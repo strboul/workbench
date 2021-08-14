@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+# Replace smart quotes with ASCII equivalents
+#
+# Examples:
+# Use directly with stdin
+#   replace-smart-quotes "‘hello’ “world”"
+#
+# Replace quotes in a file:
+#   tempfile="$(mktemp).rsq.test"
+#   echo "‘hello’ “world”" > "$tempfile"
+#   replace-smart-quotes -f "$tempfile"
+#   cat "$tempfile"
+#
+
+INPUT="$1"
+FILE="$2"
+
+SINGLE=$(echo -ne "\u00B4\u2018\u2019")
+DOUBLE=$(echo -ne "\u201C\u201D")
+
+PATTERN="s/[$SINGLE]/'/g; s/[$DOUBLE]/\"/g"
+
+sed_file() {
+  sed -i "${PATTERN}" "${FILE}"
+}
+
+sed_stdin() {
+  echo "$INPUT" | sed "${PATTERN}"
+}
+
+if [ "$INPUT" == "-f" ]; then
+  sed_file
+else
+  sed_stdin
+fi

@@ -20,13 +20,13 @@ check__dotfiles_in_home_dir
 
 get_package_manager() {
   local ostype
-  ostype="$(utils__get_ostype)"
+  ostype="$(utils__os__get_ostype)"
   if [[ "$ostype" == "darwin"* ]]; then
     utils__stop_if_not_command_exists "brew" "Install brew [ https://brew.sh ]"
     echo "brew"
   elif [[ "$ostype" == "linux"* ]]; then
     local distro_name
-    distro_name="$(utils__get_distro_name)"
+    distro_name="$(utils__os__get_distro_name)"
     if [[ "$distro_name" == "Debian" ]]; then
       utils__stop_if_not_command_exists \
         "apt-get" \
@@ -62,10 +62,10 @@ install_if_command_not_exist() {
   local command="$1"
   local fun="$2"
   if [ "$(utils__check_if_command_exists "$command")" = false ]; then
-    utils__color_msg "yellow" "\"$command\" not found on local. Installing..."
+    utils__log__info "\"$command\" not found on local. Installing..."
     "$fun"
   else
-    utils__color_msg "yellow" "\"$command\" is already installed. Skipping."
+    utils__log__info "\"$command\" is already installed. Skipping."
     echo
   fi
 }
@@ -74,7 +74,7 @@ install__install_with_pkg_manager() {
   local command="$1"
   local -n package_arr=$2
   install_with_pkg_manager() {
-    utils__color_msg "green" "installing \"$command\" via the package manager"
+    utils__log__success "installing \"$command\" via the package manager"
     local package_name
     package_name="${package_arr[$PKG_MAN]}"
     [ -z "$package_name" ] && package_name="${package_arr["all"]}"
@@ -87,7 +87,7 @@ install__install_custom() {
   local command="$1"
   local inst_fun="$2"
   install_custom() {
-    utils__color_msg "green" "installing \"$command\" via custom script"
+    utils__log__success "installing \"$command\" via custom script"
     "$inst_fun"
   }
   install_if_command_not_exist "$command" install_custom
@@ -172,12 +172,12 @@ install__install_ohmyzsh() {
   ohmyzsh_exists="$(utils__check_variable_exists "$ZSH")"
 
   if [ "$ohmyzsh_exists" ]; then
-    utils__color_msg "yellow" "\"ohmyzsh\" is already installed. Skipping."
+    utils__log__info "\"ohmyzsh\" is already installed. Skipping."
     echo
     return 1
   fi
 
-  utils__color_msg "yellow" "Installing \"ohmyzsh\" and plugins"
+  utils__log__success "Installing \"ohmyzsh\" and plugins"
 
   install_ohmyzsh() {
     sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
@@ -193,8 +193,14 @@ install__install_ohmyzsh() {
       "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}"/plugins/zsh-syntax-highlighting
   }
 
+  install_plugin_history_substring_search() {
+    git clone https://github.com/zsh-users/zsh-history-substring-search.git \
+      "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}"/plugins/zsh-history-substring-search
+  }
+
   install_plugin_autosuggestions
   install_plugin_syntax_highlighting
+  install_plugin_history_substring_search
 }
 
 install__install_ohmyzsh
@@ -208,9 +214,9 @@ shell__change_default_shell() {
   if [ -z "${SHELL##*zsh*}" ]; then
     echo "Default shell is zsh."
   else
-    utils__user_prompt "
+    utils__yesno_prompt "
     Default shell is not \"zsh\".
-    Do you want to \`sudo chsh -s $(command -v zsh)\`?
+    Do you want to \`sudo chsh -s \$(command -v zsh)\`?
     (Tip: leave the password prompt empty by pressing the <Enter> right away.)
     "
     utils__stop_if_not_command_exists "sudo"
@@ -223,14 +229,15 @@ shell__check_default_shell() {
   {
     shell__change_default_shell
   } || {
-    utils__color_msg "red"                                         \
-    "The configuration will not work properly without \"zsh\"."    \
-    "\nTroubleshooting:"                                           \
+    utils__log__error \
+      "The configuration will not work properly without \"zsh\"."
+    echo -ne \
+    "Troubleshooting:\n"                                           \
     "If you received \"chsh: PAM: Authentication failure\" error," \
-    "you can try to do the following actions:"                     \
-    "Open file \`sudo vi /etc/pam.d/chsh\`"                        \
-    "\`auth       required   pam_shells.so\` should be:"           \
-    "\`auth       sufficient   pam_shells.so\`"
+    "you can try to do the following actions:\n"                     \
+    "Open file \`sudo vi /etc/pam.d/chsh\`\n"                        \
+    "\`auth       required   pam_shells.so\` should be:\n"           \
+    "\`auth       sufficient   pam_shells.so\`\n"
   }
 }
 

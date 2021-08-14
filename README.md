@@ -10,6 +10,6 @@ Clone this repository into your home (`$HOME/`) directory, and then change
 directory into the `dotfiles` folder. After all, execute the setup script.
 
 ```bash
-git clone git@github.com:strboul/dotfiles.git "$HOME"/dotfiles
+git clone https://github.com/strboul/dotfiles.git "$HOME"/dotfiles
 cd "$HOME"/dotfiles && ./setup.sh
 ```

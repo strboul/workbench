@@ -100,29 +100,12 @@ call plug#begin('~/.local/share/nvim/plugged')
 " fzf
   Plug 'https://github.com/junegunn/fzf', { 'do': { -> fzf#install() } }
   Plug 'https://github.com/junegunn/fzf.vim'
+  source $HOME/dotfiles/nvim/plugins/fzf.vim
 
-  " map commands
-  nnoremap <silent> <c-p> :Files<CR>
-  " list open buffers
-  nnoremap <silent> <leader>b :Buffers<CR>
 
-  " Rg with arguments
-  " (https://github.com/junegunn/fzf.vim/issues/838#issuecomment-509902575)
-  command! -bang -nargs=* Rg
-    \ call fzf#vim#grep(
-    \ "rg --column --line-number --no-heading --color=always --smart-case ".<q-args>,
-    \ 1, fzf#vim#with_preview(), <bang>0
-    \ )
-
-  " use fzf as 'split windows', not as 'project drawer'
-  " open fzf pane in current buffer window, not in whole tab
-  let g:fzf_layout={'window': '20split enew'}
-
-  augroup fzfsettings
-    autocmd!
-    " ESC closes the window
-    autocmd FileType fzf tnoremap <buffer> <ESC> <C-C>
-  augroup END
+" lightline
+  Plug 'itchyny/lightline.vim'
+  source $HOME/dotfiles/nvim/plugins/lightline.vim
 
 
 " NERDTree
@@ -139,41 +122,6 @@ call plug#begin('~/.local/share/nvim/plugged')
   \ }
 
 
-" vim-airline
-  Plug 'https://github.com/vim-airline/vim-airline'
-  Plug 'https://github.com/vim-airline/vim-airline-themes'
-
-  " powerline symbols
-  let g:airline_powerline_fonts=1
-
-  " statusline settings
-    " simplify line, col info:
-    let g:airline_section_z='%p%% ' . nr2char(0x2630) . ' %l:%c'
-
-    if !exists('g:airline_symbols')
-      let g:airline_symbols = {}
-    endif
-
-    let g:airline_symbols.branch=nr2char(0x2387) . ' '
-    let g:airline#parts#ffenc#skip_expected_string='utf-8[unix]'
-
-  " tabline settings
-    let g:airline#extensions#tabline#enabled=1
-    let g:airline#extensions#tabline#show_close_button=0
-    " smart file paths display:
-    let g:airline#extensions#tabline#formatter='unique_tail'
-    let g:airline#extensions#tabline#show_tab_nr=0
-    " change labels:
-    let g:airline#extensions#tabline#buffers_label=''
-    let g:airline#extensions#tabline#tabs_label='TABS'
-    " show buffer numbers (as shown in `:ls`):
-    let g:airline#extensions#tabline#buffer_nr_show=1
-    let g:airline#extensions#tabline#buffer_nr_format='%s '
-
-  " extensions
-    let g:airline#extensions#tagbar#enabled=1
-
-
 " icons/patched fonts
   Plug 'https://github.com/ryanoasis/vim-devicons'
 
@@ -187,6 +135,7 @@ call plug#begin('~/.local/share/nvim/plugged')
   Plug 'https://github.com/preservim/tagbar'
   " tags should be sorted by order of their apperance, not alphabetically
   let g:tagbar_sort=0
+
 
 " Vista
   Plug 'https://github.com/liuchengxu/vista.vim'
@@ -307,7 +256,6 @@ call plug#end()
 " General colorscheme
   colorscheme apprentice
   set background=dark
-  let g:airline_theme='bubblegum'
 
 " terminal stuff
   source $HOME/dotfiles/nvim/terminal.vim

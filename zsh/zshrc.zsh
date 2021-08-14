@@ -29,9 +29,11 @@ ZSH_THEME="strboul"
 plugins=(
   zsh-autosuggestions
   zsh-syntax-highlighting
+  history-substring-search
   docker
   docker-compose
   npm
+  z
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -47,6 +49,9 @@ export PATH="$HOME/dotfiles/bin:$PATH"
 export PATH=$PATH:/usr/local/go/bin
 # $GOPATH env variable
 export PATH=$PATH:$(go env GOPATH)/bin
+# npm global path (don't use sudo)
+# https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally
+export PATH="$HOME/.npm-global/bin:$PATH"
 
 # ===== sources =====
 source "$HOME"/dotfiles/zsh/keybindings.zsh
@@ -91,8 +96,10 @@ alias cdr="_cdr"
 
 alias cp="cp -iv" # 'cp' prompt and verbose
 alias mv="mv -iv" # 'mv' prompt and verbose
-alias ll="ls -l"
-alias la="ls -al"
+
+# - 'h' gives human readable file sizes
+alias ll="ls -lh"
+alias la="ls -alh"
 
 alias v="eval $(command -v nvim)"
 alias v2="nvim -u $HOME/dotfiles/nvim/lua/init2.lua"

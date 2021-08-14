@@ -19,5 +19,9 @@ autocmd BufNewFile,BufRead *.py
   \ setlocal shiftwidth=4 |
   \ setlocal smartindent
 
-autocmd BufNewFile,BufRead *.yaml,*.yml setlocal tabstop=4 shiftwidth=4
+" fold json files by default
+autocmd FileType json setlocal foldmethod=syntax
+
+autocmd FileType yaml setlocal tabstop=4 shiftwidth=4
+
 autocmd FileType make setlocal noexpandtab

@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+# List down "$PATH" environment variables in a more readable way
+#
+# Usage:
+# list-path
+#
+
+tr ":" "\n" <<< "$PATH"
+

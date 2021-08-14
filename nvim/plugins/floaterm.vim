@@ -4,10 +4,13 @@
 
 " REPL utility based on floaterm
   let s:repl_list={}
+  let s:repl_list['sh']='bash'
+  let s:repl_list['zsh']='zsh'
   let s:repl_list['r']=executable('radian') ? 'radian' : 'R'
   let s:repl_list['python']=executable('bpython') ? 'bpython' : 'python3'
-  let s:repl_list['javascript']="node"
-  let s:repl_list['typescript']="ts-node"
+  let s:repl_list['javascript']='node'
+  let s:repl_list['typescript']='ts-node'
+  let s:repl_list['lua']='lua'
 
   function s:GetREPLCommand(file_type)
     if has_key(s:repl_list,a:file_type)
@@ -69,12 +72,21 @@
     endif
   endfunction
 
+  function! s:REPLSend(...)
+    if a:0 > 0
+      let s:command=a:000[0]
+      exec 'FloatermSend --name=' . s:repl_toggle_term_name . ' ' . s:command
+    else
+      FloatermSend --name=s:repl_toggle_term_name
+    endif
+  endfunction
+
   function! s:REPLSendLine()
-    FloatermSend --name=s:repl_toggle_term_name
+    call <SID>REPLSend()
   endfunction
 
   function! s:REPLSendSelection()
-    '<,'>FloatermSend --name=s:repl_toggle_term_name
+    '<,'>call <SID>REPLSend()
   endfunction
 
   " TODO REPLSendBuffer - send whole buffer line by line
@@ -95,3 +107,5 @@
   " ('> goes to the beginning of the last line of the last selected Visual
   " area in the current buffer)
   vnoremap <silent><leader><CR> :<C-u>call <SID>REPLSendSelection()<CR>'>
+  " send 'n' to the terminal - useful for 'n' (next line) during debugging
+  nnoremap <silent><leader>tn :call <SID>REPLSend('n')<CR>

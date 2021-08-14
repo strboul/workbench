@@ -1,4 +1,4 @@
-# a temp environment for the Rprofile
+# temp environment for Rprofile
 .Rprofile <- new.env()
 
 # private Rprofile file (for private aliases & credentials etc.)
@@ -15,14 +15,18 @@ options(
   # disable tcl/tk
   menu.graphics = FALSE,
   # <Enter> key shouldn't repeat the previous command at debugging
-  browserNLdisabled = TRUE
+  browserNLdisabled = TRUE,
+  # don't blow up the R console
+  max.print = 200
 )
+
+# show stack trace option when an error happens:
+if (requireNamespace("rlang", quietly = TRUE)) {
+  options(error = rlang::entrace)
+}
 
 # more scrolling up in .Rhistory
 Sys.setenv(R_HISTSIZE = "100000")
-
-# don't blow up the R console
-options(max.print = 200)
 
 # define default package repo for `install.packages`
 local({
@@ -49,31 +53,27 @@ if (nchar(Sys.which("radian"))) {
   )
 }
 
-# special calls when using R from the Terminal
+has_mmy <- requireNamespace("mmy", quietly = TRUE)
+
+# special calls when using R from terminal:
 if (interactive()) {
   options(prompt = "R>> ")
   options(continue = "... ")
-
-  # some extra interactive checks in an interactive section
-  if (!suppressWarnings(require("mmy", quietly = TRUE))) {
-    # Warn about the packages only in an *interactive* session
+  if (has_mmy) {
     .Rprofile$packages <- utils::read.csv(file.path(
       Sys.getenv("HOME"),
       "dotfiles/lang/R/packages.csv"
     ))
     mmy::warn_recommended_packages(.Rprofile$packages)
-
-    # if the interactive section is a terminal, i.e. not Rstudio console
+    # if the interactive section is a terminal, e.g. not RStudio console:
     if (mmy::is_terminal()) {
-      # `utils::View` is not great on terminal, replace with `mmy::view_tbl`
+      # `utils::View` is not great on terminal, replace with the alternative:
       unlockBinding("View", getNamespace("utils"))
-      assign("View", mmy::view_tbl, getNamespace("utils"))
+      assign("View", mmy::view, getNamespace("utils"))
       lockBinding("View", getNamespace("utils"))
     }
-    # unload mmy package
-    detach("package:mmy", unload = TRUE)
   }
 }
 
-# remove tmp environment
+# remove temporary environment
 rm(.Rprofile)

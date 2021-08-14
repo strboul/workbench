@@ -2,6 +2,7 @@
 "tidyverse","CRAN","NULL","NULL"
 "devtools","CRAN","NULL","NULL"
 "usethis","CRAN","NULL","NULL"
+"rlang","CRAN","NULL","NULL"
 "microbenchmark","CRAN","NULL","NULL"
 "knitr","CRAN","NULL","NULL"
 "jsonlite","CRAN","NULL","NULL"

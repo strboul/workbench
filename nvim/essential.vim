@@ -9,3 +9,6 @@
   set noswapfile
   set nobackup
   set nowritebackup
+
+" disable ex mode
+  nnoremap Q <nop>

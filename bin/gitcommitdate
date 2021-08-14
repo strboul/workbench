@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+
+# Git commit changes on a particular date and time
+#
+# Why two dates?
+# The author is the person who originally wrote the work, whereas the committer
+# is the person who last applied the work. ― Pro Git book
+#
+# Usage:
+# gitcommitdate
+#
+
+source "$HOME"/dotfiles/zsh/utils.sh
+
+git_timestamp() {
+  date "+%FT%T %z"
+}
+
+ask_for_date() {
+  local timestamp="$1"
+  printf "enter date in the following format.\n" >&2
+  printf "The current system time is %s\n\n" "$timestamp" >&2
+  read -rp "date: " -e -i "$timestamp" datevar
+  echo "$datevar"
+}
+
+git_commit() {
+  git commit
+}
+
+main() {
+  local timestamp
+  local date
+  timestamp="$(git_timestamp)"
+  date="$(ask_for_date "$timestamp")"
+  export GIT_AUTHOR_DATE="$date"
+  export GIT_COMMITTER_DATE="$date"
+  git_commit
+  unset GIT_AUTHOR_DATE
+  unset GIT_COMMITTER_DATE
+}
+
+main
