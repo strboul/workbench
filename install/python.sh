@@ -40,3 +40,4 @@ $PIP_INSTALL bpython       # https://github.com/bpython/bpython
 $PIP_INSTALL pdbpp         # https://github.com/pdbpp/pdbpp (drop-in replacement for pdb)
 $PIP_INSTALL git-substatus # https://github.com/strboul/git-substatus
 $PIP_INSTALL tmuxp         # https://github.com/tmux-python/tmuxp
+$PIP_INSTALL youtube-dl    # https://github.com/ytdl-org/youtube-dl

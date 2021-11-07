@@ -12,7 +12,26 @@
 --
 -- -- Performs `PackerClean` and then `PackerUpdate`
 -- :PackerSync
-return require('packer').startup(function()
+--
+
+-- use a different path from the rest of the nvim config:
+local package_root = os.getenv("HOME") + "/.config/nvim2/packer.nvim/site/pack"
+local compile_path = os.getenv("HOME") + "/.config/nvim2/packer.nvim/plugin/packer_compiled.lua"
+
+function install_packer()
+  if vim.fn.empty(vim.fn.glob(package_root)) > 0 then
+    vim.api.nvim_command('!git clone https://github.com/wbthomason/packer.nvim '..package_root)
+  end
+end
+install_packer()
+
+vim.cmd [[packadd packer.nvim]]
+
+local packer = require "packer"
+
+packer.init { compile_path = compile_path }
+
+packer.startup(function()
   -- Packer can manage itself
   use 'https://github.com/wbthomason/packer.nvim'
 
@@ -41,10 +60,6 @@ return require('packer').startup(function()
       ]], true)
 
     end
-  }
-
-  use {
-    'https://github.com/folke/tokyonight.nvim'
   }
 
   use {

@@ -1,4 +1,8 @@
 " fzf plugin
+
+  " <C-a> selects all entries in an fzf window
+  let $FZF_DEFAULT_OPTS='--bind ctrl-a:select-all,ctrl-d:deselect-all'
+
   nnoremap <silent> <c-p> :Files<CR>
   nnoremap <silent> <leader>b :Buffers<CR>
 

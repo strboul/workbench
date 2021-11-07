@@ -30,6 +30,7 @@
     else
       let l:repl_cmd=a:command
     endif
+    echo 'REPL created ' . l:repl_cmd
     execute 'FloatermNew ' .
       \ '--name=' . s:repl_toggle_term_name . ' ' .
       \ '--height=0.5 ' .
@@ -67,36 +68,35 @@
     if s:messages =~ s:error_msg
       return
     else
-      echo 'REPL restarted'
       call <SID>REPLCreate()
     endif
   endfunction
 
-  function! s:REPLSend(...)
-    if a:0 > 0
-      let s:command=a:000[0]
-      exec 'FloatermSend --name=' . s:repl_toggle_term_name . ' ' . s:command
-    else
-      FloatermSend --name=s:repl_toggle_term_name
+  function! s:REPLSend(...) abort
+    if !a:0 > 0
+      echohl WarningMsg | echo 'No command provided.' | echohl None
+      return
     endif
+    let s:command=a:000[0]
+    exec 'FloatermSend --name=' . s:repl_toggle_term_name . ' ' . s:command
   endfunction
 
   function! s:REPLSendLine()
-    call <SID>REPLSend()
+    FloatermSend --name=s:repl_toggle_term_name
   endfunction
 
   function! s:REPLSendSelection()
-    '<,'>call <SID>REPLSend()
+    '<,'>FloatermSend --name=s:repl_toggle_term_name
   endfunction
 
-  " TODO REPLSendBuffer - send whole buffer line by line
-
 " commands & keymappings
-  " toggle terminal
 
   " command :REPLToggle <empty>, :REPLToggle python
   command! -nargs=* REPLToggle :call <SID>REPLToggle(<f-args>)
+  " command :REPLSend <command>, :REPLSend pwd (if REPL is bash)
+  command! -nargs=* REPLSend :call <SID>REPLSend(<f-args>)
 
+  " toggle repl
   nnoremap <silent><leader>tt :call <SID>REPLToggle()<CR>
   tnoremap <silent><leader>tt <C-\><C-n> :call <SID>REPLToggle()<CR>
   " restart terminal

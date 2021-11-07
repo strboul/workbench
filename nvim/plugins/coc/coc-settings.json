@@ -17,6 +17,7 @@
   // --- python
   "python.pythonPath": "~/.pyenv/shims/python",
 
+
   // prettier
   "coc.preferences.formatOnSaveFiletypes": [
     "html",

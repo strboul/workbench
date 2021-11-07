@@ -1,6 +1,7 @@
 # zsh keybindings
 
 # ls
+# TODO: is it possible to attach it to a uppercase L and leave the lowercase l for clear?
 ctrl_l() {
   BUFFER="ls"
   zle accept-line

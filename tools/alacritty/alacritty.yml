@@ -14,12 +14,11 @@ window:
 
   decorations: none
 
-
-background_opacity: 1.00
+  opacity: 1.00
 
 
 font:
-  size: 10.0
+  size: 9.0
   normal:
     family: JetBrains Mono
     style: Regular

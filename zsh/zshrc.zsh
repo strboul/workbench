@@ -6,6 +6,7 @@ DISABLE_UPDATE_PROMPT=true
 [ -f "$HOME"/.zshrc_private ] && source "$HOME"/.zshrc_private
 
 # ===== tmux =====
+
 # Initialize tmux on zsh start-up if
 # (1) tmux exists,
 # (2) terminal emulator is alacritty.
@@ -21,6 +22,7 @@ fi
 export TERM=xterm-256color
 
 # ===== oh-my-zsh =====
+
 export ZSH="$HOME/.oh-my-zsh"
 
 ZSH_THEME="strboul"
@@ -30,15 +32,17 @@ plugins=(
   zsh-autosuggestions
   zsh-syntax-highlighting
   history-substring-search
+  z
   docker
   docker-compose
   npm
-  z
+  yarn
 )
 
 source $ZSH/oh-my-zsh.sh
 
 # ===== paths =====
+
 # See line by line:  echo "${PATH//:/$'\n'}"
 export PATH="/usr/local/bin:$PATH"
 export PATH="/usr/local/sbin:$PATH"
@@ -48,15 +52,17 @@ export PATH="$HOME/dotfiles/bin:$PATH"
 # golang path:
 export PATH=$PATH:/usr/local/go/bin
 # $GOPATH env variable
-export PATH=$PATH:$(go env GOPATH)/bin
+export PATH=$PATH:"$(go env GOPATH)"/bin
 # npm global path (don't use sudo)
 # https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally
 export PATH="$HOME/.npm-global/bin:$PATH"
 
 # ===== sources =====
+
 source "$HOME"/dotfiles/zsh/keybindings.zsh
 
 # ===== settings =====
+
 export LANG=en_US.UTF-8
 export EDITOR="nvim -u DEFAULTS"
 export DISABLE_AUTO_TITLE="true"
@@ -102,13 +108,14 @@ alias ll="ls -lh"
 alias la="ls -alh"
 
 alias v="eval $(command -v nvim)"
-alias v2="nvim -u $HOME/dotfiles/nvim/lua/init2.lua"
+alias v2="nvim -u $HOME/.config/nvim2/*"
+
 # https://github.com/randy3k/radian
 alias r="eval $(command -v radian)"
 # https://github.com/bpython/bpython
 alias py="eval $(command -v bpython)"
 # https://github.com/jesseduffield/lazygit
-alias lg="eval $(command -v lazygit)"
+alias lg="tmux-open-popup $(command -v lazygit)"
 
 
 # ===== configs =====
@@ -140,5 +147,5 @@ fi
 
 # nvm (https://github.com/nvm-sh/nvm#installing-and-updating)
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 

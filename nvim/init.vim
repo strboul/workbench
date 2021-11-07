@@ -95,7 +95,7 @@ source $HOME/dotfiles/nvim/mmy.vim
 " - For Neovim: stdpath('data') . '/plugged'
 " - Debug: - check the running paths with `:set runtimepath?`
 " - Use full URL because it's easy to go to the link with `gx`
-call plug#begin('~/.local/share/nvim/plugged')
+call plug#begin('~/.config/nvim/vim-plug')
 
 " fzf
   Plug 'https://github.com/junegunn/fzf', { 'do': { -> fzf#install() } }
@@ -224,7 +224,8 @@ call plug#begin('~/.local/share/nvim/plugged')
     \ '.js$':  {'ale_enabled': 0},
     \ '.jsx$':  {'ale_enabled': 0},
     \ '.ts$':  {'ale_enabled': 0},
-    \ '.tsx$':  {'ale_enabled': 0}
+    \ '.tsx$':  {'ale_enabled': 0},
+    \ '.json.*$':  {'ale_enabled': 0}
   \}
 
 
@@ -273,22 +274,23 @@ call plug#end()
   highlight ColorColumn guibg=#1c1c1c
   highlight CursorLine guibg=#1c1c1c
 
-
-  function! s:quickfix_highlight()
+  function! s:quickfix_win()
     highlight QuickFixLine gui=bold guifg=Black guibg=DarkGray
+    setlocal signcolumn=no
+    setlocal colorcolumn=
   endfunction
-  autocmd BufWinEnter quickfix call s:quickfix_highlight()
+  autocmd BufWinEnter quickfix call s:quickfix_win()
 
-  function! s:fzf_colors()
+  function! s:fzf_win()
     setlocal winhighlight=Normal:Pmenu
   endfunction
-  autocmd FileType fzf call s:fzf_colors()
+  autocmd FileType fzf call s:fzf_win()
 
-  function! s:tagbar_colors()
+  function! s:tagbar_win()
     highlight TagbarHighlight guibg=Black
     setlocal winhighlight=Normal:SignColumn
   endfunction
-  autocmd FileType tagbar call s:tagbar_colors()
+  autocmd FileType tagbar call s:tagbar_win()
 
 
 " #### THE END ####

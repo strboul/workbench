@@ -30,6 +30,10 @@ do_link "$HOME"/dotfiles/nvim/init.vim "$HOME"/.config/nvim/init.vim
 do_link "$HOME"/dotfiles/nvim/plugins/coc/coc-settings.json "$HOME"/.config/nvim/coc-settings.json
 do_link "$HOME"/dotfiles/nvim/snippets/ "$HOME"/.config/nvim/UltiSnips
 
+# nvim2
+# lua config is accessible via v2 alias defined in zshrc
+do_link "$HOME"/dotfiles/nvim/lua "$HOME"/.config/nvim2/lua
+
 # lang
 do_link "$HOME"/dotfiles/lang/R/Rprofile.R "$HOME"/.Rprofile
 do_link "$HOME"/dotfiles/lang/python/pythonstartup.py "$HOME"/.pythonstartup

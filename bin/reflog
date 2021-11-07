@@ -1,10 +1,70 @@
-#!/usr/bin/env bash
+#!/usr/bin/env python
 
-main() {
-  git reflog --date=iso --format='%C(auto)%h %<|(17)%gd %C(reset) %gs (%s)'
-}
+# Display git reflog. Show the last day entries.
+#
+
+import subprocess
+import re
+from datetime import datetime
+import pydoc
+import locale
+
+locale.setlocale(locale.LC_TIME, "en_US.UTF-8")
 
 
-main
+def get_git_reflog():
+    cmd = ["git", "reflog", "--date=iso", "--format='%h %gd %gs (%s)'"]
+    run = subprocess.run(
+        cmd, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, check=True
+    )
+    if run.returncode != 0:
+        return ""
+    out = run.stdout.decode("utf-8")
+    return out
 
-# vim: ft=sh
+
+def get_lines(reflog):
+    lines = list(filter(None, reflog.split("\n")))
+    lines = [line.rstrip("'").lstrip("'") for line in lines]
+    return lines
+
+
+def get_last_day_entries(lines, last_n_day=3):
+    dates = {}
+    for line in lines:
+        if len(dates) >= last_n_day:
+            break
+        date_extract = re.search("HEAD@{(.*)}", line).group(1)
+        date = datetime.strptime(date_extract, "%Y-%m-%d %H:%M:%S %z")
+        date_str = date.strftime("%Y-%m-%d | %A")
+        if date_str not in dates.keys():
+            dates[date_str] = []
+        dates[date_str].append(line)
+    return dates
+
+
+def create_entries_text(entries):
+    text = ""
+    for key, lines in entries.items():
+        header = key + "\n" + "-" * 25 + "\n"
+        text += header
+        for line in lines:
+            text += line + "\n"
+        text += "\n\n"
+    return text
+
+
+def pager_text(text):
+    pydoc.pager(text)
+
+
+def main():
+    reflog = get_git_reflog()
+    lines = get_lines(reflog)
+    entries = get_last_day_entries(lines)
+    text = create_entries_text(entries)
+    pager_text(text)
+
+
+if __name__ == "__main__":
+    main()

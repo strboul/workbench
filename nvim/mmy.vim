@@ -31,13 +31,13 @@
 " ----- Commands ---------------------------------------------------------
 
 " Echo buffer file path and put them in the register
-  function mmy#FunEchoRegisterBufferPath()
+  function mmy#EchoRegisterBufferPath()
     let l:abs_pat=expand('%:p')
     let l:rel_pat=expand('%')
     if l:abs_pat != ""
       call setreg('f', l:abs_pat)
       call setreg('g', l:rel_pat)
-      echohl Statement |echon printf('"%s" ', l:rel_pat) | echohl None
+      echohl Statement |echon printf('%s  ', l:rel_pat) | echohl None
       echon 'relative path stored in :reg'
       echohl Statement | echon ' "g' | echohl None
       echon ' and absolute path in'
@@ -47,13 +47,13 @@
     endif
   endfunction
 
-  command EchoRegisterBufferPath :call mmy#FunEchoRegisterBufferPath()
+  command EchoRegisterBufferPath :call mmy#EchoRegisterBufferPath()
   nnoremap <silent> <C-g> :EchoRegisterBufferPath<CR>
 
 
 " Convert single quotes to double and vice versa
 " FIXME: doesn't work well sometimes
-  function mmy#FunQuoteTypesToggle()
+  function mmy#QuoteTypesToggle()
     " (maybe write this fun recursively one day)
     " get the cursor position:
     let l:init_cur_pos=getpos('.')
@@ -75,45 +75,60 @@
     call setpos('.', l:init_cur_pos)
   endfunction
 
-  command QuoteTypesToggle :call mmy#FunQuoteTypesToggle()
+  command QuoteTypesToggle :call mmy#QuoteTypesToggle()
 
 
 " Command to help fix indentation lines
-  function mmy#FunIndentToggle()
+  function mmy#IndentToggle()
     if &cursorcolumn | set nocursorcolumn | else | set cursorcolumn | endif
     if &list         | set nolist         | else | set list         | endif
   endfunction
 
-  command IndentToggle :call mmy#FunIndentToggle()
+  command IndentToggle :call mmy#IndentToggle()
 
 
 " Break into new lines by (,) comma e.g. `[x=1, y=2, c=3]`
 " TODO create SplitIntoMultipleLines instead with a prompt for delimiter
 " TODO this can be a lua function. Probably easier to write
-  function mmy#FunSpanLinesByComma()
+  function mmy#SpanLinesByComma()
     :s/,/,\r/g
     " keep cursor position on the line
     normal! ``
   endfunction
 
-  command SpanLinesByComma :call mmy#FunSpanLinesByComma()
+  command SpanLinesByComma :call mmy#SpanLinesByComma()
 
 
 " Search & highlight non-ASCII chars (https://stackoverflow.com/a/16987522)
-  function mmy#FunSearchNonASCIIChars()
+  function mmy#SearchNonASCIIChars()
     " built query as <CR> isn't read between double quotes, see:
     " https://vim.fandom.com/wiki/Using_normal_command_in_a_script_for_searching
     let l:query='/[^\x00-\x7F]'
     execute 'normal! /' . l:query . "\<CR>"
   endfunction
 
-  command SearchNonASCIIChars :call mmy#FunSearchNonASCIIChars()
+  command SearchNonASCIIChars :call mmy#SearchNonASCIIChars()
 
 
 " Remove zero width unicode chars displayed as <200b>
-  function mmy#FunRemoveZeroWidthSpaceChars()
+  function mmy#RemoveZeroWidthSpaceChars()
     :%s/\%u200b//g
   endfunction
 
-  command RemoveZeroWidthSpaceChars :call mmy#FunRemoveZeroWidthSpaceChars()
+  command RemoveZeroWidthSpaceChars :call mmy#RemoveZeroWidthSpaceChars()
 
+
+" Find todo keywords (case sensitive) in dirs and open them in a quickfix window
+  function mmy#TODOFind()
+    try
+      " TODO add an alternative for non git repos
+      silent vimgrep /TODO\|FIXME\C/g `git ls-files`
+    catch /^Vim\%((\a\+)\)\=:E480/ " catch error E480 - No match
+      echohl WarningMsg | echo 'No TODOs found.' | echohl None
+      return
+    endtry
+    :BD " from vim-bufkill plugin
+    copen
+  endfunction
+
+  command TODOFind :call mmy#TODOFind()

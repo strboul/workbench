@@ -10,6 +10,7 @@
 # Uninstall with
 #   yay -R <package-name>
 #
+act # https://github.com/nektos/act
 ctags
 docker
 docker-compose
@@ -20,6 +21,7 @@ jq # https://stedolan.github.io/jq/
 lazygit # https://github.com/jesseduffield/lazygit
 libgit2
 lua
+meld
 neovim-nightly-bin
 nix
 nnn # https://github.com/jarun/nnn
@@ -30,9 +32,11 @@ shellcheck # https://github.com/koalaman/shellcheck
 tmux
 vagrant # https://www.vagrantup.com/
 xsel
+xcolor # Color picker https://github.com/Soft/xcolor
 ####################
 ##### binaries #####
 ####################
+anydesk-bin
 brave # https://brave.com/
 chromium
 dbeaver # https://dbeaver.io/
@@ -44,6 +48,7 @@ kitty
 pinta-git # https://www.pinta-project.com/
 postman-bin
 rstudio-desktop-bin
+robo3t-bin # https://robomongo.org/
 signal-desktop
 slack-desktop
 telegram-desktop

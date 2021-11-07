@@ -2,7 +2,7 @@
 #
 # This ignore file should be portable for every case. Do not add specific file
 # exclusions (e.g.'*.o').
-*.lock
+.~lock*
 *.swp
 *.swo
 *.log

@@ -53,13 +53,13 @@ if (nchar(Sys.which("radian"))) {
   )
 }
 
-has_mmy <- requireNamespace("mmy", quietly = TRUE)
+.Rprofile$has_mmy <- requireNamespace("mmy", quietly = TRUE)
 
 # special calls when using R from terminal:
 if (interactive()) {
   options(prompt = "R>> ")
   options(continue = "... ")
-  if (has_mmy) {
+  if (.Rprofile$has_mmy) {
     .Rprofile$packages <- utils::read.csv(file.path(
       Sys.getenv("HOME"),
       "dotfiles/lang/R/packages.csv"

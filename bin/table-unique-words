@@ -1,0 +1,93 @@
+#!/usr/bin/env python
+
+# Table the number of unique words in a text
+#
+# Examples:
+#   table-unique-words "The quick brown   fox jumps over the lazy   dog"
+#
+# Or use cat to read the contents of a file:
+#   table-unique-words "$(cat file.txt)"
+#
+# Only display words greater than:
+#   table-unique-words "We were going really, really fast" --gte 2
+#
+
+import argparse
+import re
+from collections import Counter
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        allow_abbrev=False, description="table the number of unique words in a text"
+    )
+    parser.add_argument(
+        "text", metavar="text", type=str, nargs=1, help="text to count the words"
+    )
+    parser.add_argument(
+        "--gte",
+        action="store",
+        type=int,
+        help="only prints the words that are greater than or equal to the number specified",
+    )
+
+    args = parser.parse_args()
+    return args
+
+
+def tokenize(text_arr):
+    text = text_arr[0]
+    # remove punctuation
+    text = re.sub("[^A-Za-z0-9]+", " ", text)
+    # split words
+    text = text.split(" ")
+    text = list(filter(None, text))
+    # lowercase
+    text = [t.lower() for t in text]
+    # apply stopwords
+    stopwords = [
+        "i", "me", "my", "myself", "we", "our", "ours", "ourselves", "you",
+        "your", "yours", "yourself", "yourselves", "he", "him", "his",
+        "himself", "she", "her", "hers", "herself", "it", "its", "itself",
+        "they", "them", "their", "theirs", "themselves", "what", "which",
+        "who", "whom", "this", "that", "these", "those", "am", "is", "are",
+        "was", "were", "be", "been", "being", "have", "has", "had", "having",
+        "do", "does", "did", "doing", "a", "an", "the", "and", "but", "if",
+        "or", "because", "as", "until", "while", "of", "at", "by", "for",
+        "with", "about", "against", "between", "into", "through", "to", "from",
+        "up", "down", "in", "out", "on", "off", "over", "under", "here",
+        "there", "when", "where", "why", "how", "all", "any", "both", "each",
+        "few", "more", "most", "other", "some", "such", "no", "nor", "not",
+        "only", "own", "same", "so", "than", "too", "very", "can", "will",
+        "just", "should", "now"
+    ]
+    text = [t for t in text if t not in stopwords]
+    return text
+
+
+def count_tokens(tokens):
+    counts = Counter(tokens)
+    counts_sorted = dict(counts.most_common())
+    return counts_sorted
+
+
+def filter_counts(counts, gte):
+    return {key: value for key, value in counts.items() if value >= gte}
+
+
+def display_count_table(counts):
+    for key, value in counts.items():
+        print(key, value)
+
+
+def main():
+    args = parse_args()
+    tokens = tokenize(args.text)
+    counts = count_tokens(tokens)
+    if args.gte is not None:
+        counts = filter_counts(counts, args.gte)
+    display_count_table(counts)
+
+
+if __name__ == "__main__":
+    main()
