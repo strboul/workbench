@@ -12,7 +12,7 @@
 " Read a file (e.g. a txt) as a conf by removing commented and empty lines:
   function mmy#ReadTxtConfFile(file_path)
     let l:file=readfile(glob(a:file_path))
-    let l:out_array=filter(filter(l:file, 'v:val !~ "#.*$"'), 'v:val !~ "^\s*$"')
+    let l:out_array=filter(filter(l:file, 'v:val !~? "#.*$"'), 'v:val !~? "^\s*$"')
     return l:out_array
   endfunction
 
@@ -34,14 +34,17 @@
   function mmy#EchoRegisterBufferPath()
     let l:abs_pat=expand('%:p')
     let l:rel_pat=expand('%')
-    if l:abs_pat != ""
+    if l:abs_pat !=# ''
       call setreg('f', l:abs_pat)
       call setreg('g', l:rel_pat)
       echohl Statement |echon printf('%s  ', l:rel_pat) | echohl None
-      echon 'relative path stored in :reg'
-      echohl Statement | echon ' "g' | echohl None
-      echon ' and absolute path in'
-      echohl Statement | echon ' "f' | echohl None
+      echon '(relative)'
+      echohl Statement |echon printf('  %s  ', l:abs_pat) | echohl None
+      echon '(absolute); paths stored in :reg '
+      echohl Statement | echon ' "g  ' | echohl None
+      echon 'and '
+      echohl Statement | echon ' "f  ' | echohl None
+      echon 'respectively'
     else
       echohl WarningMsg | echo 'No file in the buffer' | echohl None
     endif
@@ -89,9 +92,11 @@
 
 " Break into new lines by (,) comma e.g. `[x=1, y=2, c=3]`
 " TODO create SplitIntoMultipleLines instead with a prompt for delimiter
-" TODO this can be a lua function. Probably easier to write
+" TODO this can be written in a LUA.
   function mmy#SpanLinesByComma()
+    " vint: -ProhibitCommandWithUnintendedSideEffect -ProhibitCommandRelyOnUser
     :s/,/,\r/g
+    " vint: +ProhibitCommandWithUnintendedSideEffect +ProhibitCommandRelyOnUser
     " keep cursor position on the line
     normal! ``
   endfunction
@@ -112,7 +117,9 @@
 
 " Remove zero width unicode chars displayed as <200b>
   function mmy#RemoveZeroWidthSpaceChars()
+    " vint: -ProhibitCommandWithUnintendedSideEffect -ProhibitCommandRelyOnUser
     :%s/\%u200b//g
+    " vint: +ProhibitCommandWithUnintendedSideEffect +ProhibitCommandRelyOnUser
   endfunction
 
   command RemoveZeroWidthSpaceChars :call mmy#RemoveZeroWidthSpaceChars()
@@ -132,3 +139,11 @@
   endfunction
 
   command TODOFind :call mmy#TODOFind()
+
+
+" Get name of the vim highlight name under the cursor
+  function mmy#GetVimHighlightNameUnderCursor()
+    echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
+  endfunction
+
+  command GetVimHighlightNameUnderCursor :call mmy#GetVimHighlightNameUnderCursor()

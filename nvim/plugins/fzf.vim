@@ -18,7 +18,7 @@
   " open fzf pane in current buffer window, not in whole tab
   let g:fzf_layout={'window': '20split enew'}
 
-  augroup fzfsettings
+  augroup FzfSettings
     autocmd!
     " ESC closes the window
     autocmd FileType fzf tnoremap <buffer> <ESC> <C-C>

@@ -15,8 +15,8 @@
 --
 
 -- use a different path from the rest of the nvim config:
-local package_root = os.getenv("HOME") + "/.config/nvim2/packer.nvim/site/pack"
-local compile_path = os.getenv("HOME") + "/.config/nvim2/packer.nvim/plugin/packer_compiled.lua"
+local package_root = os.getenv("XDG_CONFIG_HOME") + "/nvim2/packer.nvim/site/pack"
+local compile_path = os.getenv("XDG_CONFIG_HOME") + "/nvim2/packer.nvim/plugin/packer_compiled.lua"
 
 function install_packer()
   if vim.fn.empty(vim.fn.glob(package_root)) > 0 then

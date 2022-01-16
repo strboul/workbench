@@ -17,19 +17,17 @@ URL=$1
 [ -z "$URL" ] && utils__err_exit "provide an URL"
 
 DIRNAME="$(printf "linkchecker_%s" "$(utils__timestamp | sed 's/ /_/g; s/:/_/g')")"
-TMPDIRPAT="/tmp/${DIRNAME}/"
+TMPDIRPAT="/tmp/$DIRNAME/"
 
-mkdir -p ${TMPDIRPAT}
+mkdir -p "${TMPDIRPAT}"
 
 "$(command -v docker)" run --rm -it \
-  -u $(id -u):$(id -g)              \
+  -u "$(id -u)":"$(id -g)"          \
   -v "$TMPDIRPAT":/mnt              \
   linkchecker/linkchecker           \
   -Fhtml/linkchecker.html           \
   -Fcsv/linkchecker.csv             \
   --verbose                         \
-  $URL
+  "$URL"
 
-utils__log__info "saved in ${TMPDIRPAT}"
-
-# vim: ft=sh
+utils__log__info "saved in $TMPDIRPAT"

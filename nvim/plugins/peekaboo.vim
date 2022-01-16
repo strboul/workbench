@@ -14,7 +14,7 @@ function! s:vim_peekaboo_win()
   setlocal winhighlight=Normal:Pmenu
 endfunction
 
-augroup PeekabooWindow
+augroup PeekabooWin
   autocmd!
   autocmd FileType peekaboo call s:vim_peekaboo_win()
 augroup END

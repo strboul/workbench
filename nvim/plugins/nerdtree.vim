@@ -39,13 +39,15 @@
   " 1. if the active buffer exists, find (point out) the file in NERDTree
   " 2. else, toggle NERDTree window only
   function! s:MyNERDTreeToggleFind()
-    if g:NERDTree.IsOpen() && &filetype == 'nerdtree'
+    if g:NERDTree.IsOpen() && &filetype ==# 'nerdtree'
       " collapse all other open folders - P (jump to root) X (close recursively)
+      " vint: -ProhibitCommandRelyOnUser
       :normal PX
+      " vint: +ProhibitCommandRelyOnUser
       :NERDTreeToggle
     else
       let l:bn=bufname('%')
-      if l:bn != '' && l:bn != 'NERD_tree_\d'
+      if l:bn !=# '' && l:bn !=# 'NERD_tree_\d'
         :NERDTreeFind
       else
         :NERDTreeToggle
@@ -55,7 +57,7 @@
 
   nnoremap <silent> <leader>n :call <SID>MyNERDTreeToggleFind()<CR>
 
-  augroup NERDTreeWindow
+  augroup NERDTreeWin
     autocmd!
     " - Pressing ESC in nerdtree window toggles the window
     autocmd FileType nerdtree

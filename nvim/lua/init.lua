@@ -1,5 +1,5 @@
-vim.cmd([[set runtimepath=~/.config/nvim2]])
-vim.cmd([[set packpath=~/.config/nvim2]])
+vim.cmd([[set runtimepath=$XDG_CONFIG_HOME . '/nvim2']])
+vim.cmd([[set packpath=$XDG_CONFIG_HOME . '/nvim2']])
 
 require("utils")
 require("plugins")

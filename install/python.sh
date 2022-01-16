@@ -41,3 +41,4 @@ $PIP_INSTALL pdbpp         # https://github.com/pdbpp/pdbpp (drop-in replacement
 $PIP_INSTALL git-substatus # https://github.com/strboul/git-substatus
 $PIP_INSTALL tmuxp         # https://github.com/tmux-python/tmuxp
 $PIP_INSTALL youtube-dl    # https://github.com/ytdl-org/youtube-dl
+$PIP_INSTALL pre-commit     # https://pre-commit.com/#installation

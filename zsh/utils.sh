@@ -27,10 +27,8 @@ utils__message__color_message() {
   # utils__message__color_message "red" "Oh no\!" "Something went wrong."
   local color_name messages ansi_colors no_color selected
   color_name="$1"
-  # TODO: get rid of SC2124
-  messages="${@:2}"
-  declare -A ansi_colors
-  ansi_colors=(
+  messages=( "${@:2}" )
+  declare -A ansi_colors=(
     ["black"]="0;30"
     ["red"]="0;31"
     ["green"]="0;32"
@@ -49,7 +47,7 @@ utils__message__color_message() {
   )
   no_color="\033[0m"
   selected="\033[${ansi_colors[$color_name]}m"
-  printf "${selected}%s${no_color} " "$messages"
+  printf "${selected}%s${no_color} " "${messages[@]}"
   echo
 }
 

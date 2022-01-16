@@ -1,0 +1,7 @@
+# Be mindful before you disable something.
+#
+
+# SC1090: ShellCheck can't follow non-constant source. Use a directive to specify location.
+# https://github.com/koalaman/shellcheck/wiki/SC1090
+disable=SC1090
+disable=SC1091

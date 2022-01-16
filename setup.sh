@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 source "$HOME"/dotfiles/zsh/utils.sh
 
 # --------------------------------------------------------------------------- #
@@ -22,7 +24,7 @@ get_package_manager() {
   local ostype
   ostype="$(utils__os__get_ostype)"
   if [[ "$ostype" == "darwin"* ]]; then
-    utils__stop_if_not_command_exists "brew" "Install brew [ https://brew.sh ]"
+    utils__stop_if_not_command_exists "brew" "Install brew (https://brew.sh)"
     echo "brew"
   elif [[ "$ostype" == "linux"* ]]; then
     local distro_name
@@ -99,11 +101,11 @@ install__install_custom() {
 # names in all.
 {
   declare -A pkg_zsh=( ["all"]="zsh" )
-  install__install_with_pkg_manager "zsh" "pkg_zsh"
+  install__install_with_pkg_manager "zsh" "${pkg_zsh[@]}"
 }
 {
   declare -A pkg_tmux=( ["all"]="tmux" )
-  install__install_with_pkg_manager "tmux" "pkg_tmux"
+  install__install_with_pkg_manager "tmux" "${pkg_tmux[@]}"
   # extra terminfo run for tmux:
   tic "$HOME"/dotfiles/tmux/tmux-256color.terminfo
   tic "$HOME"/dotfiles/tmux/xterm-256color-italic.terminfo
@@ -111,51 +113,51 @@ install__install_custom() {
 {
   # https://github.com/neovim/neovim
   declare -A pkg_neovim=( ["brew"]="nvim" ["apt"]="nvim" ["yay"]="neovim" )
-  install__install_with_pkg_manager "nvim" "pkg_neovim"
+  install__install_with_pkg_manager "nvim" "${pkg_neovim[@]}"
 }
 {
   # https://github.com/BurntSushi/ripgrep
   declare -A pkg_ripgrep=( ["all"]="ripgrep" )
-  install__install_with_pkg_manager "rg" "pkg_ripgrep"
+  install__install_with_pkg_manager "rg" "${pkg_ripgrep[@]}"
 }
 {
   # https://github.com/sharkdp/fd
   declare -A pkg_fd=( ["all"]="fd" )
-  install__install_with_pkg_manager "fd" "pkg_fd"
+  install__install_with_pkg_manager "fd" "${pkg_fd[@]}"
 }
 {
   # https://github.com/sharkdp/bat
   declare -A pkg_bat=( ["all"]="bat" )
-  install__install_with_pkg_manager "bat" "pkg_bat"
+  install__install_with_pkg_manager "bat" "${pkg_bat[@]}"
 }
 {
   # https://github.com/stedolan/jq
   declare -A pkg_jq=( ["all"]="jq" )
-  install__install_with_pkg_manager "jq" "pkg_jq"
+  install__install_with_pkg_manager "jq" "${pkg_jq[@]}"
 }
 {
   # https://github.com/koalaman/shellcheck
   declare -A pkg_shellcheck=( ["all"]="shellcheck" )
-  install__install_with_pkg_manager "shellcheck" "pkg_shellcheck"
+  install__install_with_pkg_manager "shellcheck" "${pkg_shellcheck[@]}"
 }
 {
   # https://github.com/jesseduffield/lazygit
   declare -A pkg_lazygit=( ["all"]="lazygit" )
-  install__install_with_pkg_manager "lazygit" "pkg_lazygit"
+  install__install_with_pkg_manager "lazygit" "${pkg_lazygit[@]}"
 }
 {
   # https://github.com/jesseduffield/lazydocker
   declare -A pkg_lazydocker=( ["all"]="lazydocker" )
-  install__install_with_pkg_manager "lazydocker" "pkg_lazydocker"
+  install__install_with_pkg_manager "lazydocker" "${pkg_lazydocker[@]}"
 }
 {
   # https://github.com/universal-ctags/ctags
-  declare -A pkg_ctags=( ["brew"]="--HEAD universal-ctags/universal-ctags/universal-ctags" ["yay"]="ctags" )
-  install__install_with_pkg_manager "ctags" "pkg_ctags"
+  declare -A pkg_ctags=( ["yay"]="ctags" )
+  install__install_with_pkg_manager "ctags" "${pkg_ctags[@]}"
 }
 {
   declare -A pkg_nodejs=( ["all"]="nodejs" )
-  install__install_with_pkg_manager "node" "pkg_nodejs"
+  install__install_with_pkg_manager "node" "${pkg_nodejs[@]}"
 }
 {
   # https://github.com/junegunn/fzf
@@ -177,30 +179,36 @@ install__install_ohmyzsh() {
     return 1
   fi
 
-  utils__log__success "Installing \"ohmyzsh\" and plugins"
+  utils__log__success "installing \"ohmyzsh\" and plugins"
 
   install_ohmyzsh() {
     sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
   }
 
   install_plugin_autosuggestions() {
-    git clone https://github.com/zsh-users/zsh-autosuggestions.git \
-      "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}"/plugins/zsh-autosuggestions
+    git clone --depth=1 https://github.com/zsh-users/zsh-autosuggestions.git \
+      "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"/plugins/zsh-autosuggestions
   }
 
   install_plugin_syntax_highlighting() {
-    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git \
-      "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}"/plugins/zsh-syntax-highlighting
+    git clone --depth=1 https://github.com/zsh-users/zsh-syntax-highlighting.git \
+      "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"/plugins/zsh-syntax-highlighting
   }
 
   install_plugin_history_substring_search() {
-    git clone https://github.com/zsh-users/zsh-history-substring-search.git \
-      "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}"/plugins/zsh-history-substring-search
+    git clone --depth=1 https://github.com/zsh-users/zsh-history-substring-search.git \
+      "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"/plugins/zsh-history-substring-search
+  }
+
+  install_plugin_powerlevel10k() {
+    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \
+      "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"/themes/powerlevel10k
   }
 
   install_plugin_autosuggestions
   install_plugin_syntax_highlighting
   install_plugin_history_substring_search
+  install_plugin_powerlevel10k
 }
 
 install__install_ohmyzsh

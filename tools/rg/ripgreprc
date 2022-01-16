@@ -1,0 +1,24 @@
+# https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md
+
+# Search hidden files and directories
+--hidden
+
+# Follow symbolic links
+--follow
+
+# Don't let ripgrep vomit really long lines to terminal
+--max-columns=150
+
+# Search case insensitive if the pattern is all lowercase. Otherwise, search
+# case sensitive.
+--smart-case
+
+# Make the output look like The Silver Searcher's output (ag)
+# https://github.com/BurntSushi/ripgrep/blob/master/FAQ.md#silver-searcher-output
+--colors=line:fg:yellow
+--colors=line:style:bold
+--colors=path:fg:green
+--colors=path:style:bold
+--colors=match:fg:black
+--colors=match:bg:yellow
+--colors=match:style:nobold

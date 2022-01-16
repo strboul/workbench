@@ -1,3 +1,5 @@
+:scriptencoding utf-8
+
 source $HOME/dotfiles/nvim/mmy.vim
 
 " ----- General settings ---------------------------------------------------
@@ -84,18 +86,20 @@ source $HOME/dotfiles/nvim/mmy.vim
 " ----- Plugins ------------------------------------------------------------
 
 " Auto installation vim-plug (https://github.com/junegunn/vim-plug)
-  if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
-    silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
-          \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
-  endif
+  augroup VimPlugInstall
+    if empty(glob($XDG_DATA_HOME . '/nvim/site/autoload/plug.vim'))
+      silent !curl -fLo $XDG_DATA_HOME . '/nvim/site/autoload/plug.vim' --create-dirs
+            \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+      autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+    endif
+  augroup END
 
 
 " Specify directory for plugins
 " - For Neovim: stdpath('data') . '/plugged'
 " - Debug: - check the running paths with `:set runtimepath?`
 " - Use full URL because it's easy to go to the link with `gx`
-call plug#begin('~/.config/nvim/vim-plug')
+call plug#begin(stdpath('config') . '/vim-plug')
 
 " fzf
   Plug 'https://github.com/junegunn/fzf', { 'do': { -> fzf#install() } }
@@ -196,8 +200,10 @@ call plug#begin('~/.config/nvim/vim-plug')
 
   " fugitive
   Plug 'https://github.com/tpope/vim-fugitive'
-  " - ESC closes the window
-  autocmd FileType fugitiveblame nnoremap <buffer><silent> <ESC> :q<CR>
+  augroup FugitiveBlameWin
+    " - ESC closes the window
+    autocmd FileType fugitiveblame nnoremap <buffer><silent> <ESC> :q<CR>
+  augroup END
 
 
   " rhubarb for GitHub (for `:Gbrowse` mainly)
@@ -229,25 +235,24 @@ call plug#begin('~/.config/nvim/vim-plug')
   \}
 
 
+" highlight visual selections
+  Plug 'https://github.com/kdav5758/HighStr.nvim'
+  nnoremap <silent> <f1> :HSRmHighlight<CR>
+  vnoremap <silent> <f1> :<c-u>HSRmHighlight<CR>
+  vnoremap <silent> <f2> :<c-u>HSHighlight 1<CR>
+  vnoremap <silent> <f3> :<c-u>HSHighlight 7<CR>
+  vnoremap <silent> <f4> :<c-u>HSHighlight 3<CR>
+
+
 " Colors
   Plug 'https://github.com/romainl/Apprentice'
   Plug 'https://github.com/chriskempson/base16-vim'
 
 
-" FIXME Experimental plugins ----
+" --- Candidate plugins ----
+" A plugin is a candidate first, and if it's useful, it's promoted to the up.
 
-  Plug 'https://github.com/bfredl/nvim-luadev'
-  nmap <leader>l <Plug>(Luadev-RunLine)
-  vmap <leader>l <Plug>(Luadev-Run)
-
-Plug 'https://github.com/kdav5758/HighStr.nvim'
-nnoremap <silent> <f1> :HSRmHighlight<CR>
-vnoremap <silent> <f1> :<c-u>HSRmHighlight<CR>
-vnoremap <silent> <f2> :<c-u>HSHighlight 1<CR>
-vnoremap <silent> <f3> :<c-u>HSHighlight 7<CR>
-vnoremap <silent> <f4> :<c-u>HSHighlight 3<CR>
-
-Plug 'https://github.com/hkupty/iron.nvim'
+" Plug 'https://github.com/Einenlum/yaml-revealer'
 
 call plug#end()
 
@@ -279,18 +284,27 @@ call plug#end()
     setlocal signcolumn=no
     setlocal colorcolumn=
   endfunction
-  autocmd BufWinEnter quickfix call s:quickfix_win()
 
   function! s:fzf_win()
     setlocal winhighlight=Normal:Pmenu
   endfunction
-  autocmd FileType fzf call s:fzf_win()
 
-  function! s:tagbar_win()
-    highlight TagbarHighlight guibg=Black
+  function! s:nerdtree_win()
+    highlight NERDTreeFile guifg=LightGray
+    highlight NERDTreeExecFile gui=bold guifg=White
     setlocal winhighlight=Normal:SignColumn
   endfunction
-  autocmd FileType tagbar call s:tagbar_win()
+
+  function! s:tagbar_win()
+    setlocal winhighlight=Normal:SignColumn
+  endfunction
+
+  augroup HiglightTypes
+    autocmd BufWinEnter quickfix call s:quickfix_win()
+    autocmd FileType fzf call s:fzf_win()
+    autocmd FileType nerdtree call s:nerdtree_win()
+    autocmd FileType tagbar call s:tagbar_win()
+  augroup END
 
 
 " #### THE END ####

@@ -1,9 +1,22 @@
+# SC2148: Don't ask for a shebang for this file, which is not supported.
+# shellcheck disable=SC2148
+
 # disable the update prompt from oh-my-zsh
-DISABLE_UPDATE_PROMPT=true
+export DISABLE_UPDATE_PROMPT=true
 
 # Private zsh file
 # (e.g. for private aliases & env vars that are credentials)
 [ -f "$HOME"/.zshrc_private ] && source "$HOME"/.zshrc_private
+
+# set date/time locale to US
+export LC_TIME="en_US.UTF-8"
+
+# XDG base (https://wiki.archlinux.org/title/XDG_Base_Directory)
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_CACHE_HOME="$HOME/.cache"
+export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_STATE_HOME="$HOME/.local/state"
+
 
 # ===== tmux =====
 
@@ -25,21 +38,31 @@ export TERM=xterm-256color
 
 export ZSH="$HOME/.oh-my-zsh"
 
-ZSH_THEME="strboul"
+export ZSH_THEME="powerlevel10k/powerlevel10k"
 
-# See all: https://github.com/ohmyzsh/ohmyzsh/wiki/Plugins
-plugins=(
-  zsh-autosuggestions
-  zsh-syntax-highlighting
+# See all available plugins: https://github.com/ohmyzsh/ohmyzsh/wiki/Plugins
+#
+# plugins: zsh related
+plugins+=(
   history-substring-search
   z
+  zsh-autosuggestions
+  zsh-syntax-highlighting
+)
+# plugins:autocomplete tooling
+plugins+=(
+  aws
   docker
   docker-compose
+  helm
+  kubectl
   npm
+  nvm
+  terraform
   yarn
 )
 
-source $ZSH/oh-my-zsh.sh
+source "$ZSH"/oh-my-zsh.sh
 
 # ===== paths =====
 
@@ -52,7 +75,8 @@ export PATH="$HOME/dotfiles/bin:$PATH"
 # golang path:
 export PATH=$PATH:/usr/local/go/bin
 # $GOPATH env variable
-export PATH=$PATH:"$(go env GOPATH)"/bin
+gopath="$(go env GOPATH)"
+export PATH=$PATH:"$gopath"/bin
 # npm global path (don't use sudo)
 # https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally
 export PATH="$HOME/.npm-global/bin:$PATH"
@@ -75,16 +99,21 @@ unset LESS
 setopt INC_APPEND_HISTORY
 # share history across zsh sessions
 setopt SHARE_HISTORY
-# ignore all duplicate entries in the zsh history (also good for fzf search)
+# ignore all duplicate entries in the zsh history
 setopt HIST_IGNORE_ALL_DUPS
+# do not save duplicated command
+setopt HIST_SAVE_NO_DUPS
 # removes blank lines from history
 setopt HIST_REDUCE_BLANKS
 # don't save commands starting with a space in history
 setopt HIST_IGNORE_SPACE
+# append command to history file immediately after execution
+setopt INC_APPEND_HISTORY_TIME
+setopt EXTENDED_HISTORY
 
 # don't write these commands to the history
 # TODO test this, <c-r> or history doesn't work but cat ~/.zsh_history works
-HISTORY_IGNORE="(history|ls|cd|cd ..|pwd|clear|exit|cd|v)"
+export HISTORY_IGNORE="(history|ls|cd|cd ..|pwd|clear|exit|cd|v)"
 
 # ===== aliases =====
 
@@ -96,26 +125,29 @@ alias cd="_cdls"
 
 _cdr() {
   # jump to the root path of a git repository
-  cd "$(git rev-parse --show-toplevel)"
+  cd "$(git rev-parse --show-toplevel)" || exit
 }
 alias cdr="_cdr"
 
 alias cp="cp -iv" # 'cp' prompt and verbose
 alias mv="mv -iv" # 'mv' prompt and verbose
 
-# - 'h' gives human readable file sizes
-alias ll="ls -lh"
-alias la="ls -alh"
+# - '-h' gives human readable file sizes
+# - '-F' appends indicator (e.g. `/` for folders, `*` for executables)
+alias ll="ls -lhF --color=auto"
+alias la="ll -a"
 
-alias v="eval $(command -v nvim)"
-alias v2="nvim -u $HOME/.config/nvim2/*"
+alias v='eval $(command -v nvim)'
+alias v2='nvim -u $XDG_CONFIG_HOME/nvim2'
 
 # https://github.com/randy3k/radian
-alias r="eval $(command -v radian)"
+alias r='eval $(command -v radian)'
 # https://github.com/bpython/bpython
-alias py="eval $(command -v bpython)"
+alias py='eval $(command -v bpython)'
+
 # https://github.com/jesseduffield/lazygit
-alias lg="tmux-open-popup $(command -v lazygit)"
+export LG_CONFIG_FILE="$XDG_CONFIG_HOME/lazygit/config.yml"
+alias lg='tmux-open-popup $(command -v lazygit)'
 
 
 # ===== configs =====
@@ -149,3 +181,5 @@ fi
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

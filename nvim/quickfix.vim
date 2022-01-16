@@ -7,4 +7,7 @@ function! s:quickfix_win()
   setlocal nolist
   nnoremap <buffer><silent> <ESC> :cclose<CR>
 endfunction
-autocmd BufWinEnter quickfix call s:quickfix_win()
+
+augroup QuickfixWin
+  autocmd BufWinEnter quickfix call s:quickfix_win()
+augroup END

@@ -13,3 +13,7 @@ directory into the `dotfiles` folder. After all, execute the setup script.
 git clone https://github.com/strboul/dotfiles.git "$HOME"/dotfiles
 cd "$HOME"/dotfiles && ./setup.sh
 ```
+
+## Development
+
+- Run `pre-commit install` that installs the hook scripts at `.git/hooks`

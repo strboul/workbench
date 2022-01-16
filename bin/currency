@@ -2,47 +2,28 @@
 
 # Run currency to get conversion rated prices
 #
-# Use YahooFinance to get the live data.
+# Uses YahooFinance to get the live data.
 #
-# Usage: currency <amount> <source currency> <target currency>
+# Usage: currency <amount> <from> <to>
 # Example: currency 100 usd eur
 #
 
+AMOUNT="$1"
+FROM="$2"
+TO="$3"
+
 source "$HOME"/dotfiles/zsh/utils.sh
 
-utils__stop_if_not_command_exists "jq" "Please install it."
-utils__stop_if_not_command_exists "python"
+utils__stop_if_not_command_exists "deno" "Install deno (https://deno.land/)"
 
-AMOUNT=$1
-SOURCE_CURR=$2
-TARGET_CURR=$3
-
-get_conversion_rate() {
-  local curr_str=$(echo "${SOURCE_CURR}${TARGET_CURR}" | tr "[:lower:]" "[:upper:]")
-  local rate=$(curl -s "https://query1.finance.yahoo.com/v8/finance/chart/${curr_str}=X" | \
-    jq ". | .chart.result[0].meta.regularMarketPrice")
-  [ "$rate" == "null" ]  && utils__err_exit "source or target currency not found"
-  echo "${rate}"
+deno_cmd() {
+  deno run \
+    --quiet \
+    --allow-env=HOME \
+    --allow-write \
+    --allow-net="query1.finance.yahoo.com" \
+    "$HOME"/dotfiles/bin/__src-currency/index.ts \
+    "$@"
 }
 
-
-calc_amount() {
-  # use Python to calculate the amount as bash isn't great with floating point
-  local conv_rate=$1
-  python -c "print(round(${AMOUNT}*${conv_rate}, 2))"
-}
-
-
-main() {
-  utils__log__info "convert ${AMOUNT} ${SOURCE_CURR} to ${TARGET_CURR}"
-
-  local conv_rate
-  conv_rate=$(get_conversion_rate)
-  echo "conversion rate: ${conv_rate}"
-
-  local calcd
-  calcd="$(calc_amount "${conv_rate}")"
-  echo "total:  ${calcd} ${TARGET_CURR}"
-}
-
-main
+deno_cmd "$AMOUNT" "$FROM" "$TO"

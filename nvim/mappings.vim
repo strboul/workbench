@@ -44,6 +44,7 @@
 
 " better x (don't push it to the register)
   nnoremap x "_x
+  nnoremap X "_X
 
 " jump to the middle of the viewport when navigating with n or {
   nnoremap n nzz

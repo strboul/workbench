@@ -45,6 +45,7 @@ def tokenize(text_arr):
     # lowercase
     text = [t.lower() for t in text]
     # apply stopwords
+    # fmt: off
     stopwords = [
         "i", "me", "my", "myself", "we", "our", "ours", "ourselves", "you",
         "your", "yours", "yourself", "yourselves", "he", "him", "his",
@@ -61,6 +62,7 @@ def tokenize(text_arr):
         "only", "own", "same", "so", "than", "too", "very", "can", "will",
         "just", "should", "now"
     ]
+    # fmt: on
     text = [t for t in text if t not in stopwords]
     return text
 

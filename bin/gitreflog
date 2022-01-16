@@ -2,14 +2,25 @@
 
 # Display git reflog. Show the last day entries.
 #
+# Usage:
+# gitreflog
+#
 
 import subprocess
 import re
-from datetime import datetime
+from datetime import datetime, timezone
 import pydoc
 import locale
 
 locale.setlocale(locale.LC_TIME, "en_US.UTF-8")
+ISO_DATE_FORMAT = "%Y-%m-%d"
+HEADER_DASH_LENGTH = 32
+
+
+def get_now_time_str():
+    now = datetime.now(timezone.utc)
+    now_str = now.strftime(ISO_DATE_FORMAT)
+    return now_str
 
 
 def get_git_reflog():
@@ -29,14 +40,32 @@ def get_lines(reflog):
     return lines
 
 
-def get_last_day_entries(lines, last_n_day=3):
+def get_diff_str(date_str, now_time_str):
+    date_iso = datetime.strptime(date_str, ISO_DATE_FORMAT)
+    now_time_iso = datetime.strptime(now_time_str, ISO_DATE_FORMAT)
+    diff = now_time_iso - date_iso
+    diff_days = diff.days
+    text = ""
+    if diff_days > 1:
+        text = f" ({diff_days} days ago)"
+    elif diff_days == 1:
+        text = " (yesterday)"
+    elif diff_days == 0:
+        text = ""
+    return text
+
+
+def get_last_day_entries(lines, now_time_str, last_n_day=3):
     dates = {}
     for line in lines:
         if len(dates) >= last_n_day:
             break
         date_extract = re.search("HEAD@{(.*)}", line).group(1)
         date = datetime.strptime(date_extract, "%Y-%m-%d %H:%M:%S %z")
-        date_str = date.strftime("%Y-%m-%d | %A")
+        date_str = date.strftime(ISO_DATE_FORMAT)
+        day_str = date.strftime("%A")
+        diff_str = get_diff_str(date_str, now_time_str)
+        date_str = f"{date_str} | {day_str}{diff_str}"
         if date_str not in dates.keys():
             dates[date_str] = []
         dates[date_str].append(line)
@@ -46,7 +75,7 @@ def get_last_day_entries(lines, last_n_day=3):
 def create_entries_text(entries):
     text = ""
     for key, lines in entries.items():
-        header = key + "\n" + "-" * 25 + "\n"
+        header = key + "\n" + "-" * HEADER_DASH_LENGTH + "\n"
         text += header
         for line in lines:
             text += line + "\n"
@@ -59,9 +88,10 @@ def pager_text(text):
 
 
 def main():
+    now_time_str = get_now_time_str()
     reflog = get_git_reflog()
     lines = get_lines(reflog)
-    entries = get_last_day_entries(lines)
+    entries = get_last_day_entries(lines, now_time_str)
     text = create_entries_text(entries)
     pager_text(text)
 

@@ -8,8 +8,8 @@
   "terminal.integrated.cursorBlinking": true,
 
   "workbench.colorCustomizations": {
-    "terminal.background":"#000000",
-    "terminal.foreground":"#dddada"
+    "terminal.background": "#000000",
+    "terminal.foreground": "#dddada"
   },
 
   "explorer.confirmDragAndDrop": false,

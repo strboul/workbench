@@ -3,4 +3,7 @@
 function! s:help_win()
   nnoremap <buffer><silent> <ESC> :helpclose<CR>
 endfunction
-autocmd FileType help call s:help_win()
+
+augroup HelpWin
+  autocmd FileType help call s:help_win()
+augroup END

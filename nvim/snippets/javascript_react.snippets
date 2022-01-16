@@ -1,0 +1,61 @@
+extends javascript
+
+snippet comp "Function component"
+import React from "React";
+
+const ${1:ComponentName} = (props) => {
+	return (
+		<>
+			{props}
+		</>
+	)
+}
+
+export default ${1:ComponentName};
+endsnippet
+
+snippet console.dir "console.dir debug"
+console.dir(${1:object}, { depth: null });
+endsnippet
+
+snippet fetch_get "fetch GET request"
+React.useEffect(() => {
+  const fetchData = async () => {
+    const response = await fetch("${1:url}");
+    const result = await response.json();
+    return result;
+  };
+  const data = fetchData();
+  ${2:setState}(data);
+}, []);
+endsnippet
+
+snippet fetch_post "fetch POST request"
+React.useEffect(() => {
+  const postData = async () => {
+    const response = await fetch("${1:url}", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        param: "value",
+      }),
+    });
+    const result = await response.json();
+    ${2:setState}(result);
+  };
+  postData();
+}, []);
+endsnippet
+
+snippet setTimeout
+setTimeout(() => {
+	${1:body}
+}, 1000);
+endsnippet
+
+snippet useState "use state" b
+const [${1:value}, set`!p snip.rv=t[1].capitalize()`] = React.useState(null);
+endsnippet

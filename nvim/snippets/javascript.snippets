@@ -1,0 +1,33 @@
+snippet "for of (iterate values)"
+for(const ${1:iterator} of {2:object}) {
+	${3}
+}
+endsnippet
+
+snippet "for ... in (iterate keys)"
+for(const ${1:iterator} in {2:object}) {
+	${3}
+}
+endsnippet
+
+snippet "for classic"
+for (let i = 0; i < ${1:length}; i++) {
+	${0}
+}
+endsnippet
+
+snippet fun "function arrow"
+const ${1:functionName} = (${2:argument}) => {
+	${3:body};
+};
+endsnippet
+
+snippet fun_iife "Immediately-Invoked Function Expression (IIFE) - ES6 arrow"
+(() => {
+	${1:body};
+})();
+endsnippet
+
+snippet json "json stringify (pretty print)"
+JSON.stringify(${1:obj}, null, 2);
+endsnippet

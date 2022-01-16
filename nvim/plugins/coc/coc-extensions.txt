@@ -21,6 +21,8 @@ coc-eslint
 coc-prettier
 coc-emmet
 
+coc-deno # https://github.com/fannheyward/coc-deno
+
 # web/markups ------
 
 coc-html

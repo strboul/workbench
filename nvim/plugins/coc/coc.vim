@@ -23,6 +23,10 @@ function! s:check_back_space() abort
   return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
 
+" coc-snippets: use tab & s-tab to cycle between the placeholders
+let g:coc_snippet_next = '<tab>'
+let g:coc_snippet_prev = '<s-tab>'
+
 " Use <c-space> to trigger completion in INSERT mode
 inoremap <silent><expr> <c-space> coc#refresh()
 
@@ -47,14 +51,16 @@ function! s:show_documentation()
   elseif (coc#rpc#ready())
     call CocActionAsync('doHover')
   else
-    execute '!' . &keywordprg . " " . expand('<cword>')
+    execute '!' . &keywordprg . ' ' . expand('<cword>')
   endif
 endfunction
 
-" Highlight the symbol and its references when holding the cursor.
-autocmd CursorHold * silent call CocActionAsync('highlight')
-" change the color of highlight as it's not so visible
-autocmd ColorScheme * hi default CocHighlightText guibg=Black
+augroup HighlightSymbol
+  " Highlight the symbol and its references when holding the cursor.
+  autocmd CursorHold * silent call CocActionAsync('highlight')
+  " change the color of highlight as it's not so visible
+  autocmd ColorScheme * hi default CocHighlightText guibg=Black
+augroup END
 
 " Symbol renaming.
 nmap <leader>rn <Plug>(coc-rename)
