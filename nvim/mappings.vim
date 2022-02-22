@@ -13,7 +13,6 @@
   nnoremap <silent> # :let @/='\V\<'.escape(expand('<cword>'), '\').'\>'<CR>:set hls<CR>
 
   " visual selection search with */#
-  " FIXME I get a highlighted yank after :nohl, shouldn't get any?
   function! s:VSelectSearch()
     let temp=@@
     normal! gvy
@@ -65,3 +64,6 @@
 
 " 'del' key doesn't delete in normal mode
   nnoremap <Del> <nop>
+
+" select the current line, but not the newline character
+  xnoremap $ g_

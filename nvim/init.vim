@@ -200,10 +200,7 @@ call plug#begin(stdpath('config') . '/vim-plug')
 
   " fugitive
   Plug 'https://github.com/tpope/vim-fugitive'
-  augroup FugitiveBlameWin
-    " - ESC closes the window
-    autocmd FileType fugitiveblame nnoremap <buffer><silent> <ESC> :q<CR>
-  augroup END
+  source $HOME/dotfiles/nvim/plugins/fugitive.vim
 
 
   " rhubarb for GitHub (for `:Gbrowse` mainly)
@@ -211,7 +208,8 @@ call plug#begin(stdpath('config') . '/vim-plug')
 
 
 " vim-polyglot (syntax highlighting)
-  Plug 'https://github.com/sheerun/vim-polyglot'
+" TODO: move to treesitter
+  Plug 'https://github.com/sheerun/vim-polyglot', {'commit': '2c5af8f89d3e61e04e761c07a1f043b0f35203c6'}
 
 
 " prisma2 syntax highlighting
@@ -253,6 +251,14 @@ call plug#begin(stdpath('config') . '/vim-plug')
 " A plugin is a candidate first, and if it's useful, it's promoted to the up.
 
 " Plug 'https://github.com/Einenlum/yaml-revealer'
+Plug 'https://github.com/michaelb/sniprun', {'do': 'bash install.sh'}
+
+" ansible
+Plug 'https://github.com/pearofducks/ansible-vim', { 'do': './UltiSnips/generate.sh' }
+  " for coc-ansible
+  let g:coc_filetype_map = {
+    \ 'yaml.ansible': 'ansible',
+    \ }
 
 call plug#end()
 

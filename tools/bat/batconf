@@ -1,19 +1,10 @@
 # https://github.com/sharkdp/bat
-# Set the theme to "TwoDark"
---theme="TwoDark"
+--plain
 
-# Show line numbers, Git modifications and file header (but no grid)
---style="numbers,changes,header"
+--theme=TwoDark
 
-# Use italic text on the terminal (not supported on all terminals)
+# use italic text (not supported on all terminals)
 --italic-text=always
 
-# Add mouse scrolling support in less (does not work with older
-# versions of "less")
---pager="less -FR"
-
-# Use C++ syntax (instead of C) for .h header files
---map-syntax h:cpp
-
-# Use "gitignore" highlighting for ".ignore" files
+# use "gitignore" highlighting for ".ignore" files
 --map-syntax .ignore:.gitignore

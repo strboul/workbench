@@ -1,7 +1,11 @@
 extends javascript
 
-snippet comp "Function component"
+snippet import "import React"
 import React from "React";
+endsnippet
+
+snippet comp "Function component"
+import * as React from "react";
 
 const ${1:ComponentName} = (props) => {
 	return (

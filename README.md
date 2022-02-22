@@ -14,6 +14,11 @@ git clone https://github.com/strboul/dotfiles.git "$HOME"/dotfiles
 cd "$HOME"/dotfiles && ./setup.sh
 ```
 
+Create the symlinks with:
+```
+./symlinks
+```
+
 ## Development
 
 - Run `pre-commit install` that installs the hook scripts at `.git/hooks`

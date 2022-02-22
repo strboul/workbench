@@ -1,14 +1,14 @@
 # SC2148: Don't ask for a shebang for this file, which is not supported.
 # shellcheck disable=SC2148
 
-# ls
-# TODO: is it possible to attach it to a uppercase L and leave the lowercase l for clear?
+# list files via ll (alias defined in zshrc)
 __zle_widget__list_files() {
-  BUFFER="ls"
+  BUFFER="ll"
   zle accept-line
 }
 zle -N __zle_widget__list_files
-bindkey "^l" __zle_widget__list_files
+bindkey "^[l" __zle_widget__list_files
+
 
 # git status
 #
@@ -27,6 +27,7 @@ __zle_widget__git_status() {
 zle -N __zle_widget__git_status
 bindkey "^s" __zle_widget__git_status
 
+
 # Add all git-tracked & commit & push
 __zle_widget__git_add_commit_push() {
   if [ -n "$BUFFER" ]; then
@@ -38,6 +39,7 @@ __zle_widget__git_add_commit_push() {
 }
 zle -N __zle_widget__git_add_commit_push
 bindkey "^g" __zle_widget__git_add_commit_push
+
 
 # Enable Ctrl-x-e to edit long commands with the $EDITOR
 autoload -U edit-command-line

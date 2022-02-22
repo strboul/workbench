@@ -45,10 +45,20 @@
     return &readonly && &filetype !=# 'help' ? 'RO' : ''
   endfunction
 
-  " Hide the filename in the help pane
+  " Hide the filename in
+  " - the help pane
+  " - terminal
+  " Show the relative path filename.
   function! LightlineFilename()
-    return &filetype ==# 'help' ? 'help' :
-      \ expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
+    if &buftype ==# 'help'
+      return 'help'
+    elseif &buftype ==# 'terminal'
+      return expand('%:t')
+    elseif expand('%:t') !=# ''
+      return expand('%')
+    else
+      return '[No Name]'
+    endif
   endfunction
 
   " don't show file format if it's unix, check `help 'fileformat'`

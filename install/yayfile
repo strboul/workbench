@@ -17,8 +17,10 @@ docker
 docker-compose
 direnv # https://github.com/direnv/direnv
 dive # https://github.com/wagoodman/dive
+firejail # https://wiki.archlinux.org/title/firejail
 fd
 gcc-fortran
+gdu # https://github.com/dundee/gdu
 hyperfine # https://github.com/sharkdp/hyperfine
 jq # https://stedolan.github.io/jq/
 lazygit # https://github.com/jesseduffield/lazygit
@@ -59,6 +61,7 @@ flameshot # https://github.com/flameshot-org/flameshot
 gnome-boxes
 google-chrome
 kitty
+magicavoxel
 pinta-git # https://www.pinta-project.com/
 postman-bin
 rstudio-desktop-bin

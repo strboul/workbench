@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+
+# Symbolic link the files (config, tools etc.) so that they are always git
+# controlled.
+
+set -e
+
+source "$HOME"/dotfiles/zsh/utils.sh
+
+do_link() {
+  arg_target="$1"
+  arg_source="$2"
+  utils__check_file_or_dir_exists \
+    "$arg_source" \
+    "$(printf "file or folder not exist in dotfiles: \"%s\"" "$arg_source")"
+  mkdir -p "${arg_target%/*}"
+  if [[ -h "$arg_target" ]]; then
+    printf "symlink already exists in: \"%s\" -> \"%s\"\n" "$arg_source" "$arg_target"
+  else
+    utils__log__success "$(printf "linked: \"%s\" -> \"%s\"\n" "$arg_source" "$arg_target")"
+    ln -sfn "$arg_source" "$arg_target"
+  fi
+}
+
+stop_if_broken_symlinks() {
+  get_broken_symlinks() {
+    path="$1"
+    "/bin/find" "$path" -maxdepth 1 -xtype l
+  }
+  symlinks="$(get_broken_symlinks "$HOME")"
+  symlinks_len="$(echo "$symlinks" | wc -l)"
+  if [ "$symlinks_len" -gt 1 ]; then
+    utils__log__error "there \"$symlinks_len\" broken symlinks in path: \"$HOME\""
+    echo -ne "\n$symlinks\n\n"
+    utils__err_exit "clean up them to proceed."
+  fi
+}
+
+read_conf_file() {
+  conf_file="$(cat symlinks.conf)"
+  list="$(echo "$conf_file" | grep -Ev '^#')"
+  echo "$list"
+}
+
+do_loop_list() {
+  list="$1"
+  while IFS= read -r line; do
+    # split by delimiters
+    arg_target="$(echo "$line" | awk '{split($0,a," -> "); print a[1]}')"
+    arg_source="$(echo "$line" | awk '{split($0,a," -> "); print a[2]}')"
+    # add paths to the arguments
+    path_target="$HOME/$arg_target"
+    path_source="$HOME/dotfiles/$arg_source"
+    do_link "$path_target" "$path_source"
+  done <<< "$list"
+}
+
+main() {
+  stop_if_broken_symlinks
+
+  list="$(read_conf_file)"
+  do_loop_list "$list"
+}
+
+main

@@ -38,8 +38,9 @@ coc-xml
 
 # tooling ------
 
-coc-cmake           # https://github.com/voldikss/coc-cmake
-@yaegassy/coc-nginx # https://github.com/yaegassy/coc-nginx
+coc-cmake             # https://github.com/voldikss/coc-cmake
+@yaegassy/coc-nginx   # https://github.com/yaegassy/coc-nginx
+@yaegassy/coc-ansible # https://github.com/yaegassy/coc-ansible
 
 # others ------
 

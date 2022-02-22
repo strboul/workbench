@@ -3,7 +3,7 @@
 # Open a program in tmux popup
 #
 # Example:
-# tmux-open-popup top
+#   tmux-open-popup top
 #
 
 PROGRAM="$1"

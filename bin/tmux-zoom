@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+
+# Open a program in tmux by zooming the window and resize the panes back on
+# exit
+#
+# Example:
+#   tmux-resize top
+#
+
+set -e
+
+source "$HOME"/dotfiles/zsh/utils.sh
+
+PROGRAM="$1"
+
+is_tmux_running() {
+  if [ "$TERM_PROGRAM" = tmux ]; then
+    echo "true"
+  else
+    echo "false"
+  fi
+}
+
+tmux_get_window_name() {
+  tmux display-message -p "#W"
+}
+
+tmux_rename_window() {
+  name="$1"
+  tmux rename-window "$name"
+}
+
+tmux_zoom() {
+  tmux resize-pane -Z
+}
+
+tmux_resize() {
+  tmux resize-pane
+}
+
+tmux_on_exit() {
+  # set the original window name back on exit
+  init_win_name="$1"
+  tmux_rename_window "$init_win_name"
+  # resize back on exit
+  tmux_resize
+}
+
+tmux_run() {
+  init_win_name="$(tmux_get_window_name)"
+  tmux_zoom
+  tmux_rename_window "$PROGRAM"
+  trap '$(tmux_on_exit "$init_win_name")' EXIT
+  "$PROGRAM"
+}
+
+main() {
+  # if tmux not running, by-pass tmux wrapper
+  is_in_tmux="$(is_tmux_running 2>/dev/null)"
+  if "$is_in_tmux"; then
+    tmux_run
+  else
+    "$PROGRAM"
+  fi
+}
+
+main

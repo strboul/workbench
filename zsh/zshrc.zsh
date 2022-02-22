@@ -1,7 +1,7 @@
 # SC2148: Don't ask for a shebang for this file, which is not supported.
 # shellcheck disable=SC2148
 
-# disable the update prompt from oh-my-zsh
+# disable the update prompt from oh-my-zsh, just update.
 export DISABLE_UPDATE_PROMPT=true
 
 # Private zsh file
@@ -138,7 +138,6 @@ alias ll="ls -lhF --color=auto"
 alias la="ll -a"
 
 alias v='eval $(command -v nvim)'
-alias v2='nvim -u $XDG_CONFIG_HOME/nvim2'
 
 # https://github.com/randy3k/radian
 alias r='eval $(command -v radian)'
@@ -147,8 +146,11 @@ alias py='eval $(command -v bpython)'
 
 # https://github.com/jesseduffield/lazygit
 export LG_CONFIG_FILE="$XDG_CONFIG_HOME/lazygit/config.yml"
-alias lg='tmux-open-popup $(command -v lazygit)'
+alias lg='tmux-zoom lazygit'
 
+# ===== prompt =====
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 # ===== configs =====
 
@@ -167,19 +169,12 @@ fi
 
 # fzf (https://github.com/junegunn/fzf)
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-# use 'fd' in fzf, that's better for exclusion.
+
+# use 'fd' (https://github.com/sharkdp/fd) in fzf to ignore git files.
 # (Source: https://github.com/junegunn/dotfiles/blob/ba5013726515e5185a2840b4b133991fe37b8827/bashrc#L369-L373)
 if command -v fd > /dev/null; then
-  export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
-  export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git node_modules'
-  export FZF_CTRL_T_COMMAND='fd --type f --type d --hidden --follow --exclude .git'
-else
-  echo "fd not found. Install for a better fzf experience: https://github.com/sharkdp/fd"
+  __fd_custom="$(command -v fd) --strip-cwd-prefix --hidden --follow --exclude .git"
+  export FZF_DEFAULT_COMMAND="$__fd_custom --type f"
+  export FZF_ALT_C_COMMAND="$__fd_custom --type d"
+  export FZF_CTRL_T_COMMAND="$__fd_custom --type f --type d"
 fi
-
-# nvm (https://github.com/nvm-sh/nvm#installing-and-updating)
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

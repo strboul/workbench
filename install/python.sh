@@ -32,6 +32,7 @@ install__pyenv
 PIP_INSTALL="python -m pip install --user"
 
 $PIP_INSTALL virtualenv
+$PIP_INSTALL ansible
 $PIP_INSTALL pynvim        # python neovim modules. See `:h provider-python` in neovim
 $PIP_INSTALL jupyter       # https://jupyter.org/install
 $PIP_INSTALL pylint        # https://github.com/PyCQA/pylint
