@@ -2,6 +2,10 @@
 
 # Symbolic link the files (config, tools etc.) so that they are always git
 # controlled.
+#
+# Usage:
+#  ./symlinks
+#
 
 set -e
 
@@ -30,7 +34,7 @@ stop_if_broken_symlinks() {
   symlinks="$(get_broken_symlinks "$HOME")"
   symlinks_len="$(echo "$symlinks" | wc -l)"
   if [ "$symlinks_len" -gt 1 ]; then
-    utils__log__error "there \"$symlinks_len\" broken symlinks in path: \"$HOME\""
+    utils__log__error "there \"$symlinks_len\" broken symlinks in path \"$HOME\":"
     echo -ne "\n$symlinks\n\n"
     utils__err_exit "clean up them to proceed."
   fi

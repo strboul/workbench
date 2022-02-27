@@ -1,22 +1,16 @@
 # dotfiles
 
-neovim, zsh, tmux and *others*.
-
-Compatible with Arch/Manjaro (first-class), Debian/Ubuntu, and MacOS.
+My custom config files
 
 ## Setup
 
 Clone this repository into your home (`$HOME/`) directory, and then change
-directory into the `dotfiles` folder. After all, execute the setup script.
+directory into the `dotfiles` folder. After all, execute the script that
+creates the symbolic links.
 
 ```bash
 git clone https://github.com/strboul/dotfiles.git "$HOME"/dotfiles
-cd "$HOME"/dotfiles && ./setup.sh
-```
-
-Create the symlinks with:
-```
-./symlinks
+cd "$HOME"/dotfiles && ./.symlinks
 ```
 
 ## Development

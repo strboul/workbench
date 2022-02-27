@@ -44,5 +44,5 @@ repos:
         name: "[sh] shellcheck"
         exclude: |
             (?x)(
-                ^zsh\/p10k.zsh
+                ^p10k\/p10k.zsh
             )$
