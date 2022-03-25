@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 
-# Open a program in tmux by zooming the window and resize the panes back on
-# exit
+# Open a program in tmux by zooming the window and resize all panes back on
+# program exit
 #
 # Example:
-#   tmux-resize top
+#   tmux-zoom top
 #
 
 set -e
 
-source "$HOME"/dotfiles/zsh/utils.sh
+source "$HOME"/dotfiles/bin/__utils/utils.sh
 
 PROGRAM="$1"
 
@@ -34,6 +34,11 @@ tmux_zoom() {
   tmux resize-pane -Z
 }
 
+tmux_is_zoomed() {
+  tmux list-panes -F '#F' | grep -q Z
+  echo $?
+}
+
 tmux_resize() {
   tmux resize-pane
 }
@@ -41,22 +46,28 @@ tmux_resize() {
 tmux_on_exit() {
   # set the original window name back on exit
   init_win_name="$1"
+  is_zoomed="$2"
   tmux_rename_window "$init_win_name"
-  # resize back on exit
-  tmux_resize
+  # resize back on exit (unless already zoomed)
+  if [ ! "$is_zoomed" -eq 0 ]; then
+    tmux_resize
+  fi
 }
 
 tmux_run() {
   init_win_name="$(tmux_get_window_name)"
-  tmux_zoom
+  is_zoomed="$(tmux_is_zoomed)"
+  if [ ! "$is_zoomed" -eq 0 ]; then
+    tmux_zoom
+  fi
   tmux_rename_window "$PROGRAM"
-  trap '$(tmux_on_exit "$init_win_name")' EXIT
+  trap '$(tmux_on_exit "$init_win_name" "$is_zoomed")' EXIT
   "$PROGRAM"
 }
 
 main() {
   # if tmux not running, by-pass tmux wrapper
-  is_in_tmux="$(is_tmux_running 2>/dev/null)"
+  is_in_tmux="$(is_tmux_running 2> /dev/null)"
   if "$is_in_tmux"; then
     tmux_run
   else

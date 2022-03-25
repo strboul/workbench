@@ -15,7 +15,7 @@
 
 set -e
 
-source "$HOME"/dotfiles/zsh/utils.sh
+source "$HOME"/dotfiles/bin/__utils/utils.sh
 
 BRANCH_NAME=$1
 

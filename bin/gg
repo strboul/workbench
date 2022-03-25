@@ -7,8 +7,7 @@
 # Sources:
 # - https://gist.github.com/junegunn/f4fca918e937e6bf5bad
 
-source "$HOME"/dotfiles/zsh/utils.sh
-
+source "$HOME"/dotfiles/bin/__utils/utils.sh
 
 clipboard_copy() {
   if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -23,26 +22,25 @@ clipboard_copy() {
 main() {
   utils__git__check_repository "${PWD}"
   local gitlog=(
-    git log \
-      --graph \
-      --color=always \
-      --format='%C(blue)%h%Creset%C(magenta)%d%Creset %C(bold)%s%Creset %C(yellow)<%an> %C(cyan)(%ci)%Creset' \
-      --abbrev-commit \
-      --date=iso
+    git log
+    --graph
+    --color=always
+    --format='%C(blue)%h%Creset%C(magenta)%d%Creset %C(bold)%s%Creset %C(yellow)<%an> %C(cyan)(%ci)%Creset'
+    --abbrev-commit
+    --date=iso
   )
   local fzf=(
     fzf
-      --ansi --no-sort --reverse --tiebreak=index
-      --header="<Enter>: view, q: quit view | CTRL-y: yank hash, CTRL-c | ESC: exit"
-      --bind "enter:execute:
+    --ansi --no-sort --reverse --tiebreak=index
+    --header="<Enter>: view, q: quit view | CTRL-y: yank hash, CTRL-c | ESC: exit"
+    --bind "enter:execute:
           (grep -o '[a-f0-9]\{7\}' | head -1 |
           xargs -I % sh -c 'git show --color=always % | less -R') << 'FZF-EOF'
             {}
             FZF-EOF"
-      --bind "ctrl-y:execute:(grep -o '[a-f0-9]\{7\} ' | head -1 | $clipboard_copy)"
+    --bind "ctrl-y:execute:(grep -o '[a-f0-9]\{7\} ' | head -1 | $clipboard_copy)"
   )
   "${gitlog[@]}" | "${fzf[@]}"
 }
-
 
 main

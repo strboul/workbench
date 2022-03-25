@@ -40,14 +40,14 @@ if (nchar(Sys.which("radian"))) {
   options(
     # disable complete_while_typing
     # https://github.com/randy3k/radian/issues/135#issuecomment-574707750
-    radian.complete_while_typing        = FALSE,
-    radian.highlight_matching_bracket   = TRUE,
-    radian.tab_size                     = 2,
+    radian.complete_while_typing = FALSE,
+    radian.highlight_matching_bracket = TRUE,
+    radian.tab_size = 2,
     # insert new line between prompts
-    radian.insert_new_line              = TRUE,
+    radian.insert_new_line = TRUE,
     radian.history_search_no_duplicates = TRUE,
     # ignore case in history search
-    radian.history_search_ignore_case   = TRUE,
+    radian.history_search_ignore_case = TRUE,
     # don't auto match brackets and quotes
     radian.auto_match = FALSE
   )
@@ -60,10 +60,12 @@ if (interactive()) {
   options(prompt = "R>> ")
   options(continue = "... ")
   if (.Rprofile$has_mmy) {
-    .Rprofile$packages <- utils::read.csv(file.path(
-      Sys.getenv("HOME"),
-      "dotfiles/lang/R/packages.csv"
-    ))
+    # add the recommended packages here
+    .Rprofile$packages <- data.frame(
+      "package" = c("devtools", "rlang", "languageserver", "listviewer"),
+      "source" = c("CRAN", "CRAN", "CRAN", "GitHub"),
+      "link" = c(NA, NA, NA, "timelyportfolio/listviewer")
+    )
     mmy::warn_recommended_packages(.Rprofile$packages)
     # if the interactive section is a terminal, e.g. not RStudio console:
     if (mmy::is_terminal()) {
@@ -75,5 +77,5 @@ if (interactive()) {
   }
 }
 
-# remove temporary environment
+# remove temp environment
 rm(.Rprofile)

@@ -35,7 +35,7 @@ NUMBER_STYLED="[#$NUMBER]"
 
 # TODO: the 2nd cond doesn't work - for amending commits
 if [ -z "$NUMBER" ] || [ "$MESSAGE" = "$NUMBER_STYLED*" ]; then
-  exit 0;
+  exit 0
 fi
 
 echo "$NUMBER_STYLED $MESSAGE" > "$FILE"

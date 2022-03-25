@@ -85,16 +85,8 @@ source $HOME/dotfiles/nvim/mmy.vim
 
 " ----- Plugins ------------------------------------------------------------
 
-" Auto installation vim-plug (https://github.com/junegunn/vim-plug)
-  augroup VimPlugInstall
-    if empty(glob($XDG_DATA_HOME . '/nvim/site/autoload/plug.vim'))
-      silent !curl -fLo $XDG_DATA_HOME . '/nvim/site/autoload/plug.vim' --create-dirs
-            \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-      autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
-    endif
-  augroup END
-
-
+" Plugins installed with vim-plug (https://github.com/junegunn/vim-plug)
+"
 " Specify directory for plugins
 " - For Neovim: stdpath('data') . '/plugged'
 " - Debug: - check the running paths with `:set runtimepath?`
@@ -108,7 +100,7 @@ call plug#begin(stdpath('config') . '/vim-plug')
 
 
 " lightline
-  Plug 'itchyny/lightline.vim'
+  Plug 'https://github.com/itchyny/lightline.vim'
   source $HOME/dotfiles/nvim/plugins/lightline.vim
 
 
@@ -161,7 +153,7 @@ call plug#begin(stdpath('config') . '/vim-plug')
 
 
 " floaterm
-  Plug 'voldikss/vim-floaterm'
+  Plug 'https://github.com/voldikss/vim-floaterm'
 
   function! s:floaterm_lazygit()
     :FloatermNew lazygit
@@ -249,9 +241,6 @@ call plug#begin(stdpath('config') . '/vim-plug')
 
 " --- Candidate plugins ----
 " A plugin is a candidate first, and if it's useful, it's promoted to the up.
-
-" Plug 'https://github.com/Einenlum/yaml-revealer'
-Plug 'https://github.com/michaelb/sniprun', {'do': 'bash install.sh'}
 
 " ansible
 Plug 'https://github.com/pearofducks/ansible-vim', { 'do': './UltiSnips/generate.sh' }

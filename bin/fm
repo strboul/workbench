@@ -8,7 +8,7 @@
 # fm <dir>
 #
 
-source "$HOME"/dotfiles/zsh/utils.sh
+source "$HOME"/dotfiles/bin/__utils/utils.sh
 
 main() {
 
@@ -36,6 +36,5 @@ main() {
 
   utils__log__success "opened file manager at:" "$select_path"
 }
-
 
 main "$@"

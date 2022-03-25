@@ -1,7 +1,13 @@
-# Be mindful before you disable something.
+# Global shellcheck disables.
+#
+# !! Think twice before you do a change !!
 #
 
 # SC1090: ShellCheck can't follow non-constant source. Use a directive to specify location.
 # https://github.com/koalaman/shellcheck/wiki/SC1090
 disable=SC1090
 disable=SC1091
+
+# SC2148: Tips depend on target shell and yours is unknown. Add a shebang.
+# https://github.com/koalaman/shellcheck/wiki/SC2148
+disable=SC2148

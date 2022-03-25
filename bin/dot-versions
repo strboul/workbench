@@ -19,15 +19,15 @@ git_version() { git --version; }
 
 # ----- Utils -----
 itemize() {
-  printf "* %s\n" "$1";
+  printf "* %s\n" "$1"
 }
 
 replace_first_space() {
-  echo "$1" | sed -r "s/\s+/|/";
+  echo "$1" | sed -r "s/\s+/|/"
 }
 
 new_row() {
-  itemize "$(replace_first_space "$1")";
+  itemize "$(replace_first_space "$1")"
 }
 
 # ----- Main -----

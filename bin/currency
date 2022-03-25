@@ -12,7 +12,7 @@ AMOUNT="$1"
 FROM="$2"
 TO="$3"
 
-source "$HOME"/dotfiles/zsh/utils.sh
+source "$HOME"/dotfiles/bin/__utils/utils.sh
 
 utils__stop_if_not_command_exists "deno" "Install deno (https://deno.land/)"
 

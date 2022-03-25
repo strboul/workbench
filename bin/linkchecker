@@ -8,7 +8,9 @@
 # - https://github.com/linkchecker/linkchecker
 # - https://wummel.github.io/linkchecker/
 
-source "$HOME"/dotfiles/zsh/utils.sh
+set -e
+
+source "$HOME"/dotfiles/bin/__utils/utils.sh
 
 utils__stop_if_not_command_exists "docker"
 
@@ -22,12 +24,12 @@ TMPDIRPAT="/tmp/$DIRNAME/"
 mkdir -p "${TMPDIRPAT}"
 
 "$(command -v docker)" run --rm -it \
-  -u "$(id -u)":"$(id -g)"          \
-  -v "$TMPDIRPAT":/mnt              \
-  linkchecker/linkchecker           \
-  -Fhtml/linkchecker.html           \
-  -Fcsv/linkchecker.csv             \
-  --verbose                         \
+  -u "$(id -u)":"$(id -g)" \
+  -v "$TMPDIRPAT":/mnt \
+  linkchecker/linkchecker \
+  -Fhtml/linkchecker.html \
+  -Fcsv/linkchecker.csv \
+  --verbose \
   "$URL"
 
 utils__log__info "saved in $TMPDIRPAT"

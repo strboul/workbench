@@ -9,7 +9,7 @@
 
 set -e
 
-source "$HOME"/dotfiles/zsh/utils.sh
+source "$HOME"/dotfiles/bin/__utils/utils.sh
 
 do_link() {
   arg_target="$1"
@@ -18,7 +18,7 @@ do_link() {
     "$arg_source" \
     "$(printf "file or folder not exist in dotfiles: \"%s\"" "$arg_source")"
   mkdir -p "${arg_target%/*}"
-  if [[ -h "$arg_target" ]]; then
+  if [[ -L "$arg_target" ]]; then
     printf "symlink already exists in: \"%s\" -> \"%s\"\n" "$arg_source" "$arg_target"
   else
     utils__log__success "$(printf "linked: \"%s\" -> \"%s\"\n" "$arg_source" "$arg_target")"

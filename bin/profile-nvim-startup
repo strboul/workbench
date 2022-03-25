@@ -18,7 +18,7 @@ set -e
 #  ... multiple arguments to be passed on to `nvim`.
 #
 
-source "$HOME"/dotfiles/zsh/utils.sh
+source "$HOME"/dotfiles/bin/__utils/utils.sh
 
 TEMPFILE="$(mktemp).nvim.log"
 

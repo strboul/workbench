@@ -9,7 +9,7 @@
 
 set -e
 
-source "$HOME"/dotfiles/zsh/utils.sh
+source "$HOME"/dotfiles/bin/__utils/utils.sh
 
 get_git_remote_ssh_address() {
   local path="$1"

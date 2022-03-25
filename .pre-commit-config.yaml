@@ -2,6 +2,7 @@
 # See https://pre-commit.com/hooks.html for more hooks
 fail_fast: true
 repos:
+# base hooks
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.0.1
     hooks:
@@ -14,29 +15,24 @@ repos:
     -   id: check-merge-conflict
     -   id: check-executables-have-shebangs
     -   id: check-shebang-scripts-are-executable
-        exclude: |
-            (?x)(
-                ^zsh\/utils.sh|
-                ^tools\/git\/hooks\/prepare-commit-msg
-            )$
     -   id: check-json
         exclude: nvim\/plugins\/coc\/coc-settings.json
 
-# vim
+# vim: vint
 -   repo: https://github.com/Vimjas/vint
-    rev: 471e70b # the latest commit on master
+    rev: 471e70bfff02edab460bc238c2e6d8aa46197d60 # latest commit on master
     hooks:
       -   id: vint
           name: "[vim] vint"
 
-# python
+# python: black
 -   repo: https://github.com/psf/black
     rev: 21.11b1
     hooks:
     -   id: black
         name: "[py] black"
 
-# shell - bash
+# shell: shellcheck
 -   repo: https://github.com/shellcheck-py/shellcheck-py
     rev: v0.8.0.1
     hooks:
@@ -46,3 +42,43 @@ repos:
             (?x)(
                 ^p10k\/p10k.zsh
             )$
+
+# shell: shfmt - requires golang to build
+-   repo: https://github.com/scop/pre-commit-shfmt
+    rev: v3.4.3-1
+    hooks:
+    -   id: shfmt
+        name: "[sh] shfmt"
+        exclude: |
+            (?x)(
+                ^p10k\/p10k.zsh
+            )$
+        # -w Write result to file instead of stdout.
+        # -i indent two spaces.
+        # -ci Switch cases will be indented.
+        # -bn Binary ops like && and | may start a line.
+        # -sr Redirect operators will be followed by a space.
+        args: ['-w', '-i=2', '-ci', '-bn', '-sr']
+
+-   repo: local
+    hooks:
+    -   id: custom-rules
+        name: "custom rules"
+        description: |
+            Custom rules such as
+              - check certain text not exist in the code
+        language: system
+        entry: |
+            python -c '''
+            import sys, os, re
+            files = sys.argv[1:]
+            for file in files:
+                with open(file) as f:
+                     content = f.read()
+                status = []
+                # no user or home variable
+                status.append(bool(re.search(os.environ["USER"], content)))
+                status.append(bool(re.search(os.environ["HOME"], content)))
+                if any(status):
+                    raise ValueError(file)
+            '''

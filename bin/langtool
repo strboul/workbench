@@ -14,19 +14,19 @@
 
 set -e
 
-source "$HOME"/dotfiles/zsh/utils.sh
+source "$HOME"/dotfiles/bin/__utils/utils.sh
 
 INPUT=$1
 
 check_if_server_up() {
-  nc -vz 127.0.0.1 8081 || \
-    { utils__err_exit "Port 8081 is not open. LanguageTool server seems not running..."; }
+  nc -vz 127.0.0.1 8081 \
+    || { utils__err_exit "Port 8081 is not open. LanguageTool server seems not running..."; }
 }
 
 run_langtool() {
   curl --silent --data "language=en-US&text=$(cat "${INPUT}")" \
-    http://localhost:8081/v2/check | \
-    jq ".matches[] | {shortMessage: .shortMessage, message: .message, sentence: .sentence, replacements: .replacements}"
+    http://localhost:8081/v2/check \
+    | jq ".matches[] | {shortMessage: .shortMessage, message: .message, sentence: .sentence, replacements: .replacements}"
 }
 
 main() {

@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 # Reusable util functions for the dotfiles - aims to be POSIX compatible.
 
 # --------------------------------------------------------------------------- #
@@ -27,7 +25,7 @@ utils__message__color_message() {
   # utils__message__color_message "red" "Oh no\!" "Something went wrong."
   local color_name messages ansi_colors no_color selected
   color_name="$1"
-  messages=( "${@:2}" )
+  messages=("${@:2}")
   declare -A ansi_colors=(
     ["black"]="0;30"
     ["red"]="0;31"
@@ -69,7 +67,7 @@ utils__os__get_distro_name() {
 
 utils__git__is_repository() {
   local pat=$1
-  git -C "$pat" rev-parse >/dev/null 2>&1 || return 1
+  git -C "$pat" rev-parse > /dev/null 2>&1 || return 1
 }
 
 utils__git__check_repository() {
@@ -143,8 +141,14 @@ utils__yesno_prompt() {
   while true; do
     read -r -p "$(utils__log__info "${msg} [y/N]?")" answer
     case "$answer" in
-      y) echo "y"; return 0 ;;
-      N) echo "N"; return 0 ;;
+      y)
+        echo "y"
+        return 0
+        ;;
+      N)
+        echo "N"
+        return 0
+        ;;
       *) echo "Error: invalid option ${answer}. Try again [y/N]." ;;
     esac
   done

@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
-source "$HOME"/dotfiles/zsh/utils.sh
-
 # Search a term in the TheFreeDictionary
 #
 # Usage: the "word to search"
 #
 TERM="$1"
+
+source "$HOME"/dotfiles/bin/__utils/utils.sh
 
 check_term_provided() {
   [ -z "$TERM" ] && utils__err_exit "term is missing."

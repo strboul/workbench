@@ -8,7 +8,7 @@
 
 set -e
 
-source "$HOME"/dotfiles/zsh/utils.sh
+source "$HOME"/dotfiles/bin/__utils/utils.sh
 
 utils__stop_if_not_command_exists "docker"
 
@@ -19,5 +19,5 @@ utils__git__check_repository "$PAT"
 # TODO: official github image doesn't exist, replace once it's ready
 # https://github.com/github/linguist/issues/4613
 "$(command -v docker)" run --rm -it \
-  -v "$PAT":/repo                   \
+  -v "$PAT":/repo \
   crazymax/linguist:latest

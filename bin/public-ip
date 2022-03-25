@@ -5,7 +5,7 @@
 # Usage:
 # public-ip
 
-source "$HOME"/dotfiles/zsh/utils.sh
+source "$HOME"/dotfiles/bin/__utils/utils.sh
 
 utils__stop_if_not_command_exists "curl"
 

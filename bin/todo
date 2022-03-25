@@ -8,7 +8,7 @@
 
 set -e
 
-source "$HOME"/dotfiles/zsh/utils.sh
+source "$HOME"/dotfiles/bin/__utils/utils.sh
 
 MESSAGE="$1"
 printf -- "- %s\n\n" "$MESSAGE" >> todo

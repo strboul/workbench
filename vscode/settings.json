@@ -1,5 +1,7 @@
 {
+  "update.mode": "none",
   "editor.trimAutoWhitespace": true,
+  "editor.formatOnSave": true,
 
   "files.autoSave": "afterDelay",
   "files.insertFinalNewline": true,
