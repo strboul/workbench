@@ -74,7 +74,7 @@ export PATH="$HOME/dotfiles/bin:$PATH"
 
 # ===== sources =====
 
-source "$HOME"/dotfiles/zsh/keybindings.zsh
+source "$HOME"/dotfiles/files/zsh/keybindings.zsh
 
 # ===== settings =====
 

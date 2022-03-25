@@ -1,9 +1,9 @@
 " coc.vim plugin config
 " Adapted from https://github.com/neoclide/coc.nvim#example-vim-configuration
 
-source $HOME/dotfiles/nvim/mmy.vim
+source $HOME/dotfiles/files/nvim/mmy.vim
 let g:coc_global_extensions=mmy#ReadTxtConfFile(
-  \ '$HOME/dotfiles/nvim/plugins/coc/coc-extensions.txt'
+  \ '$HOME/dotfiles/files/nvim/plugins/coc/coc-extensions.txt'
   \ )
 
 " Don't pass messages to |ins-completion-menu|.

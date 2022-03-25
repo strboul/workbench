@@ -19,7 +19,7 @@ do_link() {
     "$(printf "file or folder not exist in dotfiles: \"%s\"" "$arg_source")"
   mkdir -p "${arg_target%/*}"
   if [[ -L "$arg_target" ]]; then
-    printf "symlink already exists in: \"%s\" -> \"%s\"\n" "$arg_source" "$arg_target"
+    printf "symlink already exists: \"%s\" -> \"%s\"\n" "$arg_source" "$arg_target"
   else
     utils__log__success "$(printf "linked: \"%s\" -> \"%s\"\n" "$arg_source" "$arg_target")"
     ln -sfn "$arg_source" "$arg_target"
@@ -54,7 +54,7 @@ do_loop_list() {
     arg_source="$(echo "$line" | awk '{split($0,a," -> "); print a[2]}')"
     # add paths to the arguments
     path_target="$HOME/$arg_target"
-    path_source="$HOME/dotfiles/$arg_source"
+    path_source="$HOME/dotfiles/files/$arg_source"
     do_link "$path_target" "$path_source"
   done <<< "$list"
 }

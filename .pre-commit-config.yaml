@@ -16,7 +16,7 @@ repos:
     -   id: check-executables-have-shebangs
     -   id: check-shebang-scripts-are-executable
     -   id: check-json
-        exclude: nvim\/plugins\/coc\/coc-settings.json
+        exclude: files\/nvim\/plugins\/coc\/coc-settings.json
 
 # vim: vint
 -   repo: https://github.com/Vimjas/vint
@@ -40,7 +40,7 @@ repos:
         name: "[sh] shellcheck"
         exclude: |
             (?x)(
-                ^p10k\/p10k.zsh
+                ^files\/p10k\/p10k.zsh
             )$
 
 # shell: shfmt - requires golang to build
@@ -51,7 +51,7 @@ repos:
         name: "[sh] shfmt"
         exclude: |
             (?x)(
-                ^p10k\/p10k.zsh
+                ^files\/p10k\/p10k.zsh
             )$
         # -w Write result to file instead of stdout.
         # -i indent two spaces.

@@ -1,10 +1,10 @@
 :scriptencoding utf-8
 
-source $HOME/dotfiles/nvim/mmy.vim
+source $HOME/dotfiles/files/nvim/mmy.vim
 
 " ----- General settings ---------------------------------------------------
 
-  source $HOME/dotfiles/nvim/essential.vim
+  source $HOME/dotfiles/files/nvim/essential.vim
 
 " Window display
   set nonumber         " line numbers
@@ -72,16 +72,16 @@ source $HOME/dotfiles/nvim/mmy.vim
 
 
 " essential autocommands
-  source $HOME/dotfiles/nvim/autocmds.vim
+  source $HOME/dotfiles/files/nvim/autocmds.vim
 
 " Quickfix
-  source $HOME/dotfiles/nvim/quickfix.vim
+  source $HOME/dotfiles/files/nvim/quickfix.vim
 
 " Help
-  source $HOME/dotfiles/nvim/help.vim
+  source $HOME/dotfiles/files/nvim/help.vim
 
-  source $HOME/dotfiles/nvim/filetypes.vim
-  source $HOME/dotfiles/nvim/mappings.vim
+  source $HOME/dotfiles/files/nvim/filetypes.vim
+  source $HOME/dotfiles/files/nvim/mappings.vim
 
 " ----- Plugins ------------------------------------------------------------
 
@@ -96,17 +96,17 @@ call plug#begin(stdpath('config') . '/vim-plug')
 " fzf
   Plug 'https://github.com/junegunn/fzf', { 'do': { -> fzf#install() } }
   Plug 'https://github.com/junegunn/fzf.vim'
-  source $HOME/dotfiles/nvim/plugins/fzf.vim
+  source $HOME/dotfiles/files/nvim/plugins/fzf.vim
 
 
 " lightline
   Plug 'https://github.com/itchyny/lightline.vim'
-  source $HOME/dotfiles/nvim/plugins/lightline.vim
+  source $HOME/dotfiles/files/nvim/plugins/lightline.vim
 
 
 " NERDTree
   Plug 'https://github.com/preservim/nerdtree'
-  source $HOME/dotfiles/nvim/plugins/nerdtree.vim
+  source $HOME/dotfiles/files/nvim/plugins/nerdtree.vim
 
 
 " nerdcommenter
@@ -124,7 +124,7 @@ call plug#begin(stdpath('config') . '/vim-plug')
 
 " coc.nvim
   Plug 'https://github.com/neoclide/coc.nvim', {'branch': 'release'}
-  source $HOME/dotfiles/nvim/plugins/coc/coc.vim
+  source $HOME/dotfiles/files/nvim/plugins/coc/coc.vim
 
 
 " tagbar
@@ -160,7 +160,7 @@ call plug#begin(stdpath('config') . '/vim-plug')
   endfunction
   command Lg :call s:floaterm_lazygit()
 
-  source $HOME/dotfiles/nvim/plugins/floaterm.vim
+  source $HOME/dotfiles/files/nvim/plugins/floaterm.vim
 
 
 " vim-bufkill (for :BD)
@@ -177,7 +177,7 @@ call plug#begin(stdpath('config') . '/vim-plug')
 
 " vim-peekaboo:  " / @ / C-r
   Plug 'https://github.com/junegunn/vim-peekaboo'
-  source $HOME/dotfiles/nvim/plugins/peekaboo.vim
+  source $HOME/dotfiles/files/nvim/plugins/peekaboo.vim
 
 
 " vim-easy-align
@@ -192,7 +192,7 @@ call plug#begin(stdpath('config') . '/vim-plug')
 
   " fugitive
   Plug 'https://github.com/tpope/vim-fugitive'
-  source $HOME/dotfiles/nvim/plugins/fugitive.vim
+  source $HOME/dotfiles/files/nvim/plugins/fugitive.vim
 
 
   " rhubarb for GitHub (for `:Gbrowse` mainly)
@@ -259,7 +259,7 @@ call plug#end()
   set background=dark
 
 " terminal stuff
-  source $HOME/dotfiles/nvim/terminal.vim
+  source $HOME/dotfiles/files/nvim/terminal.vim
 
 " Highlight groups
 "
