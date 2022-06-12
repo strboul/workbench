@@ -1,5 +1,5 @@
 [core]
-	editor = "nvim -u DEFAULTS"
+	editor = "nvim -u DEFAULTS -c ':normal $'"
 	excludesfile = ~/.gitignore
 	autocrlf = input
 [push]
@@ -32,5 +32,8 @@
 	untracked = red bold
 [commit]
 	verbose = true
+	gpgsign = true
 [credential]
 	helper = cache
+[init]
+	templatedir = ~/dotfiles/files/git/git_templates

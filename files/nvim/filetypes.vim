@@ -20,9 +20,6 @@ augroup Filetypes
     \ setlocal shiftwidth=4 |
     \ setlocal smartindent
 
-  " fold json files by default
-  autocmd FileType json setlocal foldmethod=syntax
-
   autocmd FileType yaml setlocal tabstop=4 shiftwidth=4
 
   autocmd FileType make setlocal noexpandtab

@@ -4,7 +4,7 @@ fail_fast: true
 repos:
 # base hooks
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.0.1
+    rev: v4.3.0
     hooks:
     -   id: trailing-whitespace
     -   id: end-of-file-fixer
@@ -20,21 +20,21 @@ repos:
 
 # vim: vint
 -   repo: https://github.com/Vimjas/vint
-    rev: 471e70bfff02edab460bc238c2e6d8aa46197d60 # latest commit on master
+    rev: 471e70bfff02edab460bc238c2e6d8aa46197d60 # XXX latest commit on master of the dead project. don't change it.
     hooks:
       -   id: vint
           name: "[vim] vint"
 
 # python: black
 -   repo: https://github.com/psf/black
-    rev: 21.11b1
+    rev: 22.3.0
     hooks:
     -   id: black
         name: "[py] black"
 
 # shell: shellcheck
 -   repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: v0.8.0.1
+    rev: v0.8.0.4
     hooks:
     -   id: shellcheck
         name: "[sh] shellcheck"
@@ -45,7 +45,7 @@ repos:
 
 # shell: shfmt - requires golang to build
 -   repo: https://github.com/scop/pre-commit-shfmt
-    rev: v3.4.3-1
+    rev: v3.5.1-1
     hooks:
     -   id: shfmt
         name: "[sh] shfmt"
@@ -62,23 +62,39 @@ repos:
 
 -   repo: local
     hooks:
-    -   id: custom-rules
-        name: "custom rules"
-        description: |
-            Custom rules such as
-              - check certain text not exist in the code
+    -   id: custom-rule-check-text
+        name: "[custom] check text in content"
+        description: check certain text not exist in the content
         language: system
         entry: |
             python -c '''
             import sys, os, re
             files = sys.argv[1:]
+            # check text list
+            # - no user or home variable exist literally
+            check_text = [os.environ["USER"], os.environ["HOME"]]
             for file in files:
                 with open(file) as f:
                      content = f.read()
-                status = []
-                # no user or home variable
-                status.append(bool(re.search(os.environ["USER"], content)))
-                status.append(bool(re.search(os.environ["HOME"], content)))
-                if any(status):
+                for text in check_text:
+                    is_exist = bool(re.search(text, content))
+                    if (is_exist):
+                        raise ValueError(file, text)
+            '''
+
+-   repo: local
+    hooks:
+    -   id: custom-rule-yml-ext
+        name: "[custom] use .yml not .yaml"
+        description: use .yml instead of .yaml extension
+        # except for this file: https://github.com/pre-commit/pre-commit/issues/1451
+        exclude: .pre-commit-config.yaml
+        language: system
+        entry: |
+            python -c '''
+            import sys
+            files = sys.argv[1:]
+            for file in files:
+                if file.endswith(".yaml"):
                     raise ValueError(file)
             '''

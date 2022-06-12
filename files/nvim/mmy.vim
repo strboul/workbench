@@ -8,14 +8,6 @@
   endfunction
 
 " ----- Functions --------------------------------------------------------
-
-" Read a file (e.g. a txt) as a conf by removing commented and empty lines:
-  function mmy#ReadTxtConfFile(file_path)
-    let l:file=readfile(glob(a:file_path))
-    let l:out_array=filter(filter(l:file, 'v:val !~? "#.*$"'), 'v:val !~? "^\s*$"')
-    return l:out_array
-  endfunction
-
 " Get git ignored files as a list (if the current wd is a git repository)
   function mmy#GetGitIgnoredFiles()
     let l:git_ignored=system('git status --ignored --porcelain')
@@ -147,3 +139,42 @@
   endfunction
 
   command GetVimHighlightNameUnderCursor :call mmy#GetVimHighlightNameUnderCursor()
+
+" Reverse the order of visual selected lines
+  function mmy#ReverseSelectedLines()
+    " `tac` is a program from `coreutils`:
+    " https://man.archlinux.org/man/tac.1.en
+    '<,'>!tac
+  endfunction
+
+  command -range ReverseSelectedLines :call mmy#ReverseSelectedLines()
+
+lua << EOF
+--[[
+Read variables from a simple config file, where the variables are expressed in
+the following way:
+
+  KEY=VALUE
+
+where single (') or double (") quotes are optional around VALUE.
+--]]
+function _G.mmy_GetLocalConfigVariable(var, config_path)
+  config_path = config_path or '/opt/workbench/variables'
+  file = io.open(config_path, 'rb')
+  if not file then return nil end
+  lines = file:lines()
+  for line in lines do
+    t = {}
+    for str in string.gmatch(line, '[^=]+') do
+      table.insert(t, str)
+    end
+    key=t[1]
+    value=t[2]
+    if key == var and value ~= nil then
+      return value
+    end
+  end
+  file:close()
+  return nil
+end
+EOF

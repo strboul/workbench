@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-
-# Print "$PATH" in a more readable way
-#
-
-tr ":" "\n" <<< "$PATH"

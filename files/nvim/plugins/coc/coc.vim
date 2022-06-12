@@ -1,10 +1,32 @@
 " coc.vim plugin config
 " Adapted from https://github.com/neoclide/coc.nvim#example-vim-configuration
-
-source $HOME/dotfiles/files/nvim/mmy.vim
-let g:coc_global_extensions=mmy#ReadTxtConfFile(
-  \ '$HOME/dotfiles/files/nvim/plugins/coc/coc-extensions.txt'
-  \ )
+let g:coc_global_extensions=[
+  \ 'coc-pyright',
+  \ 'coc-pydocstring',
+  \ 'coc-sh',
+  \ 'coc-clangd',
+  \ 'coc-sql',
+  \ 'coc-vimlsp',
+  \ 'coc-vimtex',
+  \ 'coc-lua',
+  \ 'coc-tsserver',
+  \ 'coc-eslint',
+  \ 'coc-prettier',
+  \ 'coc-deno',
+  \ 'coc-html',
+  \ 'coc-css',
+  \ 'coc-svg',
+  \ 'coc-tailwindcss',
+  \ 'coc-json',
+  \ 'coc-yaml',
+  \ 'coc-xml',
+  \ 'coc-cmake',
+  \ 'coc-vetur',
+  \ '@yaegassy/coc-nginx',
+  \ '@yaegassy/coc-ansible',
+  \ 'coc-highlight',
+  \ 'coc-snippets',
+  \ ]
 
 " Don't pass messages to |ins-completion-menu|.
 set shortmess+=c

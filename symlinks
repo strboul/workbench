@@ -1,23 +1,59 @@
 #!/usr/bin/env bash
 
-# Symbolic link the files (config, tools etc.) so that they are always git
-# controlled.
-#
 # Usage:
-#  ./symlinks
+#   ./symlinks --help
 #
 
-set -e
+set -Eeuo pipefail
 
 source "$HOME"/dotfiles/bin/__utils/utils.sh
+
+usage() {
+  cat << EOF
+Usage: $(basename "${BASH_SOURCE[0]}") [-h] [--clean]
+
+Symbolic link the files (config, tools etc.) so that they are always git
+controlled.
+
+optional arguments:
+  -h, --help  Print this help and exit.
+  --clean     Remove all the target links, and re-link in a clean state.
+EOF
+  exit
+}
+
+parse_params() {
+  clean=false
+  while :; do
+    case "${1-}" in
+      -f | --clean) clean=true ;;
+      -h | --help) usage ;;
+      -?*) echo "Unknown option: $1" && usage && exit 2 ;;
+      *) break ;;
+    esac
+    shift
+  done
+  args=("$@")
+  echo "${args[@]}"
+  return 0
+}
 
 do_link() {
   arg_target="$1"
   arg_source="$2"
+
   utils__check_file_or_dir_exists \
     "$arg_source" \
     "$(printf "file or folder not exist in dotfiles: \"%s\"" "$arg_source")"
+
+  if "$clean"; then
+    rm -f "$arg_target"
+  else
+    stop_if_broken_symlinks
+  fi
+
   mkdir -p "${arg_target%/*}"
+
   if [[ -L "$arg_target" ]]; then
     printf "symlink already exists: \"%s\" -> \"%s\"\n" "$arg_source" "$arg_target"
   else
@@ -31,8 +67,10 @@ stop_if_broken_symlinks() {
     path="$1"
     "/bin/find" "$path" -maxdepth 1 -xtype l
   }
+
   symlinks="$(get_broken_symlinks "$HOME")"
   symlinks_len="$(echo "$symlinks" | wc -l)"
+
   if [ "$symlinks_len" -gt 1 ]; then
     utils__log__error "there \"$symlinks_len\" broken symlinks in path \"$HOME\":"
     echo -ne "\n$symlinks\n\n"
@@ -60,10 +98,10 @@ do_loop_list() {
 }
 
 main() {
-  stop_if_broken_symlinks
-
+  parse_params "$@"
+  echo "clean: $clean"
   list="$(read_conf_file)"
   do_loop_list "$list"
 }
 
-main
+main "$@"

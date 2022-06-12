@@ -16,6 +16,11 @@ ripgrep_version() { rg --version | awk 'ORS=" "'; }
 bat_version() { bat --version; }
 fd_version() { fd --version; }
 git_version() { git --version; }
+lazygit_version() {
+  version="$(lazygit --version | grep -Po 'version\=.*?(?=,)' | awk -F= '{ print $2 }')"
+  printf "lazygit %s" "$version"
+}
+gitsubstatus_version() { git-substatus --version; }
 
 # ----- Utils -----
 itemize() {
@@ -37,10 +42,12 @@ main() {
   new_row "$(tmux_version)"
   new_row "$(nvim_version)"
   new_row "$(fzf_version)"
+  new_row "$(lazygit_version)"
   new_row "$(alacritty_version)"
   new_row "$(ripgrep_version)"
   new_row "$(bat_version)"
   new_row "$(fd_version)"
+  new_row "$(gitsubstatus_version)"
 }
 
 # align the columns

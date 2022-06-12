@@ -11,6 +11,8 @@ set -e
 
 source "$HOME"/dotfiles/bin/__utils/utils.sh
 
+DEFAULT_BROWSER="firefox"
+
 get_git_remote_ssh_address() {
   local path="$1"
   git -C "$path" config --get remote.origin.url
@@ -72,7 +74,13 @@ main() {
   url="$(ssh_address_to_url "$ssh_address")"
 
   local browser_name
-  browser_name="$(get_browser_name "$browser")"
+
+  if [ -n "$browser" ]; then
+    browser_name="$(get_browser_name "$browser")"
+  else
+    browser_name="$DEFAULT_BROWSER"
+  fi
+
   open_browser "$browser_name" "$url"
   utils__log__success "opened \"$url\""
 }

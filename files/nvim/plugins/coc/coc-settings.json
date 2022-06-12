@@ -13,16 +13,19 @@
 
   // --- python
   "python.pythonPath": "~/.pyenv/shims/python",
+  "python.linting.mypyEnabled": true,
+  "pyright.disableDiagnostics": true,
 
   // prettier
   "coc.preferences.formatOnSaveFiletypes": [
+    "json",
     "html",
     "css",
     "javascript",
     "javascriptreact",
     "typescript",
     "typescriptreact",
-    "json"
+    "vue"
   ],
 
   // clangd

@@ -40,3 +40,7 @@ autoload -U edit-command-line
 zle -N edit-command-line
 bindkey '^xe' edit-command-line
 bindkey '^x^e' edit-command-line
+
+# c-k/j to shuffle in zsh history
+bindkey '^k' up-line-or-history
+bindkey '^j' down-line-or-history

@@ -2,20 +2,11 @@
   "update.mode": "none",
   "editor.trimAutoWhitespace": true,
   "editor.formatOnSave": true,
-
   "files.autoSave": "afterDelay",
   "files.insertFinalNewline": true,
-
   "terminal.integrated.shell.linux": "/usr/bin/zsh",
   "terminal.integrated.cursorBlinking": true,
-
-  "workbench.colorCustomizations": {
-    "terminal.background": "#000000",
-    "terminal.foreground": "#dddada"
-  },
-
   "explorer.confirmDragAndDrop": false,
-
   "vim.normalModeKeyBindingsNonRecursive": [
     {
       "before": ["o"],
@@ -25,5 +16,14 @@
       "before": ["O"],
       "after": ["O", "<Esc>"]
     }
-  ]
+  ],
+  "editor.inlineSuggest.enabled": true,
+  "github.copilot.enable": {
+    "*": true,
+    "yaml": false,
+    "plaintext": false,
+    "markdown": false,
+    "typescriptreact": true
+  },
+  "window.zoomLevel": -1
 }

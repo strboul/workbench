@@ -1,0 +1,103 @@
+#!/usr/bin/env python
+
+# Add the issue number, which is taken from the branch, to the beginning of the
+# commit message automatically.
+#
+# The condition is if a branch:
+#
+#   - starts with a string and number separated by hyphen or underscore
+#   - starts with a number
+#
+# the id string and number is automatically added to the commit message.
+#
+# But they are not added on the following conditions:
+#
+#   - if the number is already there
+#   - if a branch doesn't start with a number
+#
+# Example:
+#
+#   | branch         | message |
+#   |----------------|---------|
+#   | bug-5-test     | BUG-5:  |
+#   | BUG_10_TEST    | BUG_10: |
+#   | 1-issue-branch | 1:      |
+#   | new-feature    |         |
+#
+
+# TODO: make it py class
+
+import sys
+import re
+import subprocess
+
+ISSUE_PATTERN = re.compile(r"^(\w+/)?(\w+[-_])?[0-9]+", re.IGNORECASE)
+
+
+def get_commit_file():
+    return sys.argv[1]
+
+
+def get_commit_edit_message(commit_file):
+    lines = ""
+    with open(commit_file) as f:
+        lines = f.readlines()
+    return lines
+
+
+def get_commit_message(msg):
+    [xi for xi in x if not xi.startswith("#")]
+
+
+def get_branch_name():
+    """
+    It's used `git symbolic-ref` instead of `git rev-parse` because
+    `symbolic-ref` resolves itself when there is no branch (e.g. in a detached
+    state).
+    """
+    cmd = ["git", "symbolic-ref", "--short", "HEAD"]
+    branch = subprocess.check_output(cmd).decode("utf-8").strip()
+    return branch
+
+
+def extract_issue_name(branch_name):
+    match = ISSUE_PATTERN.match(branch_name)
+    if not match:
+        return None
+    name = match.group()
+    upper_name = name.upper()
+    return upper_name
+
+
+def make_message_template(issue_name):
+    return f"{issue_name}: "
+
+
+def write_to_commit_file(commit_file, message_template, commit_edit_message):
+    """
+    Write back the temp commit file with the template message.
+    """
+    commit_edit_message_str = "".join(commit_edit_message)
+    with open(commit_file, "w") as f:
+        f.write(message_template)
+        f.write(commit_edit_message_str)
+
+
+def main():
+    commit_file = get_commit_file()
+    commit_edit_message = get_commit_edit_message(commit_file)
+    branch_name = get_branch_name()
+    issue_name = extract_issue_name(branch_name)
+    if not issue_name:
+        return
+    message_template = make_message_template(issue_name)
+    is_template_exists = (
+        commit_edit_message[0].strip().startswith(message_template.strip())
+    )
+    if is_template_exists:
+        return
+    write_to_commit_file(commit_file, message_template, commit_edit_message)
+
+
+if __name__ == "__main__":
+    main()

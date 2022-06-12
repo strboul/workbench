@@ -35,7 +35,7 @@ main() {
     --header="<Enter>: view, q: quit view | CTRL-y: yank hash, CTRL-c | ESC: exit"
     --bind "enter:execute:
           (grep -o '[a-f0-9]\{7\}' | head -1 |
-          xargs -I % sh -c 'git show --color=always % | less -R') << 'FZF-EOF'
+          xargs -I % sh -c 'git show --color=always --show-signature % | less -R') << 'FZF-EOF'
             {}
             FZF-EOF"
     --bind "ctrl-y:execute:(grep -o '[a-f0-9]\{7\} ' | head -1 | $clipboard_copy)"

@@ -195,14 +195,24 @@ call plug#begin(stdpath('config') . '/vim-plug')
   source $HOME/dotfiles/files/nvim/plugins/fugitive.vim
 
 
-  " rhubarb for GitHub (for `:Gbrowse` mainly)
+  " fugitive `:GBrowse` plugins
   Plug 'https://github.com/tpope/vim-rhubarb'
+
+  Plug 'https://github.com/shumphrey/fugitive-gitlab.vim'
+  let s:gitlab_work_domain=v:lua.mmy_GetLocalConfigVariable('GITLAB_WORK_DOMAIN')
+  let g:fugitive_gitlab_domains=['https://gitlab.com', s:gitlab_work_domain]
 
 
 " vim-polyglot (syntax highlighting)
 " TODO: move to treesitter
-  Plug 'https://github.com/sheerun/vim-polyglot', {'commit': '2c5af8f89d3e61e04e761c07a1f043b0f35203c6'}
+  Plug 'https://github.com/sheerun/vim-polyglot'
 
+" ansible
+  Plug 'https://github.com/pearofducks/ansible-vim', { 'do': './UltiSnips/generate.sh' }
+  " for coc-ansible
+  let g:coc_filetype_map = {
+    \ 'yaml.ansible': 'ansible',
+    \ }
 
 " prisma2 syntax highlighting
   Plug 'https://github.com/pantharshit00/vim-prisma'
@@ -241,13 +251,9 @@ call plug#begin(stdpath('config') . '/vim-plug')
 
 " --- Candidate plugins ----
 " A plugin is a candidate first, and if it's useful, it's promoted to the up.
+  Plug 'https://github.com/gcmt/wildfire.vim'
+  map <tab> <Plug>(wildfire-fuel)
 
-" ansible
-Plug 'https://github.com/pearofducks/ansible-vim', { 'do': './UltiSnips/generate.sh' }
-  " for coc-ansible
-  let g:coc_filetype_map = {
-    \ 'yaml.ansible': 'ansible',
-    \ }
 
 call plug#end()
 

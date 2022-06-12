@@ -23,9 +23,11 @@ const ${1:functionName} = (${2:argument}) => {
 endsnippet
 
 snippet fun_iife "Immediately-Invoked Function Expression (IIFE) - ES6 arrow"
-(() => {
-	${1:body};
-})();
+(() => { return ${0} })();
+endsnippet
+
+snippet fun_iife_async "IIFE (async-await)"
+await (async () => { return ${0} })();
 endsnippet
 
 snippet json "json stringify (pretty print)"

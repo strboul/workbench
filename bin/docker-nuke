@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+# Clean up everything in Docker
+#
+
+source "$HOME"/dotfiles/bin/__utils/utils.sh
+
+utils__stop_if_not_command_exists "docker"
+
+remove_containers() {
+  utils__log__info "force removing containers"
+  # shellcheck disable=SC2046 # intended word splitting
+  docker rm -f $(docker ps -qa)
+}
+
+remove_images() {
+  utils__log__info "force removing images"
+  # shellcheck disable=SC2046 # intended word splitting
+  docker rmi -f $(docker images -q)
+}
+
+remove_volumes() {
+  utils__log__info "force removing volumes"
+  docker volume prune -f
+}
+
+main() {
+  remove_containers
+  remove_images
+  remove_volumes
+}
+
+main

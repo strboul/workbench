@@ -1,10 +1,12 @@
 # disable the update prompt from oh-my-zsh, just update.
 export DISABLE_UPDATE_PROMPT=true
 
-# set lang locale to US utf-8
+# set locales
 export LANG="en_US.UTF-8"
-# set date/time locale to US utf-8
-export LC_TIME="en_US.UTF-8"
+# time is British (start week from Monday)
+export LC_TIME="en_GB.UTF-8"
+# paper is British (A4 etc.)
+export LC_PAPER="en_GB.UTF-8"
 
 # XDG base (https://wiki.archlinux.org/title/XDG_Base_Directory)
 export XDG_CONFIG_HOME="$HOME/.config"
@@ -47,6 +49,7 @@ plugins+=(
 # plugins: others (autocomplete & tooling)
 plugins+=(
   aws
+  pass
   docker
   docker-compose
   direnv
@@ -60,21 +63,23 @@ plugins+=(
 
 source "$ZSH"/oh-my-zsh.sh
 
-# ===== autocomplete =====
-
-# makefile
-zstyle ":completion:*:*:make:*" tag-order "targets"
-
 # ===== paths =====
 
-export PATH="/usr/local/bin:$PATH"
-export PATH="/usr/local/sbin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/bin:$PATH"
 export PATH="$HOME/dotfiles/bin:$PATH"
 
 # ===== sources =====
 
+# zsh keybindings
 source "$HOME"/dotfiles/files/zsh/keybindings.zsh
+
+# for gnupg
+GPG_TTY="$(tty)"
+export GPG_TTY
+
+# pass (password store)
+export PASSWORD_STORE_DIR="$HOME/.password-store"
 
 # ===== settings =====
 
@@ -107,12 +112,6 @@ export HISTORY_IGNORE="(history|ls|cd|cd ..|pwd|clear|exit|cd|v)"
 
 # ===== aliases =====
 
-__cdls() {
-  # Custom cd (always ls when cd into a folder)
-  builtin cd "$@" && ls
-}
-alias cd="__cdls"
-
 __cdr() {
   # jump to the root path of a git repository
   cd "$(git rev-parse --show-toplevel)" || exit
@@ -141,20 +140,20 @@ alias py='eval $(command -v bpython)'
 export LG_CONFIG_FILE="$XDG_CONFIG_HOME/lazygit/config.yml"
 alias lg='tmux-zoom lazygit'
 
-# ===== prompt =====
-# run `p10k configure` or edit ~/.p10k.zsh
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+# ===== autocomplete =====
+
+# makefile
+zstyle ":completion:*:*:make:*" tag-order "targets"
+
+# ===== hooks =====
+# always ls after cd into folders
+__cdls() {
+  emulate -L zsh
+  ls
+}
+add-zsh-hook chpwd __cdls
 
 # ===== configs =====
-
-# TODO: all path manipulations go to .zprofile with workbench.
-export PATH=$PATH:/usr/local/go/bin
-# $GOPATH env variable
-gopath="$(go env GOPATH)"
-export PATH=$PATH:"$gopath"/bin
-
-# direnv: don't print the variable list
-export DIRENV_LOG_FORMAT=
 
 # https://github.com/BurntSushi/ripgrep/blob/0.8.0/GUIDE.md#configuration-file
 export RIPGREP_CONFIG_PATH="$HOME"/.ripgreprc
@@ -162,17 +161,8 @@ export RIPGREP_CONFIG_PATH="$HOME"/.ripgreprc
 export BAT_CONFIG_PATH="$HOME"/.batconf
 export PYTHONSTARTUP=$HOME/.pythonstartup
 
-# pyenv (https://github.com/pyenv/pyenv)
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-if command -v pyenv > /dev/null; then
-  eval "$(pyenv init -)"
-fi
-eval "$(pyenv init --path)"
-
 # fzf (https://github.com/junegunn/fzf)
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
 # use 'fd' (https://github.com/sharkdp/fd) in fzf to ignore git files.
 # (Source: https://github.com/junegunn/dotfiles/blob/ba5013726515e5185a2840b4b133991fe37b8827/bashrc#L369-L373)
 if command -v fd > /dev/null; then
@@ -181,3 +171,7 @@ if command -v fd > /dev/null; then
   export FZF_ALT_C_COMMAND="$__fd_custom --type d"
   export FZF_CTRL_T_COMMAND="$__fd_custom --type f --type d"
 fi
+
+# p10k (https://github.com/romkatv/powerlevel10k)
+# To customize prompt, run `p10k configure` or edit ~/dotfiles/files/p10k/p10k.zsh.
+[[ ! -f ~/dotfiles/files/p10k/p10k.zsh ]] || source ~/dotfiles/files/p10k/p10k.zsh

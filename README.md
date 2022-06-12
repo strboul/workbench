@@ -15,4 +15,4 @@ cd "$HOME"/dotfiles && ./.symlinks
 
 ## Development
 
-- Run `pre-commit install` that installs the hook scripts at `.git/hooks`
+- Run `pre-commit install` that installs the hook scripts at `.git/hooks`.

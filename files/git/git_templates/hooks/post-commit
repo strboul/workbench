@@ -1,0 +1,23 @@
+#!/bin/sh
+
+# Print the commit details after the commit is done.
+#
+
+git_commit_details() {
+  # Details shown:
+  #
+  #  - always show color
+  #  - don't show patch a.k.a. the changes diff
+  #  - show signature if gpgsign is set and sign exists
+  git show \
+    --color=always \
+    --no-patch \
+    --show-signature \
+    --format='%C(yellow)author: %an <%ae>%Creset'
+}
+
+main() {
+  git_commit_details
+}
+
+main

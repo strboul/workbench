@@ -4,6 +4,7 @@
     \ 'active': {
     \   'left': [
     \     [ 'mode', 'paste' ],
+    \     [ 'sshcontent', 'foldername' ],
     \     [ 'gitbranch', 'readonly', 'filename' ]
     \   ],
     \   'right': [
@@ -21,6 +22,8 @@
     \   'right': []
     \ },
     \ 'component_function': {
+    \   'sshcontent':   'LightlineSshContent',
+    \   'foldername':   'LightlineFoldername',
     \   'gitbranch':    'LightlineGitBranch',
     \   'readonly':     'LightlineReadonly',
     \   'filename':     'LightlineFilename',
@@ -43,6 +46,73 @@
   " Hide the filetype in the help pane
   function! LightlineReadonly()
     return &readonly && &filetype !=# 'help' ? 'RO' : ''
+  endfunction
+
+lua << EOF
+--[[
+How foldername is shown:
+
+  -------------
+  |is_git_repo|-- No --> Nothing.
+  -------------
+        |
+       Yes
+        |
+        v
+  ---------------------------
+  |tail_cwd == tail_git_repo|
+  ---------------------------
+         |             |
+        Yes            No
+         |             |
+         v             v
+  ---------------   -----------------------
+  |tail_git_repo|   |tail_git_repo/subpath|
+  ---------------   -----------------------
+
+--]]
+function _G.LuaLightlineFoldername()
+  -- TODO: there's a bug that the FugitiveGitDir checks the file, not
+  -- cwd. So if you open a git file from another non-git dir, it bugs out.
+  local has_fugitive, git_dir = pcall(vim.fn['FugitiveGitDir'])
+  if not has_fugitive or git_dir == '' then
+    return ''
+  end
+  git_dir = vim.fn.fnamemodify(git_dir, ':h')
+  local cwd = vim.fn.getcwd()
+  local tail_git_repo = vim.fn.fnamemodify(git_dir, ':t')
+  local tail_cwd = vim.fn.fnamemodify(cwd, ':t')
+  if tail_git_repo == tail_cwd then
+    return tail_git_repo
+  end
+  function sanitize_match(str)
+    -- escape hyphen in match as it's special
+    return string.gsub(str, '[%s-...]', '%%%0')
+  end
+  -- TODO: MAKE git_dir NORMAL COLOR OR BOLD AND subpath_rest PALE COLOR
+  subpath = string.match(cwd, sanitize_match(git_dir) .. '/(.*)')
+  return tail_git_repo .. '/' .. subpath
+end
+
+function _G.LuaLightlineSshContent()
+  local has_ssh_client = vim.loop.os_environ()['SSH_CLIENT'] == nil
+  local has_ssh_connection = vim.loop.os_environ()['SSH_CONNECTION'] == nil
+  if has_ssh_client or has_ssh_connection then
+    return ''
+  end
+  local os_user = vim.loop.os_environ()['USER']
+  local os_hostname = vim.loop.os_gethostname()
+  -- TODO: ssh text should be different color, like pink maybe (check p10k)
+  return (os_user .. '@' .. os_hostname)
+end
+EOF
+
+  function! LightlineFoldername()
+    return v:lua.LuaLightlineFoldername()
+  endfunction
+
+  function! LightlineSshContent()
+    return v:lua.LuaLightlineSshContent()
   endfunction
 
   " Hide the filename in

@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+# Print "$PATH" in a more readable way.
+#
+# It also prints a warning text in case there are duplicated paths.
+#
+# Usage:
+#   printpath
+
+source "$HOME"/dotfiles/bin/__utils/utils.sh
+
+get_paths() {
+  tr ":" "\n" <<< "$PATH"
+}
+
+get_duplicated_paths() {
+  paths="$1"
+  echo "$paths" | sort | uniq -c | awk '{ if ($1 > 1) { print $2, "|" , $1 } }'
+}
+
+echo_if_duplicated_paths() {
+  duplicated_paths="$1"
+  if [ -z "$duplicated_paths" ]; then
+    return
+  fi
+  duplicated="$(printf "path|times\n%s" "$duplicated_paths")"
+  duplicated="$(echo "$duplicated" | column -t -s "|")"
+  utils__log__info "Warning! some paths are duplicated: "
+  utils__message__color_message "yellow" "$duplicated"
+}
+
+main() {
+  paths="$(get_paths)"
+  echo "$paths"
+  duplicated_paths="$(get_duplicated_paths "$paths")"
+  echo_if_duplicated_paths "$duplicated_paths"
+}
+
+main

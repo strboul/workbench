@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
+# Reference: https://github.com/termstandard/colors
 check_truecolor() {
-  # Reference: https://github.com/termstandard/colors
   awk 'BEGIN {
     s="/\\/\\/\\/\\/\\"; s=s s s s s s s s;
     for (colnum = 0; colnum<77; colnum++) {
@@ -15,7 +15,7 @@ check_truecolor() {
     }
     printf "\n";
   }'
-  echo -e "----------\nYou should see a continuous gradient."
+  echo -e "----------\nYou should see a continuous gradient.\n"
 }
 
 check_font_styles() {
@@ -28,13 +28,22 @@ check_font_styles() {
     "\x1b[4:2mdouble-underline\x1b[4:0m" \
     "\x1b[9mstrikethrough\x1b[0m" \
     "\x1b[7mreverse\x1b[27m"
-  echo -e "----------\nYou should see different font styles."
+  echo -e "----------\nYou should see different font styles.\n"
+}
+
+# Reference: https://unicode.org/Public/emoji/11.0/emoji-test.txt
+check_emojis() {
+  echo -e \
+    "😀 grinning face" \
+    "| 😂 face with tears of joy" \
+    "| 🤣 rolling on the floor laughing"
+  echo -e "----------\nYou should see the emoji symbols.\n"
 }
 
 main() {
   check_truecolor
-  echo -e "\n"
   check_font_styles
+  check_emojis
 }
 
 main
