@@ -1,88 +1,115 @@
-#!/usr/bin/env bash
-# shellcheck disable=SC2001
+#!/usr/bin/env python
 
-# Browse git remote repository on a browser (default is Firefox)
+# Browse git remote repository on a browser
 #
 # Usage:
-# gbrowse firefox <repo>
+#   gbrowse  # prints remote url in the current directory
+#   gbrowse ~/path  # prints remote url in the specified directory
+#   gbrowse --open  # opens the remote url
+#   gbrowse --open=chrome # opens with chrome
+#
+# Details:
+#   The following protocols are covered:
+#   - "git@github.com:org/repo.git"
+#   - "ssh://git@gitlab.dev.internal.org:30022/org/repo.git"
 #
 
-set -e
+import argparse
+import subprocess
+import sys
+import urllib.parse
 
-source "$HOME"/dotfiles/bin/__utils/utils.sh
+_DEFAULT_BROWSER = "firefox"
 
-DEFAULT_BROWSER="firefox"
 
-get_git_remote_ssh_address() {
-  local path="$1"
-  git -C "$path" config --get remote.origin.url
-}
+def parse_args():
+    parser = argparse.ArgumentParser(allow_abbrev=False)
+    parser.add_argument("path", nargs="?")
+    parser.add_argument("--open", nargs="?", const=_DEFAULT_BROWSER)
+    args = parser.parse_args()
+    return args
 
-get_browser_name() {
-  # Update the browser names here if they change
-  case "$1" in
-    "chrome") echo "google-chrome-stable" ;;
-    "firefox") echo "firefox" ;;
-    *) utils__err_exit "unknown browser" ;;
-  esac
-}
 
-open_browser() {
-  local browser_name="$1"
-  local url="$2"
-  eval "$(printf "%s 2>/dev/null %s &" "$browser_name" "$url")"
-}
+def git_command(path, cmd_args):
+    cmd = ["git"]
+    if path is not None:
+        cmd.extend(["-C", path])
+    cmd.extend(cmd_args)
+    process = subprocess.Popen(cmd, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+    stdout, stderr = process.communicate()
+    exit_code = process.wait()
+    out = (exit_code, stdout, stderr)
+    return out
 
-str__remove_git_begin() {
-  echo "$1" | sed "s/^git@//"
-}
 
-str__remove_git_end() {
-  echo "$1" | sed "s/\.git$//"
-}
+def is_git_repository(path):
+    res = git_command(path, ["rev-parse"])
+    return res[0] == 0
 
-str__replace_colon_slash() {
-  echo "$1" | sed "s/\:/\//"
-}
 
-str__add_https_begin() {
-  echo "$1" | sed "s/^/https:\/\//"
-}
+def get_git_origin_url(path):
+    res = git_command(path, ["config", "--get", "remote.origin.url"])
+    return res[1].decode("utf-8")
 
-ssh_address_to_url() {
-  local str
-  str="$1"
-  str="$(str__remove_git_begin "$str")"
-  str="$(str__remove_git_end "$str")"
-  str="$(str__replace_colon_slash "$str")"
-  str="$(str__add_https_begin "$str")"
-  echo "$str"
-}
 
-main() {
-  local ssh_address
-  local url
-  local browser
-  local path
-  browser="$1"
-  path="$2"
+def get_browser_name(name):
+    browsers = {
+        "chrome": "google-chrome-stable",
+        "firefox": "firefox",
+    }
+    browser = browsers.get(name)
+    if browser is None:
+        raise ValueError("unknown browser")
+    return browser
 
-  select_path="$(utils__get_path "$path")"
-  utils__git__check_repository "$select_path"
 
-  ssh_address="$(get_git_remote_ssh_address "$select_path")"
-  url="$(ssh_address_to_url "$ssh_address")"
+def open_browser(browser, url):
+    cmd = [browser, url]
+    print(f"opened url on '{browser}'")
+    subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
-  local browser_name
 
-  if [ -n "$browser" ]; then
-    browser_name="$(get_browser_name "$browser")"
-  else
-    browser_name="$DEFAULT_BROWSER"
-  fi
+def transform_ssh_to_https(path):
+    split_at = path.split("@")
+    if len(split_at) > 1:
+        path = split_at[1]
+    if path.endswith(".git"):
+        path = path[: len(path) - 4]
+    split_colon = path.split(":")
+    if len(split_colon) > 1:
+        path = "/".join(split_colon)
+    if not path.startswith("https://"):
+        path = "https://" + path
+    return path
 
-  open_browser "$browser_name" "$url"
-  utils__log__success "opened \"$url\""
-}
 
-main "$@"
+def transform_remote_url(url):
+    parsed = urllib.parse.urlparse(url)
+    path = parsed.path
+    if parsed.scheme == "ssh":
+        split_colon = parsed.netloc.split(":")
+        if len(split_colon) > 1:
+            ssh = split_colon[0]
+            path = ssh + parsed.path
+    remote_url = transform_ssh_to_https(path)
+    print(remote_url)
+    return remote_url
+
+
+def main():
+    args = parse_args()
+    is_git = is_git_repository(args.path)
+    if not is_git:
+        print("not a git repository")
+        sys.exit(1)
+
+    origin_url = get_git_origin_url(args.path)
+    remote_url = transform_remote_url(origin_url)
+
+    if args.open is not None:
+        browser = get_browser_name(args.open)
+        open_browser(browser, remote_url)
+
+
+if __name__ == "__main__":
+    main()

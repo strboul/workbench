@@ -7,6 +7,8 @@ snippet doc "docstring (reStructured Text style)"
 ${1:<<Description>>}
 
 :param ${2:<<param>>} ${3:<<type>>}: ${4:<<description>>}
+:returns: this is a description of what is returned
+:raises keyError: raises an exception
 """
 endsnippet
 
@@ -18,12 +20,12 @@ if __name__ == "__main__":
 	main()
 endsnippet
 
-snippet pdb "pdb breakpoint debugger"
-import pdb; pdb.set_trace()
-endsnippet
-
 snippet breakpoint "breakpoint (Python 3.7+)"
 breakpoint()
+endsnippet
+
+snippet pdb "breakpoint (legacy)"
+import pdb; pdb.set_trace()
 endsnippet
 
 snippet unittest "unittest skeleton" b
@@ -50,4 +52,22 @@ class Test${1:Name}(unittest.TestCase):
 	def test_failure(self):
 		with self.assertRaisesRegex(ValueError, "invalid literal"):
 			int("a")
+endsnippet
+
+snippet fordict "for loop dict" b
+for key, value in dict.items():
+	print(key, value)
+endsnippet
+
+snippet lstif "list comprehension if"
+[${2:if_true} for xi in x if ${1:condition}]
+endsnippet
+
+snippet lstifelse "list comprehension if else"
+[${2:if_true} if ${1:condition} else ${3:if_false} for xi in x]
+endsnippet
+
+snippet logging
+import logging
+log = logging.getLogger(__name__)
 endsnippet

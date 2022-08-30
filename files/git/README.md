@@ -14,7 +14,7 @@ git config --local user.email "<email>"
 Sign your commits with your GPG key:
 
 ```sh
-git config --local user.signingkey <GPG-ID>
+git config --local user.signingkey <GPG-SIGN-KEY>
 ```
 
 If you disable it in a repo:

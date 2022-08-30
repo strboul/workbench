@@ -27,10 +27,26 @@ repos:
 
 # python: black
 -   repo: https://github.com/psf/black
-    rev: 22.3.0
+    rev: 22.6.0
     hooks:
     -   id: black
         name: "[py] black"
+
+# python: flake8
+-   repo: https://github.com/PyCQA/flake8
+    rev: 4.0.1
+    hooks:
+    -   id: flake8
+        name: "[py] flake8"
+        args: ["--config=files/python/flake8_global.cfg"]
+
+# python: isort
+-   repo: https://github.com/pycqa/isort
+    rev: 5.10.1
+    hooks:
+      - id: isort
+        name: "[py] isort"
+        args: ["--profile", "black"]
 
 # shell: shellcheck
 -   repo: https://github.com/shellcheck-py/shellcheck-py

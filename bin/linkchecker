@@ -7,6 +7,7 @@
 # Sources:
 # - https://github.com/linkchecker/linkchecker
 # - https://wummel.github.io/linkchecker/
+#
 
 set -e
 
@@ -26,7 +27,7 @@ mkdir -p "${TMPDIRPAT}"
 "$(command -v docker)" run --rm -it \
   -u "$(id -u)":"$(id -g)" \
   -v "$TMPDIRPAT":/mnt \
-  linkchecker/linkchecker \
+  ghcr.io/linkchecker/linkchecker:latest \
   -Fhtml/linkchecker.html \
   -Fcsv/linkchecker.csv \
   --verbose \

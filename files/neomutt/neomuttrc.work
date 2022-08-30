@@ -1,0 +1,9 @@
+set folder    = "imaps://imap.startmail.com:993"
+set smtp_url  = "smtps://smtp.startmail.com:465"
+set spoolfile = "+INBOX"
+set postponed = "+Drafts"
+
+set from      = `pass show imap/sm/m.yazici/email`
+set imap_user = `pass show imap/sm/m.yazici/email`
+set imap_pass = `pass show imap/sm/m.yazici/password`
+set smtp_pass = `pass show imap/sm/m.yazici/password`

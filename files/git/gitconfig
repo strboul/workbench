@@ -32,8 +32,8 @@
 	untracked = red bold
 [commit]
 	verbose = true
-	gpgsign = true
 [credential]
 	helper = cache
 [init]
 	templatedir = ~/dotfiles/files/git/git_templates
+	defaultBranch = master

@@ -25,11 +25,9 @@
 #   | new-feature    |         |
 #
 
-# TODO: make it py class
-
-import sys
 import re
 import subprocess
+import sys
 
 ISSUE_PATTERN = re.compile(r"^(\w+/)?(\w+[-_])?[0-9]+", re.IGNORECASE)
 
@@ -40,13 +38,9 @@ def get_commit_file():
 
 def get_commit_edit_message(commit_file):
     lines = ""
-    with open(commit_file) as f:
-        lines = f.readlines()
+    with open(commit_file, encoding="utf-8") as file:
+        lines = file.readlines()
     return lines
-
-
-def get_commit_message(msg):
-    [xi for xi in x if not xi.startswith("#")]
 
 
 def get_branch_name():
@@ -56,7 +50,8 @@ def get_branch_name():
     state).
     """
     cmd = ["git", "symbolic-ref", "--short", "HEAD"]
-    branch = subprocess.check_output(cmd).decode("utf-8").strip()
+    output = subprocess.check_output(cmd, stderr=subprocess.DEVNULL)
+    branch = output.decode("utf-8").strip()
     return branch
 
 
@@ -78,15 +73,18 @@ def write_to_commit_file(commit_file, message_template, commit_edit_message):
     Write back the temp commit file with the template message.
     """
     commit_edit_message_str = "".join(commit_edit_message)
-    with open(commit_file, "w") as f:
-        f.write(message_template)
-        f.write(commit_edit_message_str)
+    with open(commit_file, mode="w", encoding="utf-8") as file:
+        file.write(message_template)
+        file.write(commit_edit_message_str)
 
 
 def main():
     commit_file = get_commit_file()
     commit_edit_message = get_commit_edit_message(commit_file)
-    branch_name = get_branch_name()
+    try:
+        branch_name = get_branch_name()
+    except subprocess.CalledProcessError:
+        return
     issue_name = extract_issue_name(branch_name)
     if not issue_name:
         return

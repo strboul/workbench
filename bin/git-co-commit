@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+# git-co-commit
+#
+# Adds the 'Co-authored-by: name <email>' to the commit template.
+#
+
+# TODO: add a fzf option to pick the users from the list
+# git log --pretty="%aN <%aE>%n%cN <%cE>" | sort | uniq | fzf --multi --height 40%
+
+set -e
+
+git_path="$(git rev-parse --show-toplevel)/.git"
+commit_template_path="$git_path/coauthor-commit-template"
+
+printf "\n\nCo-authored-by: name <email>\n" > "$commit_template_path"
+
+git config commit.template "$commit_template_path"
+git commit "$@"
+git config --unset commit.template

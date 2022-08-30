@@ -158,8 +158,9 @@ the following way:
 
 where single (') or double (") quotes are optional around VALUE.
 --]]
+DEFAULT_CONFIG_PATH='/opt/workbench/variables'
 function _G.mmy_GetLocalConfigVariable(var, config_path)
-  config_path = config_path or '/opt/workbench/variables'
+  config_path = config_path or DEFAULT_CONFIG_PATH
   file = io.open(config_path, 'rb')
   if not file then return nil end
   lines = file:lines()
@@ -171,6 +172,8 @@ function _G.mmy_GetLocalConfigVariable(var, config_path)
     key=t[1]
     value=t[2]
     if key == var and value ~= nil then
+      -- replace any extra quotes
+      value = value:gsub('\'', ''):gsub('\"', '')
       return value
     end
   end

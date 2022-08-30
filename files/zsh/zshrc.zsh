@@ -46,17 +46,21 @@ plugins+=(
   zsh-autosuggestions
   zsh-syntax-highlighting
 )
+# plugins: git related
+plugins+=(
+  git-auto-fetch
+)
 # plugins: others (autocomplete & tooling)
 plugins+=(
   aws
-  pass
+  direnv
   docker
   docker-compose
-  direnv
   helm
   kubectl
   npm
   nvm
+  pass
   terraform
   yarn
 )
@@ -130,11 +134,8 @@ alias ll='ls -lh'
 alias la='ll -a'
 
 alias v='eval $(command -v nvim)'
-
-# https://github.com/randy3k/radian
-alias r='eval $(command -v radian)'
 # https://github.com/bpython/bpython
-alias py='eval $(command -v bpython)'
+alias py='command -v bpython &> /dev/null && eval $(command -v bpython) || python'
 
 # https://github.com/jesseduffield/lazygit
 export LG_CONFIG_FILE="$XDG_CONFIG_HOME/lazygit/config.yml"

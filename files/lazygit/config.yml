@@ -1,14 +1,16 @@
 # Source:
 # https://github.com/jesseduffield/lazygit/blob/master/docs/Config.md
 #
-
+---
 gui:
   showFileTree: false
+  showRandomTip: false
 
 update:
   method: never
 
-# determines whether hitting 'esc' will quit the application when there is nothing to cancel/close
+# determines whether hitting 'esc' will quit the application when there is
+# nothing to cancel/close
 quitOnTopLevelReturn: true
 
 disableStartupPopups: true

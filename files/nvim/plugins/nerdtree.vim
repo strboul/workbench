@@ -28,7 +28,7 @@
     return l:with_allow
   endfunction
 
-  let s:nerd_tree_default_ignore=['^\.git$', '^\.mypy_cache$']
+  let s:nerd_tree_default_ignore=['^\.git$', '^\.mypy_cache$', '^\.vim$']
   let s:nerd_tree_default_allow=['\.env']
   let NERDTreeIgnore=s:NERDTreeSmartIgnore(
     \ s:nerd_tree_default_ignore,

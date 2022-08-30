@@ -1,0 +1,82 @@
+#!/usr/bin/env python
+
+import argparse
+import difflib
+import subprocess
+
+# Check if command output is the same in a file
+#
+# Example:
+#
+#   check_text \
+#     --file "README.md" \
+#     --command "git --help" \
+#     --marker-start '<!-- help-output: start -->\n' \
+#     --marker-end '<!-- help-output: end -->\n'
+#
+
+# TODO: refactor
+
+
+def get_file_lines(filename):
+    with open(filename) as file:
+        lines = file.readlines()
+    return lines
+
+
+def get_readme_text(lines, marker_start, marker_end):
+    start_index = lines.index(marker_start) + 1
+    end_index = lines.index(marker_end)
+    sublines = lines[start_index:end_index]
+    # remove backticks if they exist
+    sublines = [line for line in sublines if line != "```\n"]
+    text = "".join(sublines)
+    return text
+
+
+def get_command_output(command):
+    cmd = command.split(" ")
+    out = None
+    run = subprocess.run(cmd, stdout=subprocess.PIPE)
+    if run.returncode == 0:
+        out = run.stdout.decode("utf-8")
+        return out
+    raise ValueError("could not get the text")
+
+
+def check_if_equal(command_output, readme_text):
+    equal = command_output == readme_text
+    if not equal:
+        d1 = command_output.splitlines(keepends=True)
+        d2 = readme_text.splitlines(keepends=True)
+        print("".join(difflib.ndiff(d1, d2)))
+        print("* * *")
+        raise ValueError("not up-to-date")
+    print("up-to-date")
+
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--file", required=True, help="file to check the block")
+    parser.add_argument("--command", required=True, help="command to check the output")
+    parser.add_argument("--marker-start", required=True, help="file start marker")
+    parser.add_argument("--marker-end", required=True, help="file end marker")
+    args = parser.parse_args()
+    # this solution isn't great as it also removes the other unicode characters
+    # but so far, I don't have any use case so fine.
+    args.marker_start = bytes(args.marker_start, "utf-8").decode("unicode_escape")
+    args.marker_end = bytes(args.marker_end, "utf-8").decode("unicode_escape")
+    return args
+
+
+def main():
+    args = parse_args()
+    lines = get_file_lines(args.file)
+    readme_text = get_readme_text(lines, args.marker_start, args.marker_end)
+    command_output = get_command_output(args.command)
+    check_if_equal(command_output, readme_text)
+    return 0
+
+
+if __name__ == "__main__":
+    main()

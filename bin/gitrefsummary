@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+# Get git ref summary
+#
+# Examples:
+#
+#  # between a tag and HEAD:
+#  gitrefsummary 1.0.0 HEAD
+#
+#  # between two commits and edit the output in vim:
+#  gitrefsummary 4e0962e 53fc196 | vim -
+#
+
+set -e
+
+source "$HOME"/dotfiles/bin/__utils/utils.sh
+
+FROM_REF="$1"
+TO_REF="$2"
+
+get_git_log() {
+  git log "$FROM_REF..$TO_REF" --oneline --first-parent master --no-decorate --format="%h|%an|%s"
+}
+
+pretty_print() {
+  log_output="$1"
+  echo "$log_output"
+}
+
+main() {
+  if [ -z "$FROM_REF" ] || [ -z "$TO_REF" ]; then
+    utils__err_exit "provide from and to refs"
+  fi
+  log_output="$(get_git_log)"
+  pretty_print "$log_output" | column -t -s "|"
+}
+
+main

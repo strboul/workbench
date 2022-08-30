@@ -72,7 +72,10 @@
     "snippet": "\ue60b",
     "typeParameter": "\uf728",
     "default": "\uf29c"
-  }
+  },
+
+  // disable inline hints on all filetypes as they are too noisy now
+  "inlayHint.filetypes": []
 }
 
 // vim: ts=2 sw=2 et ft=jsonb

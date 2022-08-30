@@ -1,0 +1,127 @@
+#!/usr/bin/env python
+
+# Get git commit summary split by the category/type
+#
+# For example, you have conventional commit messages, such as:
+#
+#  - fix: eliminate bug
+#  - fix: remove overflown code
+#  - refactor: almost as new
+#  - fix typo
+#
+# where every commit starts with a commit category (or type) followed by a
+# colon and a text message.
+#
+# you run `gitcommitcategorysummary`, then it gives you:
+#
+# ```
+#  <branch_name>
+#
+#  fix
+#  ==========
+#  - eliminate bug
+#  - remove overflown code
+#
+#  refactor
+#  ==========
+#  - almost as new
+#
+#  (ungrouped)
+#  ===========
+#  - fix typo
+# ```
+#
+# Usage:
+#   gitcommitcategorysummary
+#
+# Optional parameters:
+#   ref-main: main base ref to compare. Default value is 'master'.
+#   ref-compare: ref to compare. Default value is the current branch.
+#
+#  In the ref parameters, any git reference (e.g. branch name, commit SHA,
+#  etc.) can be passed.
+#
+
+# TODO: rename as gitcommitgroupbytype (in conventional commits, the first part is called as type).
+
+import subprocess
+import sys
+
+# TODO: textwrap to long lines?
+# It should be like
+# - item
+# - item long string ...
+#   but indented
+# - item
+
+
+def get_current_branch_name():
+    cmd = ["git", "symbolic-ref", "--short", "HEAD"]
+    branch = subprocess.check_output(cmd).decode("utf-8").strip()
+    return branch
+
+
+def get_param_or_default_argument(position, *, default):
+    try:
+        out = sys.argv[position]
+    except IndexError:
+        out = default
+    return out
+
+
+def get_arguments(current_branch_name):
+    ref_main = get_param_or_default_argument(1, default="master")
+    ref_compare = get_param_or_default_argument(2, default=current_branch_name)
+    return (ref_main, ref_compare)
+
+
+def get_git_commit_logs(ref_main, ref_compare):
+    cmd_fmt = f"{ref_main}..{ref_compare}"
+    cmd = ["git", "log", "--format='%s'", cmd_fmt]
+    logs = subprocess.check_output(cmd).decode("utf-8")
+    logs = logs.split("\n")
+    logs = list(filter(None, logs))
+    return logs
+
+
+def group_by_category(commits):
+    out = {}
+    for commit in commits:
+        commit = commit.strip("'")
+        split = commit.split(":")
+        if len(split) > 1:
+            category = split[0]
+            message = split[1:]
+        else:
+            category = "(ungrouped)"
+            message = split
+        if category not in out:
+            out[category] = []
+        message = "".join(message).strip()
+        out[category].append(message)
+    return out
+
+
+def print_categories(categories):
+    category_keys = sorted(categories.keys(), reverse=True)
+    # reverse sort the keys, mainly to keep the `(ungrouped)` in the end.
+    for key in category_keys:
+        values = categories.get(key)
+        print(key)
+        print("-------------------")
+        for value in values:
+            print("- ", end="")
+            print(value)
+        print("")
+
+
+def main():
+    current_branch_name = get_current_branch_name()
+    ref_main, ref_compare = get_arguments(current_branch_name)
+    commit_logs = get_git_commit_logs(ref_main, ref_compare)
+    categories = group_by_category(commit_logs)
+    print_categories(categories)
+
+
+if __name__ == "__main__":
+    main()

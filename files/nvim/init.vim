@@ -126,7 +126,7 @@ call plug#begin(stdpath('config') . '/vim-plug')
   Plug 'https://github.com/neoclide/coc.nvim', {'branch': 'release'}
   source $HOME/dotfiles/files/nvim/plugins/coc/coc.vim
 
-
+" TODO: use tagbar or Vista?
 " tagbar
   Plug 'https://github.com/preservim/tagbar'
   " tags should be sorted by order of their apperance, not alphabetically
@@ -138,18 +138,11 @@ call plug#begin(stdpath('config') . '/vim-plug')
 
 
 " urlview
-  Plug 'https://github.com/strboul/urlview.vim' " :Urlview
+  Plug 'https://github.com/strboul/urlview.vim'  " :Urlview
 
 
 " any-jump
-  Plug 'https://github.com/pechorin/any-jump.vim' " <leader>j
-
-
-" UltiSnips
-" TODO look for alternatives, as it's slow.
-  Plug 'https://github.com/sirver/UltiSnips'
-  " don't use any expand key (because using `coc-snippets` for)
-  let g:UltiSnipsExpandTrigger='<nop>'
+  Plug 'https://github.com/pechorin/any-jump.vim'  " <leader>j
 
 
 " floaterm
@@ -194,6 +187,8 @@ call plug#begin(stdpath('config') . '/vim-plug')
   Plug 'https://github.com/tpope/vim-fugitive'
   source $HOME/dotfiles/files/nvim/plugins/fugitive.vim
 
+  nnoremap <silent><leader>gb :Git blame<CR>
+
 
   " fugitive `:GBrowse` plugins
   Plug 'https://github.com/tpope/vim-rhubarb'
@@ -204,7 +199,7 @@ call plug#begin(stdpath('config') . '/vim-plug')
 
 
 " vim-polyglot (syntax highlighting)
-" TODO: move to treesitter
+" TODO: move to treesitter?
   Plug 'https://github.com/sheerun/vim-polyglot'
 
 " ansible
@@ -214,25 +209,14 @@ call plug#begin(stdpath('config') . '/vim-plug')
     \ 'yaml.ansible': 'ansible',
     \ }
 
-" prisma2 syntax highlighting
-  Plug 'https://github.com/pantharshit00/vim-prisma'
-
 
 " ale (syntax checker)
 " it's still useful for some checks, e.g. shellcheck for bash/zsh TODO is it?
+" Command :ALEInfo to print the runtime information for the current buffer
   Plug 'https://github.com/dense-analysis/ale'
-  " disable linting on some files
-  " https://github.com/dense-analysis/ale/issues/371#issuecomment-304313091
-  let g:ale_pattern_options={
-    \ '.R$':   {'ale_enabled': 0},
-    \ '.Rmd$': {'ale_enabled': 0},
-    \ '.py$':  {'ale_enabled': 0},
-    \ '.js$':  {'ale_enabled': 0},
-    \ '.jsx$':  {'ale_enabled': 0},
-    \ '.ts$':  {'ale_enabled': 0},
-    \ '.tsx$':  {'ale_enabled': 0},
-    \ '.json.*$':  {'ale_enabled': 0}
-  \}
+  " === python ===
+  let g:ale_python_flake8_options=''
+  let g:ale_python_pylint_executable=''
 
 
 " highlight visual selections
@@ -251,9 +235,6 @@ call plug#begin(stdpath('config') . '/vim-plug')
 
 " --- Candidate plugins ----
 " A plugin is a candidate first, and if it's useful, it's promoted to the up.
-  Plug 'https://github.com/gcmt/wildfire.vim'
-  map <tab> <Plug>(wildfire-fuel)
-
 
 call plug#end()
 

@@ -90,7 +90,10 @@ function _G.LuaLightlineFoldername()
     return string.gsub(str, '[%s-...]', '%%%0')
   end
   -- TODO: MAKE git_dir NORMAL COLOR OR BOLD AND subpath_rest PALE COLOR
-  subpath = string.match(cwd, sanitize_match(git_dir) .. '/(.*)')
+  subpath = pcall(string.match(cwd, sanitize_match(git_dir) .. '/(.*)'))
+  if not subpath then
+    return ''
+  end
   return tail_git_repo .. '/' .. subpath
 end
 

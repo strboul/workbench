@@ -6,11 +6,11 @@
 # gitreflog
 #
 
-import subprocess
-import re
-from datetime import datetime, timezone
-import pydoc
 import locale
+import pydoc
+import re
+import subprocess
+from datetime import datetime, timezone
 
 locale.setlocale(locale.LC_TIME, "en_US.UTF-8")
 ISO_DATE_FORMAT = "%Y-%m-%d"

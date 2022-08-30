@@ -19,6 +19,4 @@ utils__git__check_repository "$PAT"
 
 # TODO: official github image doesn't exist, replace once it's ready
 # https://github.com/github/linguist/issues/4613
-"$(command -v docker)" run --rm \
-  -v "$PAT":/repo \
-  crazymax/linguist:latest
+docker run -t --rm -v "$PAT":/repo crazymax/linguist:latest
