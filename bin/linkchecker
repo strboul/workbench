@@ -13,7 +13,7 @@ set -e
 
 source "$HOME"/dotfiles/bin/__utils/utils.sh
 
-utils__stop_if_not_command_exists "docker"
+utils__stop_if_not_command_exists "podman"
 
 URL=$1
 
@@ -24,7 +24,7 @@ TMPDIRPAT="/tmp/$DIRNAME/"
 
 mkdir -p "${TMPDIRPAT}"
 
-"$(command -v docker)" run --rm -it \
+podman run --rm -it \
   -u "$(id -u)":"$(id -g)" \
   -v "$TMPDIRPAT":/mnt \
   ghcr.io/linkchecker/linkchecker:latest \

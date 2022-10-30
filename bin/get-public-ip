@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+# Get your public IP address by using https://ipinfo.io/ service.
+#
+# Get own IP:
+#   get-public-ip
+#
+# Get other IP:
+#   get-public-ip 255.255.255.255
+#
+
+source "$HOME"/dotfiles/bin/__utils/utils.sh
+utils__stop_if_not_command_exists "curl"
+IP="$1"
+COMMAND="https://ipinfo.io/$IP"
+utils__log__info "requesting $COMMAND"
+curl "$COMMAND"
+echo

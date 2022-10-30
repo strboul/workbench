@@ -18,6 +18,13 @@ source "$HOME"/dotfiles/bin/__utils/utils.sh
 FROM_REF="$1"
 TO_REF="$2"
 
+get_default_refs() {
+  utils__log__info "no refs provided. getting latest tag and HEAD."
+  latest_tag="$(git describe --tags "$(git rev-list --tags --max-count=1)")"
+  FROM_REF="$latest_tag"
+  TO_REF="HEAD"
+}
+
 get_git_log() {
   git log "$FROM_REF..$TO_REF" --oneline --first-parent master --no-decorate --format="%h|%an|%s"
 }
@@ -28,9 +35,13 @@ pretty_print() {
 }
 
 main() {
-  if [ -z "$FROM_REF" ] || [ -z "$TO_REF" ]; then
-    utils__err_exit "provide from and to refs"
+  if [ -z "$FROM_REF" ] && [ -z "$TO_REF" ]; then
+    get_default_refs
+  elif [ -z "$FROM_REF" ] || [ -z "$TO_REF" ]; then
+    utils__err_exit "if you pass \"from\", pass also \"to\" (and vice versa)"
   fi
+  utils__log__success "comparing refs from: \"$FROM_REF\" to: \"$TO_REF\""
+  echo
   log_output="$(get_git_log)"
   pretty_print "$log_output" | column -t -s "|"
 }

@@ -20,7 +20,10 @@ augroup Filetypes
     \ setlocal shiftwidth=4 |
     \ setlocal smartindent
 
-  autocmd FileType yaml setlocal tabstop=4 shiftwidth=4
+  " go fmt uses tab instead of spaces
+  autocmd BufNewFile,BufRead *.go setlocal tabstop=2
+
+  autocmd FileType yaml setlocal tabstop=2 shiftwidth=2
 
   autocmd FileType make setlocal noexpandtab
 

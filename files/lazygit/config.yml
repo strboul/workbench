@@ -14,3 +14,13 @@ update:
 quitOnTopLevelReturn: true
 
 disableStartupPopups: true
+
+customCommands:
+  # Rename stash:
+  # https://github.com/jesseduffield/lazygit/issues/2189
+  - key: r
+    prompts:
+      - type: "input"
+        title: "Rename stash"
+    command: "git stash drop {{.SelectedStashEntry.RefName}} | sed -E 's/.*\\(([0-9a-f]+)\\).*/\\1/' | xargs git stash store -m 'On {{.CheckedOutBranch.Name}}: {{index .PromptResponses 0}}'"
+    context: stash

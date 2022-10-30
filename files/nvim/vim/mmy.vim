@@ -181,3 +181,42 @@ function _G.mmy_GetLocalConfigVariable(var, config_path)
   return nil
 end
 EOF
+
+lua << EOF
+--[[
+Copy a visual selection with markdown compatible output.
+It can help for literal programming.
+--]]
+function _G.mmy_CopyWithMetadata()
+  -- get visual selection range
+  local start_row, start_col = unpack(vim.api.nvim_buf_get_mark(0, "<"))
+  local end_row, end_col = unpack(vim.api.nvim_buf_get_mark(0, ">"))
+  -- get buffer lines by range
+  local buf_lines = vim.api.nvim_buf_get_lines(0, start_row - 1, end_row, false)
+  local linestr = table.concat(buf_lines, "\n")
+  local selected = table.concat({"```", linestr, "```"}, "\n")
+  -- get path
+  local current_dir = vim.fn.fnamemodify(vim.loop.cwd(), ":t")
+  local current_bufname = vim.fn.expand('%')
+  local path = table.concat({current_dir, "/", current_bufname})
+  -- row numbers
+  local row_nums
+  if start_row == end_row then
+    row_nums = start_row
+  else
+    row_nums = table.concat({start_row, "-", end_row})
+  end
+  -- file identifier
+  local file_id = table.concat({"> ", path, ":", row_nums})
+  -- save to register
+  local out = table.concat({file_id, selected}, "\n")
+  print(out)
+  vim.fn.setreg('+', out)
+end
+EOF
+
+function! mmy#CopyWithMetadata()
+  return v:lua.mmy_CopyWithMetadata()
+endfunction
+
+command -range CopyWithMetadata :call mmy#CopyWithMetadata()

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Usage:
-#   ./symlinks --help
+#   ./symlink --help
 #
 
 set -Eeuo pipefail

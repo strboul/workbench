@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+
+# Run neovim in container (with podman)
+#
+# Usage:
+#   v2
+#
+
+set -euo pipefail
+
+source "$HOME"/dotfiles/bin/__utils/utils.sh
+
+CWD="$(pwd)"
+ARGS="$*"
+
+ID="v2-nvim"
+IMAGE_TAG="localhost/v2-nvim"
+
+is_image_exist() {
+  podman image inspect "$IMAGE_TAG" &> /dev/null
+}
+
+build_image() {
+  podman build -t "$IMAGE_TAG" "$HOME/dotfiles/files/nvim"
+}
+
+create_volume() {
+  podman volume create "$ID"
+}
+
+create_container() {
+  local command
+  if [[ "${#ARGS}" -gt 0 ]]; then
+    command="$IMAGE_TAG $ARGS"
+  else
+    command="$IMAGE_TAG"
+  fi
+  podman run -it \
+    -v "$HOME/dotfiles/files/nvim/init.lua:/root/.config/nvim/init.lua:ro" \
+    -v "$HOME/dotfiles/files/nvim/lua:/root/.config/nvim/lua:ro" \
+    -v "$HOME/dotfiles/files/nvim/after:/root/.config/nvim/after:ro" \
+    -v "$CWD:/root/cwd" \
+    -v "$ID:/root" \
+    $command
+}
+
+cleanup_exited_containers() {
+  # shellcheck disable=SC2046 # intended splitting
+  podman rm $(podman ps -aq -f status=exited) &> /dev/null &
+}
+
+on_exit() {
+  cleanup_exited_containers
+}
+
+main() {
+  if ! is_image_exist; then
+    utils__log__info "image not found. building..."
+    build_image
+    create_volume
+  fi
+  trap on_exit EXIT
+  create_container
+}
+
+main

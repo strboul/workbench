@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+# lazygit wrapper (alias)
+#
+
+source "$HOME"/dotfiles/bin/__utils/utils.sh
+
+main() {
+  utils__git__check_repository "$(pwd)"
+  tmux-zoom lazygit
+}
+
+main

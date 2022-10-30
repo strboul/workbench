@@ -2,26 +2,38 @@
 
 # Clean up everything in Docker
 #
+# Usage:
+#  docker-nuke
+#
+# It's also possible to remove any other container runtime (e.g., podman) as
+# the commands are identical.
+#  docker-nuke <command>
+#
 
 source "$HOME"/dotfiles/bin/__utils/utils.sh
 
-utils__stop_if_not_command_exists "docker"
+COMMAND="$1"
+
+# set default.
+if [ -z "$COMMAND" ]; then
+  COMMAND="docker"
+fi
 
 remove_containers() {
   utils__log__info "force removing containers"
-  # shellcheck disable=SC2046 # intended word splitting
-  docker rm -f $(docker ps -qa)
+  # shellcheck disable=SC2046 # intended splitting
+  "$COMMAND" rm -f $("$COMMAND" ps -qa)
 }
 
 remove_images() {
   utils__log__info "force removing images"
-  # shellcheck disable=SC2046 # intended word splitting
-  docker rmi -f $(docker images -q)
+  # shellcheck disable=SC2046 # intended splitting
+  "$COMMAND" rmi -f $("$COMMAND" images -q)
 }
 
 remove_volumes() {
   utils__log__info "force removing volumes"
-  docker volume prune -f
+  "$COMMAND" volume prune -f
 }
 
 main() {

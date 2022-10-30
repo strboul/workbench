@@ -1,0 +1,49 @@
+# Build this with
+#   podman build -t v2-nvim files/nvim
+#
+# Run with:
+#   podman run -it \
+#     -v "$HOME/dotfiles/files/nvim/init.lua:/root/.config/nvim/init.lua:ro" \
+#     -v "$HOME/dotfiles/files/nvim/lua:/root/.config/nvim/lua:ro" \
+#     -v "$(pwd):/root/pwd" \
+#     localhost/v2-nvim
+#
+
+# Build neovim nightly in a separate stage.
+FROM docker.io/library/alpine:latest as base
+RUN apk --no-cache add \
+  autoconf \
+  automake \
+  build-base \
+  cmake \
+  ninja \
+  coreutils \
+  curl \
+  gettext-tiny-dev \
+  git \
+  libtool \
+  pkgconf \
+  unzip
+RUN git clone https://github.com/neovim/neovim.git
+ARG VERSION=master
+RUN cd neovim && git checkout ${VERSION} && make CMAKE_BUILD_TYPE=RelWithDebInfo install
+
+# Setup neovim runtime.
+FROM docker.io/library/alpine:latest
+COPY --from=base /usr/local/lib/nvim /usr/local/lib/nvim
+COPY --from=base /usr/local/share/nvim /usr/local/share/nvim
+COPY --from=base /usr/local/bin/nvim /usr/local/bin/nvim
+RUN apk --no-cache add \
+  git \
+  # neovim \
+  fd  \
+  ctags \
+  ripgrep
+COPY ./init.lua /root/.config/nvim/init.lua
+COPY ./lua /root/.config/nvim/lua
+# Install packer
+RUN git clone --depth 1 https://github.com/wbthomason/packer.nvim \
+  ~/.local/share/nvim/site/pack/packer/start/packer.nvim
+RUN nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
+WORKDIR /root/cwd
+ENTRYPOINT ["nvim"]

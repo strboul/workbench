@@ -11,7 +11,7 @@ set -e
 
 source "$HOME"/dotfiles/bin/__utils/utils.sh
 
-utils__stop_if_not_command_exists "docker"
+utils__stop_if_not_command_exists "podman"
 
 PAT=$(utils__get_path "$@")
 
@@ -19,4 +19,4 @@ utils__git__check_repository "$PAT"
 
 # TODO: official github image doesn't exist, replace once it's ready
 # https://github.com/github/linguist/issues/4613
-docker run -t --rm -v "$PAT":/repo crazymax/linguist:latest
+podman run -t --rm -v "$PAT":/repo docker.io/crazymax/linguist:latest

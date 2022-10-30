@@ -73,7 +73,7 @@ utils__git__is_repository() {
 utils__git__check_repository() {
   local pat=$1
   if ! utils__git__is_repository "$pat"; then
-    utils__err_exit "not a git repository"
+    utils__err_exit "not a git repository."
   fi
 }
 
@@ -88,7 +88,7 @@ utils__print_dashes() {
 }
 
 utils__timestamp() {
-  date "+%F %T"
+  date "+%FT%T"
 }
 
 utils__err_exit() {

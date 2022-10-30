@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+# Profile neovim startup time
+#
+# Usage:
+#  profile-vim-startup <nvim-command> <..optional args..>
+#
+# Examples:
+#  profile-vim-startup nvim -u NONE
+#
+# References:
+#   https://github.com/mhinz/vim-galore#profiling-startup-time
+#
+
+set -e
+
+source "$HOME"/dotfiles/bin/__utils/utils.sh
+
+COMMAND="$*"
+LOGFILE="$(utils__timestamp)_$COMMAND.log"
+
+check_command() {
+  if [[ ! "${#COMMAND}" -gt 0 ]]; then
+    utils__err_exit "provide command name"
+  fi
+}
+
+measure_startuptime() {
+  "$COMMAND" --startuptime "$LOGFILE" +q
+  utils__log__info "written log file: \"$LOGFILE\""
+}
+
+open_log_file() {
+  vim -u NONE \
+    -c "colorscheme evening" \
+    -c "set mouse=a" \
+    -c "set cursorline" \
+    -c "set laststatus=2" \
+    -c "normal G$" \
+    "$LOGFILE"
+}
+
+cleanup_log_file() {
+  rm "$LOGFILE"
+}
+
+main() {
+  check_command
+  measure_startuptime
+  open_log_file
+  cleanup_log_file
+}
+
+main

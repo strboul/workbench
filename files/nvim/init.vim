@@ -1,10 +1,10 @@
 :scriptencoding utf-8
 
-source $HOME/dotfiles/files/nvim/mmy.vim
+source $HOME/dotfiles/files/nvim/vim/mmy.vim
 
 " ----- General settings ---------------------------------------------------
 
-  source $HOME/dotfiles/files/nvim/essential.vim
+  source $HOME/dotfiles/files/nvim/vim/essential.vim
 
 " Window display
   set nonumber         " line numbers
@@ -15,7 +15,7 @@ source $HOME/dotfiles/files/nvim/mmy.vim
   set noshowmode       " no showmode e.g. --INSERT-- display, check statusbar
   set splitright       " always open h-splits at the right side
   set splitbelow       " always open v-splits at the below side
-  set scrolloff=1      " off the lines when scrolling down
+  set scrolloff=8      " off the lines when scrolling down, with high value keep cursor more in the center
   set signcolumn=yes   " always show signcolumn for linting, diagnostics, etc.
   set shortmess+=I     " don't give the intro message at the start `:intro`
   set ruler            " always show cursor position
@@ -38,7 +38,7 @@ source $HOME/dotfiles/files/nvim/mmy.vim
   set tabstop=2                  " insert 2 spaces for a tab
   set shiftwidth=2               " use 2 spaces when indenting
   set smarttab                   " tabbing detects when e.g. you have 2 or 4
-  set expandtab                  " always add spaces when tab
+  set expandtab                  " convert tab to spaces
   set smartindent                " makes indenting smart
   set autoindent                 " use indendation of previous line
 
@@ -55,7 +55,9 @@ source $HOME/dotfiles/files/nvim/mmy.vim
 
 " Timeout when press on ESC to switch from Insert to Normal mode
 " If use nvim with tmux, be sure tmux.conf has: `set -s escape-time 0`
-  set timeout timeoutlen=500 ttimeout ttimeoutlen=10
+  set timeout timeoutlen=1500
+  " decrease <esc> key timeoutlen, default is 50
+  set ttimeout ttimeoutlen=10
 
 
 " Default (4000 ms ~ 4 s) is too slow. And a very low value can slow down vim.
@@ -72,16 +74,16 @@ source $HOME/dotfiles/files/nvim/mmy.vim
 
 
 " essential autocommands
-  source $HOME/dotfiles/files/nvim/autocmds.vim
+  source $HOME/dotfiles/files/nvim/vim/autocmds.vim
 
 " Quickfix
-  source $HOME/dotfiles/files/nvim/quickfix.vim
+  source $HOME/dotfiles/files/nvim/vim/quickfix.vim
 
 " Help
-  source $HOME/dotfiles/files/nvim/help.vim
+  source $HOME/dotfiles/files/nvim/vim/help.vim
 
-  source $HOME/dotfiles/files/nvim/filetypes.vim
-  source $HOME/dotfiles/files/nvim/mappings.vim
+  source $HOME/dotfiles/files/nvim/vim/filetypes.vim
+  source $HOME/dotfiles/files/nvim/vim/mappings.vim
 
 " ----- Plugins ------------------------------------------------------------
 
@@ -246,7 +248,7 @@ call plug#end()
   set background=dark
 
 " terminal stuff
-  source $HOME/dotfiles/files/nvim/terminal.vim
+  source $HOME/dotfiles/files/nvim/vim/terminal.vim
 
 " Highlight groups
 "

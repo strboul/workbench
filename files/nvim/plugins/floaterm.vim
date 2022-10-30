@@ -6,17 +6,17 @@
   let s:repl_list={}
   let s:repl_list['sh']='bash'
   let s:repl_list['zsh']='zsh'
-  let s:repl_list['r']=executable('radian') ? 'radian' : 'R'
-  let s:repl_list['python']=executable('bpython') ? 'bpython' : 'python3'
+  let s:repl_list['python']='py'
   let s:repl_list['lua']='lua'
   let s:repl_list['javascript']='node'
   let s:repl_list['javascriptreact']='node'
   let s:repl_list['typescript']='ts-node'
   let s:repl_list['typescriptreact']='ts-node'
+  let s:repl_list['r']='R'
 
   function s:GetREPLCommand(file_type)
     if has_key(s:repl_list,a:file_type)
-      let l:cmd=s:repl_list[a:file_type]
+      let l:cmd=g:floaterm_shell .. ' -ic ' .. s:repl_list[a:file_type]
     else
       let l:cmd=g:floaterm_shell
     endif

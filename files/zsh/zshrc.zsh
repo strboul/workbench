@@ -82,9 +82,6 @@ source "$HOME"/dotfiles/files/zsh/keybindings.zsh
 GPG_TTY="$(tty)"
 export GPG_TTY
 
-# pass (password store)
-export PASSWORD_STORE_DIR="$HOME/.password-store"
-
 # ===== settings =====
 
 export EDITOR="nvim -u DEFAULTS"
@@ -134,12 +131,19 @@ alias ll='ls -lh'
 alias la='ll -a'
 
 alias v='eval $(command -v nvim)'
-# https://github.com/bpython/bpython
+# python and bpython using different PYTHONPATH (https://stackoverflow.com/a/22182421)
+bpython() {
+  if test -n "$VIRTUAL_ENV"; then
+    PYTHONPATH="$(python -c 'import sys; print(":".join(sys.path))')" \
+      command bpython "$@"
+  else
+    command bpython "$@"
+  fi
+}
 alias py='command -v bpython &> /dev/null && eval $(command -v bpython) || python'
 
 # https://github.com/jesseduffield/lazygit
 export LG_CONFIG_FILE="$XDG_CONFIG_HOME/lazygit/config.yml"
-alias lg='tmux-zoom lazygit'
 
 # ===== autocomplete =====
 
