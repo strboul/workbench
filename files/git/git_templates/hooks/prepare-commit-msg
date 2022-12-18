@@ -14,6 +14,7 @@
 #
 #   - if the number is already there
 #   - if a branch doesn't start with a number
+#   - if the commit message is matched by ignore patterns
 #
 # Example:
 #
@@ -31,6 +32,11 @@ import sys
 
 ISSUE_PATTERN = re.compile(r"^(\w+/)?(\w+[-_])?[0-9]+", re.IGNORECASE)
 
+# regex patterns to ignore this hook.
+IGNORE_PATTERNS = {
+    r"^fixup!",
+}
+
 
 def get_commit_file():
     return sys.argv[1]
@@ -40,7 +46,8 @@ def get_commit_edit_message(commit_file):
     lines = ""
     with open(commit_file, encoding="utf-8") as file:
         lines = file.readlines()
-    return lines
+    first_line = lines[0].strip()
+    return first_line
 
 
 def get_branch_name():
@@ -50,8 +57,9 @@ def get_branch_name():
     state).
     """
     cmd = ["git", "symbolic-ref", "--short", "HEAD"]
-    output = subprocess.check_output(cmd, stderr=subprocess.DEVNULL)
-    branch = output.decode("utf-8").strip()
+    branch = (
+        subprocess.check_output(cmd, stderr=subprocess.DEVNULL).decode("utf-8").strip()
+    )
     return branch
 
 
@@ -66,6 +74,16 @@ def extract_issue_name(branch_name):
 
 def make_message_template(issue_name):
     return f"{issue_name}: "
+
+
+def has_ignored_pattern(commit_edit_message):
+    for pattern in IGNORE_PATTERNS:
+        matched = re.compile(pattern).match(commit_edit_message)
+        if not matched:
+            continue
+        if matched.group():
+            return True
+    return False
 
 
 def write_to_commit_file(commit_file, message_template, commit_edit_message):
@@ -84,14 +102,15 @@ def main():
     try:
         branch_name = get_branch_name()
     except subprocess.CalledProcessError:
+        # gracefully fail in case there is no branch name available.
         return
     issue_name = extract_issue_name(branch_name)
     if not issue_name:
         return
+    if has_ignored_pattern(commit_edit_message):
+        return
     message_template = make_message_template(issue_name)
-    is_template_exists = (
-        commit_edit_message[0].strip().startswith(message_template.strip())
-    )
+    is_template_exists = commit_edit_message.startswith(message_template.strip())
     if is_template_exists:
         return
     write_to_commit_file(commit_file, message_template, commit_edit_message)

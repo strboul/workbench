@@ -71,3 +71,10 @@ snippet logging
 import logging
 log = logging.getLogger(__name__)
 endsnippet
+
+snippet subprocess
+process = subprocess.Popen(${1:cmd_list}, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+stdout, stderr = process.communicate()
+exit_code = process.wait()
+out = (exit_code, stdout, stderr)
+endsnippet

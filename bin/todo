@@ -11,5 +11,7 @@ set -e
 source "$HOME"/dotfiles/bin/__utils/utils.sh
 
 MESSAGE="$1"
-printf -- "- %s\n\n" "$MESSAGE" >> todo
-utils__log__success "todo added"
+ENTRY="- [$(utils__timestamp)] $MESSAGE"
+printf -- "%s\n\n" "$ENTRY" >> todo
+utils__message__color_message "green" "$ENTRY"
+utils__message__color_message "green" "todo added"

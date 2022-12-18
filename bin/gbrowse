@@ -43,13 +43,13 @@ def git_command(path, cmd_args):
 
 
 def is_git_repository(path):
-    res = git_command(path, ["rev-parse"])
-    return res[0] == 0
+    exit_code, _, _ = git_command(path, ["rev-parse"])
+    return exit_code == 0
 
 
 def get_git_origin_url(path):
-    res = git_command(path, ["config", "--get", "remote.origin.url"])
-    return res[1].decode("utf-8")
+    _, stdout, _ = git_command(path, ["config", "--get", "remote.origin.url"])
+    return stdout.decode("utf-8")
 
 
 def get_browser_name(name):

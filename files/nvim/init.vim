@@ -128,12 +128,6 @@ call plug#begin(stdpath('config') . '/vim-plug')
   Plug 'https://github.com/neoclide/coc.nvim', {'branch': 'release'}
   source $HOME/dotfiles/files/nvim/plugins/coc/coc.vim
 
-" TODO: use tagbar or Vista?
-" tagbar
-  Plug 'https://github.com/preservim/tagbar'
-  " tags should be sorted by order of their apperance, not alphabetically
-  let g:tagbar_sort=0
-
 
 " Vista
   Plug 'https://github.com/liuchengxu/vista.vim'
@@ -201,8 +195,8 @@ call plug#begin(stdpath('config') . '/vim-plug')
 
 
 " vim-polyglot (syntax highlighting)
-" TODO: move to treesitter?
   Plug 'https://github.com/sheerun/vim-polyglot'
+
 
 " ansible
   Plug 'https://github.com/pearofducks/ansible-vim', { 'do': './UltiSnips/generate.sh' }
@@ -237,6 +231,10 @@ call plug#begin(stdpath('config') . '/vim-plug')
 
 " --- Candidate plugins ----
 " A plugin is a candidate first, and if it's useful, it's promoted to the up.
+
+" In Vim, pressing ga on a character reveals its representation in decimal,
+" octal, and hex. Characterize.vim modernizes it.
+Plug 'https://github.com/tpope/vim-characterize'
 
 call plug#end()
 
@@ -290,5 +288,9 @@ call plug#end()
     autocmd FileType tagbar call s:tagbar_win()
   augroup END
 
+  " Highlight non-ASCII chars
+  augroup HighlightNonAscii
+    autocmd BufRead * syntax match SpellBad "[^\x00-\x7F]" containedin=all
+  augroup END
 
 " #### THE END ####

@@ -77,6 +77,7 @@ export PATH="$HOME/dotfiles/bin:$PATH"
 
 # zsh keybindings
 source "$HOME"/dotfiles/files/zsh/keybindings.zsh
+source "$HOME"/dotfiles/files/zsh/navi_keybindings.zsh
 
 # for gnupg
 GPG_TTY="$(tty)"
@@ -91,22 +92,24 @@ export DISABLE_AUTO_TITLE="true"
 unsetopt AUTO_CD
 # don't use `less` pager for some commands, e.g. git
 unset LESS
+
+# History settings
 # save commands to history on type, not at shell exit
 setopt INC_APPEND_HISTORY
+# append command to history file immediately after execution
+setopt INC_APPEND_HISTORY_TIME
 # share history across zsh sessions
 setopt SHARE_HISTORY
 # ignore all duplicate entries in the zsh history
 setopt HIST_IGNORE_ALL_DUPS
-# do not save duplicated command
+# do not save duplicated commands
 setopt HIST_SAVE_NO_DUPS
-# removes blank lines from history
+# remove unnecessary whitespace
 setopt HIST_REDUCE_BLANKS
 # don't save commands starting with a space in history
 setopt HIST_IGNORE_SPACE
-# append command to history file immediately after execution
-setopt INC_APPEND_HISTORY_TIME
+# record command starttime
 setopt EXTENDED_HISTORY
-
 # don't write these commands to the history
 # TODO test this, <c-r> or history doesn't work but cat ~/.zsh_history works
 export HISTORY_IGNORE="(history|ls|cd|cd ..|pwd|clear|exit|cd|v)"
@@ -141,6 +144,8 @@ bpython() {
   fi
 }
 alias py='command -v bpython &> /dev/null && eval $(command -v bpython) || python'
+# it's annoying to have __pycache__ files laying around.
+export PYTHONDONTWRITEBYTECODE=1
 
 # https://github.com/jesseduffield/lazygit
 export LG_CONFIG_FILE="$XDG_CONFIG_HOME/lazygit/config.yml"
@@ -168,10 +173,11 @@ export PYTHONSTARTUP=$HOME/.pythonstartup
 
 # fzf (https://github.com/junegunn/fzf)
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+export FZF_DEFAULT_OPTS="--no-separator"
 # use 'fd' (https://github.com/sharkdp/fd) in fzf to ignore git files.
 # (Source: https://github.com/junegunn/dotfiles/blob/ba5013726515e5185a2840b4b133991fe37b8827/bashrc#L369-L373)
 if command -v fd > /dev/null; then
-  __fd_custom="$(command -v fd) --strip-cwd-prefix --hidden --follow --exclude .git"
+  __fd_custom="$(command -v fd) --hidden --follow --exclude .git"
   export FZF_DEFAULT_COMMAND="$__fd_custom --type f"
   export FZF_ALT_C_COMMAND="$__fd_custom --type d"
   export FZF_CTRL_T_COMMAND="$__fd_custom --type f --type d"

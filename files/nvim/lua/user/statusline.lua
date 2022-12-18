@@ -8,18 +8,11 @@ local function filename()
   if fname == "" then
     return ""
   end
-  return table.concat({ " ", fname })
-end
-
-local function filemodified()
-  if vim.bo.modified then
-    return "[+]"
-  end
-  return ""
+  return fname
 end
 
 local function filetype()
-  return string.format(" %s ", vim.bo.filetype)
+  return vim.bo.filetype
 end
 
 local function lineinfo()
@@ -32,23 +25,43 @@ local function lineinfo()
   return " %l:%c "
 end
 
+local function dir()
+  local host_pwd = vim.loop.os_environ()["host_PWD"]
+  local host_user = vim.loop.os_environ()["host_USER"]
+  local dir = string.gsub(host_pwd, table.concat({ "/home/", host_user }), "~")
+  return vim.fn.fnamemodify(dir, ":t")
+end
+
 local function gitbranch()
   local head = vim.fn.FugitiveHead()
   if head == "" then
     return ""
   end
-  local symbol = vim.fn.nr2char(0x2387)
+  local symbol = vim.fn.nr2char(0x2387) -- ALTERNATIVE KEY SYMBOL
   return table.concat({ " ", symbol, " ", head, " " })
+end
+
+local function readonly()
+  if vim.bo.readonly then
+    return "[RO] "
+  end
+  return ""
 end
 
 local function statusline()
   return table.concat({
     "%#Statusline#",
+    " ",
+    dir(),
+    " ",
     gitbranch(),
     "%=",
+    "%#WarningMsg#",
+    readonly(),
+    "%#Statusline#",
     filename(),
-    filemodified(),
-    "%=%#StatusLineExtra#",
+    "%=",
+    "%#StatusLineExtra#",
     filetype(),
     lineinfo(),
   })

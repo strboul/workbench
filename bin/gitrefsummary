@@ -40,7 +40,7 @@ main() {
   elif [ -z "$FROM_REF" ] || [ -z "$TO_REF" ]; then
     utils__err_exit "if you pass \"from\", pass also \"to\" (and vice versa)"
   fi
-  utils__log__success "comparing refs from: \"$FROM_REF\" to: \"$TO_REF\""
+  utils__log__success "comparing refs from \"$FROM_REF\" to \"$TO_REF\"."
   echo
   log_output="$(get_git_log)"
   pretty_print "$log_output" | column -t -s "|"

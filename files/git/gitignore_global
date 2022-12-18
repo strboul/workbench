@@ -9,5 +9,5 @@
 .DS_Store
 .env
 .envrc
-.pub
+.venv
 .direnv

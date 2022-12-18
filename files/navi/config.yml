@@ -1,0 +1,16 @@
+# https://github.com/denisidoro/navi/blob/master/docs/config_file_example.yaml
+#
+style:
+  tag:
+    color: cyan  # text color. possible values: https://bit.ly/3gloNNI
+    width_percentage: 12  # column width relative to the terminal window
+  comment:
+    color: blue
+    width_percentage: 12
+  snippet:
+    color: white
+    width_percentage: 76
+# width_percentage sums up to 100.
+
+cheats:
+  path: ~/.config/navi/my/cheats/

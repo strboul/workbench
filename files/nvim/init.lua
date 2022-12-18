@@ -1,27 +1,14 @@
---[[
-General lua notes:
+require("user.utils")
+require("user.options")
+require("user.mappings")
+require("user.tabline")
+require("user.winbar")
+require("user.statusline")
+require("user.quickfix")
 
-- Use `table.concat` instead of `..` for string concatenation.
--
-
---]]
-
--- disable netrw
-vim.api.nvim_set_var("loaded_netrw", 1)
-vim.api.nvim_set_var("loaded_netrwPlugin", 1)
-
--- TODO: move them to after/ folder?
-require("utils_nvim")
-require("options_nvim")
-
-require("packer_nvim")
-require("telescope_nvim")
-require("indent_blankline_nvim")
-require("comment_nvim")
-
-require("mappings_nvim")
-require("statusline_nvim")
-require("tabline_nvim")
-require("winbar_nvim")
-
--- XXX temp code below
+require("user.plugin.packer")
+require("user.plugin.telescope")
+require("user.plugin.command_center")
+require("user.plugin.nvim_tree")
+require("user.plugin.indent_blankline")
+require("user.plugin.fugitive")

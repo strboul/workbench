@@ -1,0 +1,43 @@
+#!/usr/bin/env python
+
+# GPG list public keys from keyring in a specific format.
+#
+
+import subprocess
+
+
+def get_cmd_gpg_list_keys():
+    cmd = ["gpg", "--list-keys"]
+    process = subprocess.Popen(cmd, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+    stdout, stderr = process.communicate()
+    exit_code = process.wait()
+    out = (exit_code, stdout, stderr)
+    return out
+
+
+def extract_data(stdout):
+    lines = stdout.decode().split("\n")
+    data = []
+    for i, line in enumerate(lines):
+        if line.startswith("pub"):
+            fingerprint = lines[i + 1].strip()
+            # let's take the first uid, ignore the rest.
+            uid = " ".join(lines[i + 2].split(" ")[1:]).strip()
+            data.append([fingerprint, uid])
+    return data
+
+
+def print_data(data):
+    for d in data:
+        out = " | ".join(d)
+        print(out)
+
+
+def main():
+    _, stdout, _ = get_cmd_gpg_list_keys()
+    data = extract_data(stdout)
+    print_data(data)
+
+
+if __name__ == "__main__":
+    main()

@@ -1,5 +1,5 @@
 -- show tabline if there're more than one tabs
-vim.o.showtabline = 1
+vim.opt.showtabline = 1
 
 -- TODO: optimize this algo
 
@@ -44,7 +44,7 @@ local function tabline(options)
       text = table.concat({ text, vim.fn.fnamemodify(bufname, ":t") })
       -- modify indicator
       if bufmodified == 1 then
-        text = table.concat({ text, "%#WarningMsg#", " + ", "%#TabLineFill#" })
+        text = table.concat({ text, "%#WarningMsg#", "[+]", "%#TabLineFill#" })
       end
       -- padding right
       if not isactivetab then

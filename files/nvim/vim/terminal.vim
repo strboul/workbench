@@ -10,7 +10,6 @@ autocmd TermOpen *
   \ setlocal scrolloff=0
 
 " disable cursorline in terminal
-" TODO remove unnecessary autocmd groups, experiment it
 autocmd BufWinEnter,WinEnter,TermOpen term://* set nocursorline
 autocmd BufLeave,TermLeave term://* set cursorline!
 

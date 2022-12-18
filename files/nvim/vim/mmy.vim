@@ -121,7 +121,7 @@
   function mmy#TODOFind()
     try
       " TODO add an alternative for non git repos
-      silent vimgrep /TODO\|FIXME\C/g `git ls-files`
+      silent vimgrep /TODO\|FIXME\|XXX\C/g `git ls-files`
     catch /^Vim\%((\a\+)\)\=:E480/ " catch error E480 - No match
       echohl WarningMsg | echo 'No TODOs found.' | echohl None
       return

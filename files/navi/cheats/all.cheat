@@ -1,0 +1,644 @@
+; Cheatsheet
+;
+; The syntax defined at:
+; https://github.com/denisidoro/navi/blob/master/docs/cheatsheet_syntax.md
+;
+; Rules:
+; - Create a new entry with the command name followed by the tags:
+;   `% name [tag1, tag2]`.
+;
+; - The variables are defined at the end of the entry. Use `-` hyphen to
+;   separate the variables, e.g. `my-var`.
+;
+; - Try to use synonymous words from commands on the description, e.g. if a
+;   command has the word 'delete', use 'remove' in the description. If neither
+;   exists, but the command removes something, use both in the description.
+;
+; - Don't add comma (,) or hyphen (-) to the names because the fuzzy finder
+;   doesn't work.
+
+; ----------------------------------------------------------------------------
+% git [git]
+
+# get author summary
+git shortlog -sne
+
+# Set local user name
+git config --local user.name "<name>"
+
+# Set local email
+git config --local user.email "<email>"
+
+# Squash merge branch.
+git merge --squash <uncheckout-branch>
+
+# Get remote origin.
+git remote -v
+
+# Set remote address
+git remote add <ssh_or_https>
+
+# Search a string in the git logs
+git log -p -G <string>
+
+# Search/grep a string in a file/folder with history
+git grep '<string>' "$(git rev-list --all -- <file-or-folder>)" -- <file-or-folder>
+
+# Amend and don't edit the commit message
+git commit --amend --no-edit
+
+# Change the SHA of the last commit
+git commit --allow-empty --amend --no-edit
+
+# Get a stash diff
+git stash show -p stash@{0}
+
+# List tags by creation date (descending)
+git tag --sort=-creatordate
+
+# Add a new module
+git submodule add <repository> <path>
+
+# Update submodule
+git submodule update --init
+
+# Update submodule without init
+git submodule update
+
+# Pull all submodules
+git submodule foreach git pull origin master
+
+# Update all submodules
+git submodule update --init --recursive
+
+$ name: git log --format='%an' | sort -u
+$ email: git log --format='%ae' | sort -u
+$ uncheckout-branch: git branch --list | awk '{ if ($1 != "*") { print $1 } }'
+$ file-or-folder: find * -type f -o -type d
+
+; ----------------------------------------------------------------------------
+% ssh [security]
+
+# authorise ssh pub key in a remote machine.
+ssh-copy-id -i <public-key> <user>@<hostname-or-ip>
+
+$ public-key: find ~/.ssh -type f -name '*.pub'
+
+; ----------------------------------------------------------------------------
+% gpg [security]
+
+# list public keys
+gpg --list-keys
+
+# generate key with the defaults
+gpg --gen-key
+
+# list public keys long format with fingerprints
+gpg --list-keys --keyid-format=long
+
+# search public keys by email in keyservers
+gpg --search-keys <email>
+
+# get fingerprint of a key by email
+gpg --fingerprint <email>
+
+# list signatures
+gpg --list-signatures <fingerprint>
+
+# list private keys
+gpg --list-secret-keys --keyid-format=LONG
+
+# import a public/private key from a file
+gpg --import <key-file>
+
+# export armor of a public key
+gpg --armor --export <fingerprint>
+
+# remove public key
+gpg --delete-key <fingerprint>
+
+# remove private key
+gpg --delete-secret-key <fingerprint>
+
+; multiple recipients with `--recipient ...`
+# Encrypt file
+gpg --encrypt --armor --recipient <email> --output <output_filename_gpg> <input_filename>
+
+# Decrypt file
+gpg --decrypt --output <output_filename> <input_filename_gpg>
+
+# Clearsign file
+gpg --clearsign <input_filename>
+
+# Verify a sign
+gpg --verify <filename>
+
+$ fingerprint: gpg-list-public-keys | fzf | awk '{ print $1 }'
+$ email: gpg-list-public-keys | fzf | perl -pe 's/^.*\<(.*)\>$/\1/g'
+
+; ----------------------------------------------------------------------------
+% openssl [security]
+
+# get certificate details
+openssl x509 -text -noout -in <crt-file>
+
+; ----------------------------------------------------------------------------
+% nmap [network]
+
+# find dhcp addresses
+nmap --script broadcast-dhcp-discover -e <interface>
+
+# get all valid IP addresses in network (255 netmask)
+sudo nmap -sP 192.168.1.0/24
+
+$ interface: ip -o a show | awk '{ if ($3 == "inet") { print $2; } }'
+
+; ----------------------------------------------------------------------------
+% ip [network]
+
+# get ip address
+ip route get 1.2.3.4 | awk '{ print $7 }'
+
+; ----------------------------------------------------------------------------
+% nmcli [network]
+
+# show general status
+nmcli general status
+
+# show device status
+nmcli dev status
+
+# list all known connections
+nmcli connection show
+
+# list wifi devices
+nmcli dev wifi list
+
+# create a new connection
+nmcli dev wifi con "<ssid>"
+
+# up a connection (ask password)
+nmcli con up --ask "<ssid>"
+
+# print password of the current wifi device
+nmcli dev wifi show-password
+
+# print password of a known network
+nmcli -show-secrets -get-values "802-11-wireless-security.psk" connection show "<known-ssid>"
+
+$ known-ssid: nmcli -g name connection
+
+; ----------------------------------------------------------------------------
+% iwctl [network]
+
+# list devices
+iwctl station list
+
+# list available networks on a device
+iwctl station wlan0 get-networks
+
+# connect to a network
+iwctl station wlan0 connect <ssid>
+
+; ----------------------------------------------------------------------------
+% tcpdump [network]
+
+# List connections
+tcpdump -l
+
+# Get route from an interface
+tcpdump -nn -i wlan0
+
+; ----------------------------------------------------------------------------
+% socat [network]
+
+; fork: handles connection in a child process, make the parent process attempt
+; to handle more connections.
+; reuseaddr: allows immediate restart of the server process.
+# listen at a port
+socat - TCP4-LISTEN:<port>,fork,reuseaddr
+
+# send a message to a port
+echo "hello" | socat TCP4:<address>:<port> -
+
+$ address: echo "192.168.1.1" --- --fzf-overrides '--no-select-1'
+$ port: echo "3333" --- --fzf-overrides '--no-select-1'
+
+; ----------------------------------------------------------------------------
+% qpdf [pdf]
+
+; warnings: scans with different resolutions can be problematic.
+# concatenate/merge pdf files
+qpdf --pages input-*.pdf -- output.pdf
+
+; ----------------------------------------------------------------------------
+% convert [imagemagick, jpg, pdf]
+
+# Convert jpg to pdf
+convert picture-*.jpg out.pdf
+
+# Resize an image by percent (source and destination)
+convert -resize 50% <image-files> dest.png
+
+# Resize an image by size (source and destination)
+convert -resize 1024X768 <image-files> dest.jpg
+
+$ image-files: find * -type f -regex '.*\.\(png\|jpg\|jpeg\)'
+
+; ----------------------------------------------------------------------------
+% lsof [file]
+
+# List a specific port
+lsof -i:<port>
+
+; ----------------------------------------------------------------------------
+% du [disk]
+
+# Disk usage of current directory/folder
+du -sh .
+
+# Disk usage of files and folders of current directory/folder
+du -sh *
+
+; ----------------------------------------------------------------------------
+% df [disk]
+
+# Display free disk space
+df -h
+
+; ----------------------------------------------------------------------------
+% lsblk [disk]
+
+# list block devices with filesystems
+lsblk --fs
+
+; ----------------------------------------------------------------------------
+% killall [process]
+
+; FIXME: clarify it.
+# kill all processes of that program
+killall -9 <program>
+
+; ----------------------------------------------------------------------------
+% auditctl [process]
+
+# Check which process is modifying a certain directory or file.
+sudo auditctl -w <directory> -p war
+
+; ----------------------------------------------------------------------------
+% getconf [linux]
+
+# 32 bits or 64 bits?
+getconf LONG_BIT
+
+; ----------------------------------------------------------------------------
+% ln, unlink [linux]
+
+# Create symlink
+ln -s <source> <destination>
+
+# Update symlink
+ln -sfn <source> <destination>
+
+# Remove symlink
+unlink <file>
+
+; ----------------------------------------------------------------------------
+% ss [network, socket, process]
+
+# show ipv4 connections (-r: resolve, -p: show process)
+ss -4 -r -p
+
+# list summary of all socket connections
+ss -s
+
+# filter connections by port number
+ss -at -p '( dport = :22 or sport = :22 )'
+
+; ----------------------------------------------------------------------------
+% dig [network, dns]
+
+# mx: 'Mail eXchange' records
+dig +short mx example.com
+
+# soa: 'Start Of Authority' records
+dig +short soa example.com
+
+; ----------------------------------------------------------------------------
+% ip [network]
+
+# create dummy virtual ethernet interface
+ip link add xennet0 type dummy; ip a change dev xennet0 93.184.216.34
+
+# remove dummy virtual ethernet interface
+ip link delete xennet0 type dummy
+
+; ----------------------------------------------------------------------------
+% chattr [file]
+
+# change file attribute (+i: make immutable)
+chattr +i <file>
+
+; ----------------------------------------------------------------------------
+% scanimage [printer, scanner]
+
+# scan an image
+scanimage --progress --resolution=150 --format=pdf --output-file ~/scans/"$(date +'%Y-%m-%dT%H:%M:%S')".pdf
+
+# list devices
+scanimage -L
+
+; ----------------------------------------------------------------------------
+% lpstat [printer, cups]
+
+# get printer info
+lpstat -a
+
+# get job and all statuses
+lpstat -t
+
+; ----------------------------------------------------------------------------
+% lp [printer, cups]
+
+# print the echoed string
+echo 'IPP everywhere' | lp
+
+; ----------------------------------------------------------------------------
+% nc [network, netcat]
+
+# check if a port is open
+nc -z -v 127.0.0.1 <port>
+
+; ----------------------------------------------------------------------------
+% telnet [network]
+
+# ping a port
+telnet 127.0.0.1 <port>
+
+; ----------------------------------------------------------------------------
+% journalctl [systemd]
+
+# Get the logs of a systemd unit.
+journalctl -u <service-file>
+
+$ service-file: systemctl list-unit-files | grep enabled | awk '{ print $1 }'
+
+; ----------------------------------------------------------------------------
+% firewalld [systemd]
+
+# Open tcp port (temporarily)
+sudo firewall-cmd --add-port=8000/tcp
+
+# Open tcp port (permanently)
+sudo firewall-cmd --permanent --add-port=8000/tcp
+
+# Close tcp port (permanently)
+sudo firewall-cmd --permanently --remove-port=8000/tcp
+
+# List open ports
+sudo firewall-cmd --list-ports
+
+# List active zones
+sudo firewall-cmd --get-active-zones
+
+# List running services
+sudo firewall-cmd --list-services
+
+# List everything added or enabled
+sudo firewall-cmd --list-all
+
+# Reload firewalld
+sudo firewall-cmd --reload
+
+; ----------------------------------------------------------------------------
+% pwgen
+
+# Create a random password with length of 16 (with capital letter and numerals)
+pwgen -nc 16 -1
+
+; ----------------------------------------------------------------------------
+% find
+
+# Find files ending with an extension.
+find * -type f -name '*.<extension>'
+
+; ----------------------------------------------------------------------------
+% systemctl [systemd]
+
+# Get status of a service
+systemctl status <service>
+
+# List running user services
+systemctl --user list-units --state=running
+
+# List user timers
+systemctl --user list-timers
+
+# Stop a user timer
+systemctl --user <user-timer-unit>
+
+$ service: systemctl list-units --type=service --no-pager --quiet | awk '{ print $1 }'
+$ user-timer-unit: systemctl --user list-timers --no-pager --quiet | perl -pe 's/^.*(\s+)(.*)(?<=\.timer).*$/\2/g'
+
+; ----------------------------------------------------------------------------
+% docker [docker]
+
+# Tag an image
+docker tag <image-id> <new-tag>
+
+# Delete an image
+docker rmi <image_id>
+
+# Clean none/dangling images
+docker rmi $(docker images --filter "dangling=true" -q --no-trunc)
+
+# List the networks
+docker network ls
+
+# List the running containers
+docker ps
+
+# Delete all running and stopped containers
+docker rm -f $(docker ps -aq)
+
+# Inspect a container or image
+docker inspect <container-or-image-sha>
+
+; ----------------------------------------------------------------------------
+% docker-compose [docker]
+
+# Start containers detached, force recreated, renewed anonymous volumes
+docker compose up --detach --force-recreate --renew-anon-volumes
+
+# Stop and remove containers, networks
+docker compose down
+
+; ----------------------------------------------------------------------------
+% fdisk [disk]
+
+# list disk partitions
+sudo fdisk -l
+
+; ----------------------------------------------------------------------------
+% pacman [arch]
+
+# list cache packages
+ls -l /var/cache/pacman/pkg | grep '<query>'
+
+# list all foreign packages (AUR or manually installed)
+pacman -Qm
+
+# search packages by regex query
+pacman -Qs <query>
+
+# get package information
+pacman -Qi <installed-packages>
+
+# get files provided by package
+pacman -Ql <installed-packages>
+
+# query if file is owned by a package
+pacman -Qo <file>
+
+# install from file (e.g. cache)
+sudo pacman -U <cache-file>
+
+# completely (with dependencies) remove a package
+sudo pacman -Rcns <installed-packages>
+
+$ cache-file: find /var/cache/pacman/pkg -type f -name '*.zst'
+$ installed-packages: pacman -Qq
+
+; ----------------------------------------------------------------------------
+% dmesg [linux]
+
+# get usb device names
+sudo dmesg -T | grep 'USB'
+
+; ----------------------------------------------------------------------------
+% id [linux]
+
+# get user name
+id -un
+
+; ----------------------------------------------------------------------------
+% virsh [virt, libvirt]
+
+# list of VMs
+virsh list --all
+
+# start VM
+virsh start <vm_name>
+
+# reboot VM
+virsh reboot <vm_name>
+
+# shutdown VM
+virsh shutdown <vm_name>
+
+# force stop
+virsh destroy <vm_name>
+
+# remove vm
+virsh undefine <vm_name>
+
+# console access of a running VM
+virsh console <vm_name>
+
+# list networks
+virsh net-list
+
+# start network
+virsh net-start <network_name>
+
+# show dhcp assigned IP addresses
+virsh net-dhcp-leases <network_name>
+
+# clone VM and create storage image
+virt-clone -o <vm_name> -n <new_vm_name> -f /var/lib/libvirt/images/<new_vm>.qcow2
+
+# delete/remove the attached storage file
+rm -f "$(virsh dumpxml --domain <vm_name> | grep -oP "source file='\K[^']*")"
+
+; ----------------------------------------------------------------------------
+% shred [linux]
+
+# safe delete/remove a file by overwriting it multiple times
+shred -u <file>
+
+; ----------------------------------------------------------------------------
+% usermod, gpasswd [linux]
+
+# add user to group
+usermod -aG <group> <user>
+
+# remove user from group
+sudo gpasswd -d <group> <user>
+
+$ user: getent passwd | cut -d: -f1
+$ group: getent group | cut -d: -f1
+
+; ----------------------------------------------------------------------------
+% curl [network]
+
+# send a get http request
+curl <url>
+
+# send a http request with a custom header and json body
+curl -X <method> <url> -H '<headername>: <headervalue>' -d '<json>'
+
+# send a get http request and follow redirects
+curl -L <url>
+
+$ method: echo -e 'GET\nPOST\nPUT\nDELETE\nPATCH'
+
+; ----------------------------------------------------------------------------
+% strace [linux]
+
+# Trace a process and write to a file.
+sudo strace -f -p <pid> -e trace=write -o strace_pid_<pid>.capture
+
+$ pid: ps a | tail -n +2 | fzf | awk '{ print $1 }'
+
+; ----------------------------------------------------------------------------
+% bash [linux]
+
+# For loop over the files
+for file in ls *; do echo "$file"; done
+
+; ----------------------------------------------------------------------------
+% psql [database]
+
+# Send queries from the command line
+psql postgresql://postgres:secret@127.0.0.1:5432/db -c '''
+SELECT * FROM alias;
+'''
+
+; ----------------------------------------------------------------------------
+% wget [linux]
+
+# Download and save a file with output
+wget <link> -O <output_file>
+
+; ----------------------------------------------------------------------------
+% fwupdmgr [linux]
+
+# Download new metadata from remote server
+fwupdmgr refresh
+
+# Update devices to the latest firmware version
+fwupdmgr update
+
+; ----------------------------------------------------------------------------
+% rg [ripgrep]
+
+# Search pattern but ignore files
+rg <search> -g '!*<pattern>'
+
+; ----------------------------------------------------------------------------
+% test [test]
+
+# multiline
+echo one
+echo two
+echo three

@@ -1,0 +1,41 @@
+#!/usr/bin/env zsh
+
+# This file is copied and modified from here.
+# https://github.com/denisidoro/navi/blob/9396fd539c596f60714ca6dc9b789e18f36c2f22/shell/navi.plugin.zsh
+#
+# (Update with the upstream if needed.)
+#
+
+_navi_call() {
+   local result="$(FZF_DEFAULT_OPTS='--height 50% --reverse --cycle' navi "$@" </dev/tty)"
+   printf "%s" "$result"
+}
+
+_navi_widget() {
+   local -r input="${LBUFFER}"
+   local -r last_command="$(echo "${input}" | navi fn widget::last_command)"
+   local replacement="$last_command"
+
+   if [ -z "$last_command" ]; then
+      replacement="$(_navi_call --print)"
+   elif [ "$LASTWIDGET" = "_navi_widget" ] && [ "$input" = "$previous_output" ]; then
+      replacement="$(_navi_call --print --query "$last_command")"
+   else
+      replacement="$(_navi_call --print --best-match --query "$last_command")"
+   fi
+
+   if [ -n "$replacement" ]; then
+      local -r find="${last_command}_NAVIEND"
+      previous_output="${input}_NAVIEND"
+      previous_output="${previous_output//$find/$replacement}"
+   else
+      previous_output="$input"
+   fi
+
+   zle kill-whole-line
+   LBUFFER="${previous_output}"
+   zle redisplay
+}
+
+zle -N _navi_widget
+bindkey '^n' _navi_widget

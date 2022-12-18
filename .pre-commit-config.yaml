@@ -64,7 +64,8 @@ repos:
         name: "[sh] shellcheck"
         exclude: |
             (?x)(
-                ^files\/p10k\/p10k.zsh
+                ^files\/p10k\/p10k.zsh|
+                ^files\/zsh\/navi_keybindings.zsh
             )$
 
 # shell: shfmt - requires golang to build
@@ -75,7 +76,8 @@ repos:
         name: "[sh] shfmt"
         exclude: |
             (?x)(
-                ^files\/p10k\/p10k.zsh
+                ^files\/p10k\/p10k.zsh|
+                ^files\/zsh\/navi_keybindings.zsh
             )$
         # -w Write result to file instead of stdout.
         # -i indent two spaces.

@@ -9,9 +9,9 @@ git config --local user.name "<name>"
 git config --local user.email "<email>"
 ```
 
-## GnuPG
+## PGP/GPG
 
-Sign your commits with your GPG key:
+Sign commits with PGP/GPG key:
 
 ```sh
 git config --local user.signingkey <GPG-SIGN-KEY>

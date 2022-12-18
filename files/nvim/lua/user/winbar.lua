@@ -3,12 +3,14 @@
 -- - for vsplit, hide the winbar for the bottom if the split files are the same
 --   file. (might be difficult)
 
+local user_utils = require("user.utils")
+
 -- Exclude filetypes where you don't want to have the winbar. It has to be
 -- excluded at the function level because autocmd pattern doesn't support
 -- inverting patterns yet (as of nvim 0.9.0).
 local function _is_exclude_filetype()
   local filetype = vim.bo.filetype
-  exclude_list = Utils.set({ "TelescopePrompt", "NvimTree" })
+  exclude_list = user_utils.set({ "TelescopePrompt", "NvimTree" })
   if exclude_list[filetype] then
     return true
   end
@@ -25,9 +27,9 @@ local function _winbar(status)
     return nil
   end
   if status == "active" then
-    vim.opt_local.winbar = table.concat({ "%#TabLineSel#", bufname, "%m" })
+    vim.opt_local.winbar = table.concat({ "%#TabLineSel#", bufname, "%#WarningMsg#", "%m", "%#TabLineSel#" })
   elseif status == "inactive" then
-    vim.opt_local.winbar = table.concat({ "%#TabLine#", bufname, "%m" })
+    vim.opt_local.winbar = table.concat({ "%#TabLine#", bufname, "%#WarningMsg#", "%m", "%#TabLineSel#" })
   end
 end
 
@@ -40,20 +42,22 @@ Winbar = {
   end,
 }
 
-local winbar_group = vim.api.nvim_create_augroup("winbar", { clear = true })
+local augroup_winbar = vim.api.nvim_create_augroup("Winbar", { clear = true })
 
 vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter" }, {
-  group = winbar_group,
+  group = augroup_winbar,
   pattern = "*",
   callback = function()
     Winbar.active()
   end,
+  desc = "winbar on active buffer",
 })
 
 vim.api.nvim_create_autocmd({ "WinLeave", "BufLeave" }, {
-  group = winbar_group,
+  group = augroup_winbar,
   pattern = "*",
   callback = function()
     Winbar.inactive()
   end,
+  desc = "winbar on inactive buffer",
 })

@@ -1,3 +1,9 @@
+# zsh keybindings
+#
+# Get the bindkey of a combination.
+#   bindkey '^r'
+#
+
 # list files via ll (alias defined in zshrc)
 __zle_widget__list_files() {
   BUFFER="ll"
