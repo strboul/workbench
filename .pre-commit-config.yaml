@@ -18,16 +18,8 @@ repos:
     -   id: check-json
         exclude: |
             (?x)(
-                ^files\/nvim\/plugins\/coc\/coc-settings.json|
                 ^files\/nvim\/coc-settings.json
             )$
-
-# vim: vint
--   repo: https://github.com/Vimjas/vint
-    rev: 471e70bfff02edab460bc238c2e6d8aa46197d60 # XXX latest commit on master of the dead project. don't change it.
-    hooks:
-      -   id: vint
-          name: "[vim] vint"
 
 # nvim: lua
 -   repo: https://github.com/JohnnyMorganz/StyLua
