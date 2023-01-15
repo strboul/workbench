@@ -16,7 +16,11 @@ repos:
     -   id: check-executables-have-shebangs
     -   id: check-shebang-scripts-are-executable
     -   id: check-json
-        exclude: files\/nvim\/plugins\/coc\/coc-settings.json
+        exclude: |
+            (?x)(
+                ^files\/nvim\/plugins\/coc\/coc-settings.json|
+                ^files\/nvim\/coc-settings.json
+            )$
 
 # vim: vint
 -   repo: https://github.com/Vimjas/vint

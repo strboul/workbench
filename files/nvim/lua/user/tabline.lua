@@ -5,7 +5,7 @@ vim.opt.showtabline = 1
 
 -- Some modifications on the original: https://github.com/mkitt/tabline.vim
 --
-local function tabline(options)
+local function tabline()
   local text = ""
   for index = 1, vim.fn.tabpagenr("$") do
     local winnr = vim.fn.tabpagewinnr(index)

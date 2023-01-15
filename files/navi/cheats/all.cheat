@@ -29,6 +29,9 @@ git config --local user.name "<name>"
 # Set local email
 git config --local user.email "<email>"
 
+# Remove remote-tracking branches.
+git fetch --prune
+
 # Squash merge branch.
 git merge --squash <uncheckout-branch>
 
@@ -49,6 +52,12 @@ git commit --amend --no-edit
 
 # Change the SHA of the last commit
 git commit --allow-empty --amend --no-edit
+
+# Create a fixup commit
+git commit --fixup <commit_sha_current_branch>
+
+# By skipping commit hooks
+git commit --no-verify
 
 # Get a stash diff
 git stash show -p stash@{0}
@@ -75,6 +84,7 @@ $ name: git log --format='%an' | sort -u
 $ email: git log --format='%ae' | sort -u
 $ uncheckout-branch: git branch --list | awk '{ if ($1 != "*") { print $1 } }'
 $ file-or-folder: find * -type f -o -type d
+$ commit_sha_current_branch: git log --format="%C(auto) %H %s" --no-merges master.. | fzf | awk '{ print $1 }'
 
 ; ----------------------------------------------------------------------------
 % ssh [security]
@@ -94,13 +104,16 @@ gpg --list-keys
 gpg --gen-key
 
 # list public keys long format with fingerprints
-gpg --list-keys --keyid-format=long
+gpg --list-keys --keyid-format=LONG
 
 # search public keys by email in keyservers
 gpg --search-keys <email>
 
-# get fingerprint of a key by email
+# get fingerprint of key by email
 gpg --fingerprint <email>
+
+# get fingerprint of key file (without importing it into the keyring first)
+gpg --show-keys --with-fingerprint <filename>
 
 # list signatures
 gpg --list-signatures <fingerprint>
@@ -273,6 +286,12 @@ df -h
 lsblk --fs
 
 ; ----------------------------------------------------------------------------
+% blkid [disk]
+
+# locate/print block device attributes
+blkid
+
+; ----------------------------------------------------------------------------
 % killall [process]
 
 ; FIXME: clarify it.
@@ -295,13 +314,19 @@ getconf LONG_BIT
 % ln, unlink [linux]
 
 # Create symlink
-ln -s <source> <destination>
+ln -s <destination> <source>
 
 # Update symlink
-ln -sfn <source> <destination>
+ln -sfn <destination> <source>
 
 # Remove symlink
 unlink <file>
+
+; ----------------------------------------------------------------------------
+% free [linux]
+
+# Display memory and swap info in the system
+free -m
 
 ; ----------------------------------------------------------------------------
 % ss [network, socket, process]
@@ -421,6 +446,9 @@ pwgen -nc 16 -1
 
 # Find files ending with an extension.
 find * -type f -name '*.<extension>'
+
+# Find folder/directory by name.
+find * -type d -name '<name>'
 
 ; ----------------------------------------------------------------------------
 % systemctl [systemd]
@@ -569,6 +597,12 @@ shred -u <file>
 ; ----------------------------------------------------------------------------
 % usermod, gpasswd [linux]
 
+# list user groups.
+groups
+
+# list all groups.
+getent group | cut -d: -f1
+
 # add user to group
 usermod -aG <group> <user>
 
@@ -606,6 +640,10 @@ $ pid: ps a | tail -n +2 | fzf | awk '{ print $1 }'
 # For loop over the files
 for file in ls *; do echo "$file"; done
 
+; TODO: more here: https://linuxize.com/post/how-to-compare-strings-in-bash/
+# Check if two strings are equal
+[[ "str1" == "str2" ]] && echo "equal" || echo "not equal"
+
 ; ----------------------------------------------------------------------------
 % psql [database]
 
@@ -630,10 +668,34 @@ fwupdmgr refresh
 fwupdmgr update
 
 ; ----------------------------------------------------------------------------
+% btrfs [linux]
+
+# List subvolumes
+btrfs subvolume list /
+
+# Create snapshot (-r: readonly)
+btrfs subvolume snapshot -r /home /.snapshots/home-"$(date '+%FT%T')"
+
+# Delete snapshot
+btrfs subvolume delete @snapshots/<snapshot>
+
+; # Restore snapshot
+; TODO
+
+; ----------------------------------------------------------------------------
 % rg [ripgrep]
 
 # Search pattern but ignore files
 rg <search> -g '!*<pattern>'
+
+; ----------------------------------------------------------------------------
+% pyenv [python]
+
+# List pyenv versions
+pyenv versions
+
+# Install python version
+pyenv install <version>
 
 ; ----------------------------------------------------------------------------
 % test [test]

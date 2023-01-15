@@ -14,3 +14,10 @@ update:
 quitOnTopLevelReturn: true
 
 disableStartupPopups: true
+
+keybinding:
+  files:
+    # Disable `c` key to get to habit of using `C` (commitChangesWithEditor)
+    # instead because lazygit's commit prompt is pretty basic & it doesn't
+    # trigger pre-commit before the prompt appears.
+    commitChanges: ''

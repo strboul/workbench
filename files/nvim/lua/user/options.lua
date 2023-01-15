@@ -6,11 +6,15 @@ local g = vim.g
 local cmd = vim.cmd
 
 -- [[ general ]]
--- leader key space
+-- leader key.
 g.mapleader = " "
 g.maplocalleader = " "
--- enable mouse
+-- enable mouse.
 o.mouse = "a"
+-- no backup, swap, etc. VCS everywhere.
+o.swapfile = false
+o.backup = false
+o.writebackup = false
 -- right click on mouse extends selection instead of showing popup-menu.
 o.mousemodel = "extend"
 -- 24-bit RGB, use 'gui' instead of 'cterm' attributes
@@ -23,6 +27,13 @@ o.shortmess:append("W")
 o.virtualedit = "block"
 -- darken after the 80th char
 cmd([[ let &colorcolumn=join(range(81,500),",") ]])
+-- timeout when a special key (ESC, leader, etc.) pressed.
+o.timeout = true
+o.timeoutlen = 500
+o.ttimeout = true
+o.ttimeoutlen = 10
+-- default (4000 ms) is too slow but also a too low value can be annoying.
+o.updatetime = 400
 
 -- [[ windows ]]
 -- show the cursor position in the statusline.

@@ -40,7 +40,7 @@ function custom_actions.my_smart_select(prompt_bufnr)
       actions.send_selected_to_qflist(prompt_bufnr)
       actions.open_qflist()
       -- jump to the first qf match.
-      vim.cmd([[ :cc ]])
+      vim.cmd.cc()
     else
       actions.file_edit(prompt_bufnr)
     end
@@ -53,31 +53,30 @@ function custom_commands.grep_command(query)
   builtin.grep_string({ search = query })
 end
 
-function custom_commands.any_jump_visual()
+function custom_commands.any_jump_visual_mode()
   -- FIXME
   print(vim.inspect(require("user.utils").get_visual_selection()))
   -- builtin.grep_string({ search = query })
 end
 
-function custom_commands.any_jump_normal()
+function custom_commands.any_jump_normal_mode()
   local word_under_cursor = vim.fn.expand("<cword>")
   builtin.grep_string({ search = word_under_cursor })
 end
 
 -- Keybindings
-vim.keymap.set("n", "<C-p>", builtin.find_files, { desc = "ctrl+p pfiles" })
-vim.keymap.set("n", "<C-t>", builtin.builtin, { desc = "ctrl+t Telescope" })
-vim.keymap.set("n", "<leader>b", builtin.buffers, { desc = "leader buffers" })
+vim.keymap.set("n", "<leader>f", builtin.find_files, { desc = "Files" })
+vim.keymap.set("n", "<leader>b", builtin.buffers, { desc = "Buffers" })
 
-vim.keymap.set("n", "<leader>j", custom_commands.any_jump_normal, { desc = "any jump (normal mode)" })
-vim.keymap.set("v", "<leader>j", custom_commands.any_jump_visual, { desc = "any jump (visual mode)" })
+vim.keymap.set("n", "<leader>j", custom_commands.any_jump_normal_mode, { desc = "Jump search" })
+vim.keymap.set("v", "<leader>j", custom_commands.any_jump_visual_mode, { desc = "Jump search" })
 
--- Custom Commands
+-- Custom commands.
 vim.api.nvim_create_user_command("Grep", function(opts)
   custom_commands.grep_command(opts.args)
 end, { nargs = 1 })
 
--- Package setup
+-- Package setup.
 telescope.setup({
   pickers = {
     find_files = {

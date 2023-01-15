@@ -6,7 +6,7 @@ local custom_commands = {}
 vim.api.nvim_set_var("loaded_netrw", 1)
 vim.api.nvim_set_var("loaded_netrwPlugin", 1)
 
-function custom_commands.open_file()
+function custom_commands.toggle_file()
   require("nvim-tree.actions.tree-modifiers.collapse-all").fn()
   local toggle = ":NvimTreeFindFileToggle"
   vim.cmd(toggle)
@@ -19,8 +19,8 @@ end
 vim.keymap.set(
   "n",
   "<leader>n",
-  custom_commands.open_file,
-  { desc = "leader+n nvim-tree open", noremap = true, silent = true }
+  custom_commands.toggle_file,
+  { desc = "Nvim-tree toggle", noremap = true, silent = true }
 )
 
 nvim_tree.setup({
@@ -28,6 +28,7 @@ nvim_tree.setup({
     adaptive_size = true,
     side = "right",
     -- See full list in `:h nvim-tree-default-mappings`.
+    -- TODO: possible to hook these mappings to which-key so get a nice menu?
     mappings = {
       custom_only = false,
       list = {
@@ -46,9 +47,7 @@ nvim_tree.setup({
     open_file = {
       quit_on_open = true,
       window_picker = {
-        enable = true,
-        -- first use numbers then characters.
-        chars = "1234567890ABCDEFGH",
+        enable = false,
       },
     },
   },

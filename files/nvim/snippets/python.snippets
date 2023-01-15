@@ -78,3 +78,7 @@ stdout, stderr = process.communicate()
 exit_code = process.wait()
 out = (exit_code, stdout, stderr)
 endsnippet
+
+snippet sqlalchemy_compile "compile a statement with the variables"
+print(statement.compile(compile_kwargs={"literal_binds": True}))
+endsnippet

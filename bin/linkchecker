@@ -22,7 +22,9 @@ URL=$1
 DIRNAME="$(printf "linkchecker_%s" "$(utils__timestamp | sed 's/ /_/g; s/:/_/g')")"
 TMPDIRPAT="/tmp/$DIRNAME/"
 
-mkdir -p "${TMPDIRPAT}"
+mkdir -p "$TMPDIRPAT"
+
+utils__log__info "created temp dir \"$TMPDIRPAT\""
 
 podman run --rm -it \
   -u "$(id -u)":"$(id -g)" \

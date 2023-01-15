@@ -1,42 +1,44 @@
 #!/usr/bin/env bash
 
-# Clean up everything in Docker
+# Clean up everything in containers
 #
 # Usage:
-#  docker-nuke
+#  container-nuke <docker|podman>
 #
-# It's also possible to remove any other container runtime (e.g., podman) as
-# the commands are identical.
-#  docker-nuke <command>
-#
+
+set -e
 
 source "$HOME"/dotfiles/bin/__utils/utils.sh
 
 COMMAND="$1"
 
-# set default.
-if [ -z "$COMMAND" ]; then
-  COMMAND="docker"
-fi
+set_command_param() {
+  case "$COMMAND" in
+    docker) COMMAND="docker" ;;
+    podman) COMMAND="podman" ;;
+    *) utils__err_exit "invalid option." ;;
+  esac
+}
 
 remove_containers() {
   utils__log__info "force removing containers"
   # shellcheck disable=SC2046 # intended splitting
-  "$COMMAND" rm -f $("$COMMAND" ps -qa)
+  "$COMMAND" rm -f $("$COMMAND" ps -qa) || true
 }
 
 remove_images() {
   utils__log__info "force removing images"
   # shellcheck disable=SC2046 # intended splitting
-  "$COMMAND" rmi -f $("$COMMAND" images -q)
+  "$COMMAND" rmi -f $("$COMMAND" images -q) || true
 }
 
 remove_volumes() {
   utils__log__info "force removing volumes"
-  "$COMMAND" volume prune -f
+  "$COMMAND" volume prune -f || true
 }
 
 main() {
+  set_command_param
   remove_containers
   remove_images
   remove_volumes

@@ -209,7 +209,7 @@ call plug#begin(stdpath('config') . '/vim-plug')
 " ale (syntax checker)
 " it's still useful for some checks, e.g. shellcheck for bash/zsh TODO is it?
 " Command :ALEInfo to print the runtime information for the current buffer
-  Plug 'https://github.com/dense-analysis/ale'
+  " Plug 'https://github.com/dense-analysis/ale'
   " === python ===
   let g:ale_python_flake8_options=''
   let g:ale_python_pylint_executable=''

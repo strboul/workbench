@@ -12,9 +12,8 @@
   "diagnostic.infoSign": "🛈",
 
   // --- python
-  "python.pythonPath": "~/.pyenv/shims/python",
   "python.linting.mypyEnabled": true,
-  "pyright.disableDiagnostics": true,
+  // "pyright.disableDiagnostics": true,
 
   // prettier
   "coc.preferences.formatOnSaveFiletypes": [
@@ -27,22 +26,6 @@
     "typescriptreact",
     "vue"
   ],
-
-  // clangd
-  "clangd.path": "~/.config/coc/extensions/coc-clangd-data/install/13.0.0/clangd_13.0.0/bin/clangd",
-
-  "languageserver": {
-    "terraform": {
-      "command": "terraform-ls",
-      "args": ["serve"],
-      "filetypes": [
-        "terraform",
-        "tf"
-      ],
-      "initializationOptions": {},
-      "settings": {}
-    }
-  },
 
   // don't have completion item selected by default
   "suggest.noselect": true,
@@ -75,10 +58,10 @@
     "snippet": "\ue60b",
     "typeParameter": "\uf728",
     "default": "\uf29c"
-  },
+  }
 
   // disable inline hints on all filetypes as they are too noisy now
-  "inlayHint.filetypes": []
+  // "inlayHint.filetypes": []
 }
 
 // vim: ts=2 sw=2 et ft=jsonb

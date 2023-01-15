@@ -60,20 +60,18 @@ nmap <silent> gy <Plug>(coc-type-definition)zz
 nmap <silent> gi <Plug>(coc-implementation)zz
 nmap <silent> gr <Plug>(coc-references)zz
 
-" Use K to show documentation in preview window.
-nnoremap <silent> K :call <SID>show_documentation()<CR>
+" Use K to show documentation in preview window
+nnoremap <silent> K :call ShowDocumentation()<CR>
 
-function! s:show_documentation()
-  if (index(['vim','help'], &filetype) >= 0)
-    execute 'h '.expand('<cword>')
-  elseif (coc#rpc#ready())
+function! ShowDocumentation()
+  if CocAction('hasProvider', 'hover')
     call CocActionAsync('doHover')
   else
-    execute '!' . &keywordprg . ' ' . expand('<cword>')
+    call feedkeys('K', 'in')
   endif
 endfunction
 
-augroup HighlightSymbol
+augroup CocHighlight
   " Highlight the symbol and its references when holding the cursor.
   autocmd CursorHold * silent call CocActionAsync('highlight')
   " change the color of highlight as it's not so visible

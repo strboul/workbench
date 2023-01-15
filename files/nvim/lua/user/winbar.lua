@@ -29,7 +29,7 @@ local function _winbar(status)
   if status == "active" then
     vim.opt_local.winbar = table.concat({ "%#TabLineSel#", bufname, "%#WarningMsg#", "%m", "%#TabLineSel#" })
   elseif status == "inactive" then
-    vim.opt_local.winbar = table.concat({ "%#TabLine#", bufname, "%#WarningMsg#", "%m", "%#TabLineSel#" })
+    vim.opt_local.winbar = table.concat({ "%#TabLine#", bufname, "%#WarningMsg#", "%m", "%#TabLine#" })
   end
 end
 
@@ -45,19 +45,17 @@ Winbar = {
 local augroup_winbar = vim.api.nvim_create_augroup("Winbar", { clear = true })
 
 vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter" }, {
+  desc = "winbar on active buffer",
   group = augroup_winbar,
-  pattern = "*",
   callback = function()
     Winbar.active()
   end,
-  desc = "winbar on active buffer",
 })
 
 vim.api.nvim_create_autocmd({ "WinLeave", "BufLeave" }, {
+  desc = "winbar on inactive buffer",
   group = augroup_winbar,
-  pattern = "*",
   callback = function()
     Winbar.inactive()
   end,
-  desc = "winbar on inactive buffer",
 })

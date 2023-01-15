@@ -18,6 +18,7 @@ end
 local augroup_quickfix = vim.api.nvim_create_augroup("Quickfix", { clear = true })
 
 vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
+  desc = "quickfix window",
   group = augroup_quickfix,
   pattern = "quickfix",
   callback = function()
@@ -31,5 +32,4 @@ vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
     -- statusline.
     vim.opt_local.statusline = qf_statusline()
   end,
-  desc = "quickfix window",
 })
