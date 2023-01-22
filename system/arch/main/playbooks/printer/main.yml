@@ -1,0 +1,92 @@
+---
+# Brother printer setup
+#
+# lpstat -a   # get printer info
+# lpstat -t   # get jobs status
+#
+# Test it with:
+#   echo 'IPP everywhere' | lp
+#
+# A reboot may be needed in the end.
+#
+- name: Printer
+  tags: printer
+  hosts: all
+  vars:
+    printer:
+      name: "brother-dcp-l2530dw"
+      model: "DCP-L2530DW"
+      # TODO: Set a DCHP reservation static ip for this printer by it's MAC address.
+      ipv4_address: "192.168.1.124"
+  tasks:
+    - name: Setup printer
+      block:
+        - name: Install CUPS
+          community.general.pacman: name="{{ config.packages.pacman.cups }}" state=present
+          become: true
+          notify: cups.socket running
+
+        - name: Install ghostscript  # brother printer requires it.
+          community.general.pacman: name="{{ config.packages.pacman.ghostscript }}" state=present
+          become: true
+        # lpadmin
+        # -p destination  Specify/add the named destination. This can be arbitrary e.g. foobar.
+        # -E              Enable and accept jobs on the printer (after -p)
+        # -v device-uri   Specify the device URI for the printer.
+        # -m model        Specify a standard model/PPD file for the printer. Must be 'everywhere'.
+        # See: https://wiki.gentoo.org/wiki/Driverless_printing
+        - name: Add printer to the sytem
+          ansible.builtin.shell: |
+            lpadmin -p "{{ printer.name }}" -E -v "ipp://{{ printer.ipv4_address }}/ipp" -m everywhere
+          changed_when: false
+          become: true
+
+    # https://wiki.archlinux.org/title/SANE
+    - name: Setup scanner
+      block:
+        - name: Install SANE (Scanner Access Now Easy)
+          community.general.pacman: name="{{ config.packages.pacman.sane }}" state=present
+          become: true
+
+        - name: Install brscan
+          kewlfft.aur.aur:
+            use: yay
+            name:
+              - "{{ config.packages.aur.brscan4 }}"
+              - "{{ config.packages.aur.brscan_skey }}"
+            state: present
+          become: true
+
+        - name: Add scanner
+          ansible.builtin.shell: |
+            brsaneconfig4 -a name="{{ printer.name }}" model="{{ printer.model }}" ip="{{ printer.ipv4_address }}"
+          become: true
+          notify: restart sane
+
+        # Check if scanner recognized:
+        #   scanimage -L
+        #
+        # Scan a page:
+        #   scanimage --progress --format=pdf --output-file ~/Downloads/test.pdf
+
+  handlers:
+    # > cups provides a cups.socket unit. If cups.socket is enabled (and
+    # > cups.service is disabled), systemd will not start CUPS immediately; it
+    # > will just listen to the appropriate sockets. Then, whenever a program
+    # > attempts to connect to one of these CUPS sockets, systemd will start
+    # > cups.service and transparently hand over control of these ports to the
+    # > CUPS process.
+    # https://wiki.archlinux.org/title/CUPS#Socket_activation
+    - name: cups.socket running
+      ansible.builtin.systemd:
+        name: cups.socket
+        state: started
+        enabled: true
+      become: true
+
+    - name: restart sane
+      ansible.builtin.systemd:
+        name: saned.socket
+        state: restarted
+        enabled: true
+      become: true

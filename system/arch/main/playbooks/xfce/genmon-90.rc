@@ -1,0 +1,4 @@
+Command=/opt/workbench/xfce/genmon-sensors
+UseLabel=0
+UpdatePeriod=10000
+Font=Sans 10

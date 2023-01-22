@@ -1,0 +1,48 @@
+---
+- name: Install nodejs
+  community.general.pacman: name="{{ config.packages.pacman.nodejs }}" state=present
+  become: true
+
+- name: Setup npm
+  block:
+    - name: Install npm
+      community.general.pacman: name="{{ config.packages.pacman.npm }}" state=present
+      become: true
+
+    # https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally
+    - name: Don't require sudo access while installing global packages
+      block:
+        - name: Create a directory for global installations
+          ansible.builtin.file:
+            path: "{{ ansible_env.HOME }}/.npm-global"
+            mode: 0755
+            state: directory
+
+        - name: Configure npm to use the new directory path
+          ansible.builtin.command: "npm config set prefix '{{ ansible_env.HOME }}/.npm-global'"
+          changed_when: false
+
+        - name: Export the path in profile
+          ansible.builtin.blockinfile:
+            path: "{{ ansible_env.HOME }}/.zshenv"
+            block: |
+              typeset -U path PATH
+              path=({{ ansible_env.HOME }}/.npm-global/bin $path)
+              export PATH
+            mode: 0644
+            create: true
+            state: present
+
+- name: Install node packages
+  community.general.npm:
+    name: "{{ item }}"
+    global: true
+  loop:
+    - yarn
+    - typescript
+    - ts-node
+    - eslint
+    - prettier
+    - dotenv-cli
+    - semver
+    - json-server  # https://github.com/typicode/json-server

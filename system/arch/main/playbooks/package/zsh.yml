@@ -1,0 +1,97 @@
+---
+- name: Set variables
+  ansible.builtin.set_fact:
+    vars_zsh:
+      zsh_command: /usr/bin/zsh
+
+- name: Install zsh
+  community.general.pacman: name="{{ config.packages.pacman.zsh }}" state=present
+  become: true
+
+# add --unattended not to start the interactive prompt upon installation
+# https://github.com/ohmyzsh/ohmyzsh#unattended-install
+- name: Install oh-my-zsh
+  ansible.builtin.shell: |
+    script="$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" && \
+      sh -c "$script" "" --unattended
+  args:
+    # when this file exists, this step won't run.
+    creates: ~/.oh-my-zsh
+  changed_when: false
+
+- name: Use the pre .zshrc file if it exists
+  block:
+    - name: Check pre .zshrc file exists
+      ansible.builtin.stat:
+        path: "{{ ansible_env.HOME }}/.zshrc.pre-oh-my-zsh"
+      register: pre_zshrc_file
+
+    - name: Rename pre .zshrc file
+      ansible.builtin.command: "mv {{ item.from }} {{ item.to }}"
+      loop:
+        - { from: "{{ ansible_env.HOME }}/.zshrc.pre-oh-my-zsh", to: "{{ ansible_env.HOME }}/.zshrc" }
+      when: pre_zshrc_file.stat.exists
+
+- name: oh-my-zsh custom dir
+  ansible.builtin.shell: "echo ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
+  register: "oh_my_zsh_custom_dir"
+  changed_when: false
+
+- name: Install oh-my-zsh plugins
+  ansible.builtin.git:
+    repo: "{{ item.repo }}"
+    dest: "{{ oh_my_zsh_custom_dir.stdout }}/plugins/{{ item.dest }}"
+    depth: 1
+    version: master
+    update: false
+  loop:
+    - { repo: "https://github.com/zsh-users/zsh-autosuggestions.git", dest: "zsh-autosuggestions" }
+    - { repo: "https://github.com/zsh-users/zsh-syntax-highlighting.git", dest: "zsh-syntax-highlighting" }
+    - { repo: "https://github.com/zsh-users/zsh-history-substring-search.git", dest: "zsh-history-substring-search" }
+
+- name: Install powerlevel10k prompt
+  block:
+    - name: Install p10k
+      ansible.builtin.git:
+        repo: https://github.com/romkatv/powerlevel10k.git
+        dest: "{{ oh_my_zsh_custom_dir.stdout }}/themes/powerlevel10k"
+        depth: 1
+        version: master
+        update: false
+
+    - name: Disable p10k configuration wizard prompt
+      ansible.builtin.blockinfile:
+        path: "{{ ansible_env.HOME }}/.zshenv"
+        block: |
+          POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
+        mode: 0644
+        create: true
+        state: present
+
+- name: Add zsh to /etc/shells
+  ansible.builtin.lineinfile:
+    line: "{{ vars_zsh.zsh_command }}"
+    dest: /etc/shells
+    state: present
+  become: true
+
+- name: Change default shell to zsh
+  block:
+    - name: Disable attr temporarily
+      ansible.builtin.file:
+        path: "{{ item }}"
+        attr: -a
+      loop:
+        - /etc/passwd
+        - /etc/shadow
+    - name: Change shell for user
+      ansible.builtin.command: "chsh -s {{ vars_zsh.zsh_command }} {{ ansible_env.USER }}"
+      changed_when: false
+    - name: Set back attr
+      ansible.builtin.file:
+        path: "{{ item }}"
+        attr: +a
+      loop:
+        - /etc/passwd
+        - /etc/shadow
+  become: true

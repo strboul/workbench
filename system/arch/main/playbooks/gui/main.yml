@@ -1,0 +1,131 @@
+---
+- name: GUI
+  tags: gui
+  hosts: all
+  tasks:
+    # https://github.com/alacritty/alacritty
+    - name: Install Alacritty
+      community.general.pacman: name="{{ config.packages.pacman.alacritty }}" state=present
+      become: true
+      tags: gui.alacritty
+
+    - name: Install gedit
+      ansible.builtin.import_tasks: gedit.yml
+      tags: gui.gedit
+
+    - name: Install Firefox
+      community.general.pacman: name="{{ config.packages.pacman.firefox }}" state=present
+      become: true
+      tags: gui.firefox
+
+    - name: Install Chromium
+      community.general.pacman: name="{{ config.packages.pacman.chromium }}" state=present
+      become: true
+      tags: gui.chromium
+
+    - name: Install Google Chrome
+      kewlfft.aur.aur:
+        use: yay
+        name: "{{ config.packages.aur.google_chrome }}"
+        state: present
+      tags: gui.chrome
+
+    # https://brave.com
+    - name: Install Brave browser
+      kewlfft.aur.aur:
+        use: yay
+        name: "{{ config.packages.aur.brave_bin }}"
+        state: present
+      tags: gui.brave
+
+    # https://wiki.archlinux.org/title/Visual_Studio_Code (open source version)
+    - name: Install code
+      community.general.pacman: name="{{ config.packages.pacman.code }}" state=present
+      become: true
+      tags: gui.code
+
+    # https://dbeaver.io/
+    - name: Install DBeaver
+      community.general.pacman: name="{{ config.packages.pacman.dbeaver }}" state=present
+      become: true
+      tags: gui.dbeaver
+
+    - name: Install LibreOffice
+      community.general.pacman: name="{{ config.packages.pacman.libreoffice_fresh }}" state=present
+      become: true
+      tags: gui.libreoffice
+
+    # https://www.thunderbird.net
+    - name: Setup Thunderbird
+      ansible.builtin.import_tasks: thunderbird.yml
+      tags: gui.thunderbird
+
+    - name: Install Slack desktop
+      kewlfft.aur.aur:
+        use: yay
+        name: "{{ config.packages.aur.slack_desktop }}"
+        state: present
+      tags: gui.slack
+
+    - name: Install Signal
+      community.general.pacman: name="{{ config.packages.pacman.signal_desktop }}" state=present
+      become: true
+      tags: gui.signal
+
+    # https://www.wireshark.org/
+    - name: Install Wireshark
+      ansible.builtin.import_tasks: wireshark.yml
+      tags: gui.wireshark
+
+    - name: Install VLC
+      community.general.pacman: name="{{ config.packages.pacman.vlc }}" state=present
+      become: true
+      tags: gui.vlc
+
+    # https://keepassxc.org/
+    - name: Install keepassxc
+      community.general.pacman: name="{{ config.packages.pacman.keepassxc }}" state=present
+      become: true
+      tags: gui.keepassxc
+
+    # https://www.gimp.org/
+    - name: Install gimp
+      community.general.pacman: name="{{ config.packages.pacman.gimp }}" state=present
+      become: true
+      tags: gui.gimp
+
+    # https://wiki.gnome.org/Apps/Gthumb
+    - name: Install gThumb
+      community.general.pacman: name="{{ config.packages.pacman.gthumb }}" state=present
+      become: true
+      tags: gui.gthumb
+
+    # https://github.com/Soft/xcolor
+    - name: Install xcolor
+      community.general.pacman: name="{{ config.packages.pacman.xcolor }}" state=present
+      become: true
+      tags: gui.xcolor
+
+    - name: Install gnome-disk-utility
+      community.general.pacman: name="{{ config.packages.pacman.gnome_disk_utility }}" state=present
+      become: true
+      tags: gui.gnome_disk_utility
+
+    # https://meldmerge.org
+    - name: Install meld
+      community.general.pacman: name="{{ config.packages.pacman.meld }}" state=present
+      become: true
+      tags: gui.meld
+
+    # Linux device manager for Logitech devices
+    # https://pwr-solaar.github.io/Solaar/
+    - name: Install solaar
+      community.general.pacman: name="{{ config.packages.pacman.solaar }}" state=present
+      become: true
+      tags: gui.solaar
+
+    # https://openscad.org/downloads.html
+    - name: Install OpenSCAD
+      community.general.pacman: name="{{ config.packages.pacman.openscad }}" state=present
+      become: true
+      tags: gui.openscad

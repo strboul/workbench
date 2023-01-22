@@ -1,0 +1,28 @@
+---
+- name: Make locales available in locale.gen file
+  ansible.builtin.lineinfile:
+    path: /etc/locale.gen
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  loop:
+    - { regexp: "^#en_US.UTF-8 UTF-8", line: "en_US.UTF-8 UTF-8" }
+    - { regexp: "^#en_GB.UTF-8 UTF-8", line: "en_GB.UTF-8 UTF-8" }
+  become: true
+  register: locale_gen_file
+
+- name: Generate locales
+  community.general.locale_gen:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - "en_GB.UTF-8"
+    - "en_US.UTF-8"
+  become: true
+  when: locale_gen_file.changed
+
+- name: Set system default locales
+  ansible.builtin.command: "localectl set-locale {{ item }}"
+  loop:
+    - "LANG=en_US.UTF-8"
+    - "LC_TIME=en_GB.UTF-8"
+  become: true

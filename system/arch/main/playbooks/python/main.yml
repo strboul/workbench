@@ -1,0 +1,60 @@
+---
+# Manage Python with pyenv
+# https://github.com/pyenv/pyenv/
+#
+- name: Setup Python
+  tags: python
+  hosts: all
+  tasks:
+    - name: Ensure system Python is installed
+      ansible.builtin.stat:
+        path: /usr/bin/python
+
+    - name: Ensure pip is ready
+      command: /usr/bin/python -m ensurepip --upgrade
+      changed_when: false
+
+    - name: Install pyenv
+      community.general.pacman: name="{{ config.packages.pacman.pyenv }}" state=present
+      become: true
+
+    - name: Add pyenv to zsh profile
+      ansible.builtin.blockinfile:
+        path: "{{ ansible_env.HOME }}/.zshenv"
+        block: |
+          typeset -U path PATH
+          path=($HOME/.pyenv/bin $path)
+          export PATH
+          eval "$(pyenv init --path)"
+          eval "$(pyenv init -)"
+        mode: 0644
+        create: true
+        state: present
+
+    - name: Install pyenv versions
+      ansible.builtin.command:
+        argv:
+          - pyenv
+          - install
+          - -v
+          - "{{ item }}"
+          - --skip-existing
+        creates: "{{ ansible_env.HOME }}/.pyenv/versions/{{ item }}"
+      loop:
+        - "2.7.18"  # last release of Python 2
+        - "3.11-dev"
+      register: pyenv_install
+      notify: Set default pyenv version
+
+  handlers:
+    # Set the highest Python version as global initially.
+    - name: Set default pyenv version
+      ansible.builtin.shell: |
+        version="$(pyenv versions |
+          sed '/.*system.*/d' |
+          sort -r --version-sort |
+          head -n 1 |
+          grep -Eo '[0-9]\.[0-9]+(\.[0-9]+|\-dev)?' |
+          xargs)"
+        pyenv global "$version"
+      changed_when: false

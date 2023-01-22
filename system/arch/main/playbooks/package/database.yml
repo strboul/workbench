@@ -1,0 +1,10 @@
+---
+- name: Install SQLite
+  community.general.pacman: name="{{ config.packages.pacman.sqlite }}" state=present
+  become: true
+  tags: package.database.sqlite
+
+- name: Install PostgreSQL
+  community.general.pacman: name="{{ config.packages.pacman.postgresql }}" state=present
+  become: true
+  tags: package.database.postgresql

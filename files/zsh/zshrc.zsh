@@ -71,13 +71,13 @@ source "$ZSH"/oh-my-zsh.sh
 
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/bin:$PATH"
-export PATH="$HOME/dotfiles/bin:$PATH"
+export PATH="$HOME/workbench/bin:$PATH"
 
 # ===== sources =====
 
 # zsh keybindings
-source "$HOME"/dotfiles/files/zsh/keybindings.zsh
-source "$HOME"/dotfiles/files/zsh/navi_keybindings.zsh
+source "$HOME"/workbench/files/zsh/keybindings.zsh
+source "$HOME"/workbench/files/zsh/navi_keybindings.zsh
 
 # for gnupg
 GPG_TTY="$(tty)"
@@ -183,5 +183,5 @@ if command -v fd > /dev/null; then
 fi
 
 # p10k (https://github.com/romkatv/powerlevel10k)
-# To customize prompt, run `p10k configure` or edit ~/dotfiles/files/p10k/p10k.zsh.
-[[ ! -f ~/dotfiles/files/p10k/p10k.zsh ]] || source ~/dotfiles/files/p10k/p10k.zsh
+# To customize prompt, run `p10k configure` or edit ~/workbench/files/p10k/p10k.zsh.
+[[ ! -f ~/workbench/files/p10k/p10k.zsh ]] || source ~/workbench/files/p10k/p10k.zsh

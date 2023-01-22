@@ -1,0 +1,48 @@
+---
+# Yet Another Yogurt - An AUR Helper Written in Go
+# https://github.com/Jguer/yay
+#
+- name: Install yay dependencies
+  community.general.pacman:
+    name:
+      - "{{ config.packages.pacman.git }}"
+      - "{{ config.packages.pacman.base_devel }}"  # build-essential equivalent https://archlinux.org/groups/x86_64/base-devel/
+    state: present
+  become: true
+
+- name: Check if yay is installed
+  ansible.builtin.stat:
+    path: "{{ yay_command }}"
+  register: yay_cmd
+
+- name: Install yay
+  block:
+    - name: Clone yay source
+      ansible.builtin.git:
+        repo: https://aur.archlinux.org/yay.git
+        dest: "{{ yay_install_dir }}"
+        version: master
+        update: false
+
+    - name: Build yay
+      ansible.builtin.shell:
+        chdir: "{{ yay_install_dir }}"
+        cmd: "yes Y | makepkg -si"
+      changed_when: false
+  when: not yay_cmd.stat.exists
+
+- name: Create yay config dir
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.config/yay"
+    mode: 0700
+    state: directory
+
+- name: Create yay config file
+  ansible.builtin.copy:
+    dest: "{{ ansible_env.HOME }}/.config/yay/config.json"
+    content: |
+      {
+        "upgrademenu": true,
+        "combinedupgrade": true
+      }
+    mode: 0644

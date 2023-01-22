@@ -1,0 +1,169 @@
+---
+# General configuration
+#
+config:
+  vars:
+    workbench_dir: /opt/workbench
+
+  gpg:
+    pubfile:
+      url: https://strboul.com/keys/pgp/4C884872307BB096C0EB226D9DFB9FAB33E2BB02.asc
+      checksum: sha256:9954873f3e1395eaa4102443797dffe4f18532e83e720b532f62cc38dcaa9759
+    pubkey:
+      master: 4C884872307BB096C0EB226D9DFB9FAB33E2BB02
+      subkey_sign: 2AA9C7006171519C
+      subkey_encrypt: D11E33ABD581057F
+      subkey_auth: 041DD261E197F428
+
+  # alphabetically sorted with vim's `:sort` within their groups
+  packages:
+    pacman:
+      alacritty: community/alacritty
+      archlinux_keyring: core/archlinux-keyring
+      bandwhich: community/bandwhich
+      base_devel: base-devel
+      bat: community/bat
+      bind: extra/bind
+      blueman: community/blueman
+      bluez: extra/bluez
+      bluez_utils: extra/bluez-utils
+      chromium: extra/chromium
+      clang: extra/clang
+      code: community/code
+      coreutils: core/coreutils
+      cups: extra/cups
+      curl: core/curl
+      dbeaver: community/dbeaver
+      deno: community/deno
+      direnv: community/direnv
+      docker: community/docker
+      docker_compose: community/docker-compose
+      etckeeper: community/etckeeper
+      fd: community/fd
+      file_roller: extra/file-roller
+      firefox: extra/firefox
+      firewalld: community/firewalld
+      flameshot: community/flameshot
+      fwupd: community/fwupd
+      fzf: community/fzf
+      galculator: community/galculator
+      gdb: extra/gdb
+      gdu: community/gdu
+      gedit: community/gedit
+      ghostscript: extra/ghostscript
+      gimp: extra/gimp
+      git: extra/git
+      gnome_boxes: community/gnome-boxes
+      gnome_disk_utility: extra/gnome-disk-utility
+      gnome_keyring: extra/gnome-keyring
+      gnucash: community/gnucash
+      gnu_free_fonts: extra/gnu-free-fonts
+      gnu_netcat: extra/gnu-netcat
+      golang: community/go
+      gpgme: core/gpgme
+      gthumb: extra/gthumb
+      htop: extra/htop
+      hyperfine: community/hyperfine
+      inetutils: core/inetutils
+      iputils: core/iputils
+      ipython: community/ipython
+      jetbrains_mono_nerd: community/ttf-jetbrains-mono-nerd
+      jq: community/jq
+      k9s: community/k9s
+      keepassxc: community/keepassxc
+      kubectx: community/kubectx
+      lazygit: community/lazygit
+      libreoffice_fresh: extra/libreoffice-fresh
+      libssh2: core/libssh2
+      libssh: extra/libssh
+      libvirt: community/libvirt
+      lsof: extra/lsof
+      lua: extra/lua
+      man_db: core/man-db
+      man_pages: core/man-pages
+      meld: extra/meld
+      minikube: community/minikube
+      neofetch: community/neofetch
+      neomutt: community/neomutt
+      neovim: community/neovim
+      nmap: extra/nmap
+      nodejs: community/nodejs
+      noto_fonts: extra/noto-fonts
+      noto_fonts_cjk: extra/noto-fonts-cjk
+      noto_fonts_emoji: extra/noto-fonts-emoji
+      noto_fonts_extra: extra/noto-fonts-extra
+      npm: community/npm
+      ntp: extra/ntp
+      onefetch: community/onefetch
+      openscad: community/openscad
+      openssh: core/openssh
+      pass: community/pass
+      peek: community/peek
+      podman: community/podman
+      postgresql: extra/postgresql
+      pwgen: community/pwgen
+      pyenv: community/pyenv
+      qrencode: extra/qrencode
+      r: community/r
+      ranger: community/ranger
+      ripgrep: community/ripgrep
+      rust: extra/rust
+      sane: extra/sane
+      signal_desktop: community/signal-desktop
+      socat: extra/socat
+      solaar: community/solaar
+      sqlite: core/sqlite
+      strace: extra/strace
+      tcpdump: extra/tcpdump
+      terraform: community/terraform
+      thunderbird: extra/thunderbird
+      tmux: community/tmux
+      traceroute: core/traceroute
+      tree: extra/tree
+      vagrant: extra/vagrant
+      valgrind: extra/valgrind
+      vi: core/vi
+      viewnior: community/viewnior
+      vim: extra/vim
+      virt_manager: community/virt-manager
+      virtualbox: community/virtualbox
+      virtualbox_guest_utils: community/virtualbox-guest-utils
+      vlc: extra/vlc
+      wget: extra/wget
+      wireguard_tools: extra/wireguard-tools
+      wireshark_cli: community/wireshark-cli
+      wireshark_qt: community/wireshark-qt
+      xclip: extra/xclip
+      xcolor: community/xcolor
+      xdg_utils: extra/xdg-utils
+      xfce4_clipman_plugin: extra/xfce4-clipman-plugin
+      xfce4_genmon_plugin: extra/xfce4-genmon-plugin
+      xfce4_whiskermenu_plugin: community/xfce4-whiskermenu-plugin
+      xfwm4_themes: extra/xfwm4-themes
+      xorg_xev: extra/xorg-xev
+      yamllint: community/yamllint
+      yubikey_manager: community/yubikey-manager
+      yubikey_manager_qt: community/yubikey-manager-qt
+      yubikey_touch_detector: community/yubikey-touch-detector
+      zbar: extra/zbar
+      zsh: extra/zsh
+
+    # beware aur packages - audit them before you add here
+    #
+    # list all aur packages with `pacman -Qm`
+    #
+    aur:
+      brave_bin: brave-bin
+      brscan4: brscan4
+      brscan_skey: brscan-skey
+      clang_format_static_bin: clang-format-static-bin
+      docker_credential_secretservice: docker-credential-secretservice
+      google_chrome: google-chrome
+      lazydocker: lazydocker
+      navi: navi
+      shellcheck: shellcheck-bin
+      slack_desktop: slack-desktop
+      terraform_docs_bin: terraform-docs-bin
+      terraform_ls: terraform-ls
+      tflint_bin: tflint-bin
+      visual_studio_code_bin: visual-studio-code-bin

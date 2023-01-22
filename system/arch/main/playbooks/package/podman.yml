@@ -1,0 +1,14 @@
+---
+# Podman
+# https://podman.io
+#
+- name: Install podman
+  community.general.pacman: name="{{ config.packages.pacman.podman }}" state=present
+  become: true
+
+- name: Set rootless mode
+  ansible.builtin.shell: |
+    echo {{ ansible_env.USER }}:10000:65536 >> /etc/subuid
+    echo {{ ansible_env.USER }}:10000:65536 >> /etc/subgid
+  become: true
+  changed_when: false

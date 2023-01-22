@@ -1,0 +1,37 @@
+---
+- name: Language
+  tags: language
+  hosts: all
+  tasks:
+    - name: Setup nodejs
+      ansible.builtin.import_tasks: node.yml
+      tags: language.node
+
+    # https://go.dev/
+    - name: Setup golang
+      ansible.builtin.import_tasks: golang.yml
+      tags: language.golang
+
+    # https://deno.land/
+    - name: Install deno
+      community.general.pacman: name="{{ config.packages.pacman.deno }}" state=present
+      become: true
+      tags: language.deno
+
+    # https://rust-lang.org/
+    - name: Install Rust
+      community.general.pacman: name="{{ config.packages.pacman.rust }}" state=present
+      become: true
+      tags: language.rust
+
+    # https://lua.org/
+    - name: Install Lua
+      community.general.pacman: name="{{ config.packages.pacman.lua }}" state=present
+      become: true
+      tags: language.lua
+
+    # https://r-project.org
+    - name: Install R
+      community.general.pacman: name="{{ config.packages.pacman.r }}" state=present
+      become: true
+      tags: language.r

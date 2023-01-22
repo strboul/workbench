@@ -1,0 +1,27 @@
+---
+- name: Set variables
+  ansible.builtin.set_fact:
+    vars_base_xdg:
+      text_editor: gnome.gedit.desktop
+      image_viewer: viewnior.desktop
+      media_player: vlc.desktop
+
+- name: Install xdg utils
+  community.general.pacman: name="{{ config.packages.pacman.xdg_utils }}" state=present
+  become: true
+
+- name: Change default application MIME types
+  ansible.builtin.command:
+    argv:
+      - xdg-mime
+      - default
+      - "{{ item.application }}"
+      - "{{ item.mimetype }}"
+  loop:
+    - { application: "{{ vars_base_xdg.text_editor }}", mimetype: "text/plain" }
+    - { application: "{{ vars_base_xdg.text_editor }}", mimetype: "text/html" }
+    - { application: "{{ vars_base_xdg.text_editor }}", mimetype: "application/json" }
+    - { application: "{{ vars_base_xdg.image_viewer }}", mimetype: "image/jpeg" }
+    - { application: "{{ vars_base_xdg.image_viewer }}", mimetype: "image/png" }
+    - { application: "{{ vars_base_xdg.media_player }}", mimetype: "video/mp4" }
+  changed_when: false

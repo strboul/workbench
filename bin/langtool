@@ -14,7 +14,7 @@
 
 set -e
 
-source "$HOME"/dotfiles/bin/__utils/utils.sh
+source "$HOME"/workbench/bin/__utils/utils.sh
 
 INPUT=$1
 

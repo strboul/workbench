@@ -7,7 +7,7 @@
 # Usage:
 #   printpath
 
-source "$HOME"/dotfiles/bin/__utils/utils.sh
+source "$HOME"/workbench/bin/__utils/utils.sh
 
 get_paths() {
   tr ":" "\n" <<< "$PATH"

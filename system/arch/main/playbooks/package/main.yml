@@ -1,0 +1,35 @@
+- name: Package
+  tags: package
+  hosts: all
+  tasks:
+    - name: Setup zsh
+      ansible.builtin.import_tasks: zsh.yml
+      tags: package.zsh
+
+    - name: cli utils install
+      ansible.builtin.import_tasks: cli-utils.yml
+      tags: package.cli_utils
+
+    - name: cli utils extra install
+      ansible.builtin.import_tasks: cli-utils-extra.yml
+      tags: package.cli_utils_extra
+
+    - name: Setup podman
+      ansible.builtin.import_tasks: podman.yml
+      tags: package.podman
+
+    - name: Setup Terraform
+      ansible.builtin.import_tasks: terraform.yml
+      tags: package.terraform
+
+    - name: Setup Kubernetes
+      ansible.builtin.import_tasks: kubernetes.yml
+      tags: package.kubernetes
+
+    - name: Setup C/C++
+      ansible.builtin.import_tasks: clang.yml
+      tags: package.clang
+
+    - name: Setup database
+      ansible.builtin.import_tasks: database.yml
+      tags: package.database

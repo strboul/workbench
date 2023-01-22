@@ -1,0 +1,113 @@
+---
+# Follow the post-install steps here for the rest:
+# https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user
+#
+- name: Docker
+  tags: docker
+  hosts: all
+  vars:
+    config_dir: "{{ ansible_env.HOME }}/.docker"
+    config_path: "{{ config_dir }}/config.json"
+  tasks:
+    - name: Install Docker
+      community.general.pacman:
+        name:
+          - "{{ config.packages.pacman.docker }}"
+          - "{{ config.packages.pacman.docker_compose }}"
+        state: present
+      become: true
+
+    - name: Be sure Docker is always running
+      ansible.builtin.command: /bin/true
+      notify: Docker service running
+
+    - meta: flush_handlers
+
+    # https://github.com/docker/docker-credential-helpers/tree/master/secretservice
+    - name: Install docker-credential-secretservice
+      kewlfft.aur.aur:
+        use: yay
+        name: "{{ config.packages.aur.docker_credential_secretservice }}"
+        state: present
+
+    - name: Create the docker group
+      ansible.builtin.group:
+        name: docker
+        state: present
+      become: true
+
+    - name: Add user to the docker group
+      block:
+        # TODO. usermod is annoying that wants to open the file instead of
+        # appending. Probably because of sorting?
+        - name: Disable attr temporarily
+          ansible.builtin.file:
+            path: "{{ item }}"
+            attr: -a
+          loop:
+            - /etc/passwd
+            - /etc/shadow
+        - name: Add user
+          ansible.builtin.user:
+            name: "{{ ansible_env.USER }}"
+            groups: docker
+            append: true
+        - name: Set back attr
+          ansible.builtin.file:
+            path: "{{ item }}"
+            attr: +a
+          loop:
+            - /etc/passwd
+            - /etc/shadow
+      become: true
+
+    # force ansible run the notified handlers up to this point
+    - meta: flush_handlers
+
+    - name: Change the group ownership of the docker socket
+      ansible.builtin.file:
+        path: /var/run/docker.sock
+        owner: "{{ ansible_env.USER }}"
+      become: true
+
+    - name: Setup docker config
+      block:
+        - name: Create config dir
+          ansible.builtin.file:
+            path: "{{ config_dir }}"
+            mode: 0700
+            state: directory
+
+        - name: Check config file exists
+          ansible.builtin.stat:
+            path: "{{ config_path }}"
+          register: config_path_stat
+
+        - name: Create config file if not exist
+          ansible.builtin.copy:
+            dest: "{{ config_path }}"
+            content: |
+              {
+                "credsStore": "secretservice"
+              }
+            mode: 0600
+          when: not config_path_stat.stat.exists
+
+    - name: Test Docker
+      block:
+        - name: Test run
+          ansible.builtin.command: docker run --rm hello-world
+          register: docker_test_run_cmd
+
+        - name: Error message if test run failed
+          ansible.builtin.fail:
+            msg: Docker test run failed.
+          when: docker_test_run_cmd.rc != 0
+
+  handlers:
+    - name: Docker service running
+      ansible.builtin.systemd:
+        name: docker.service
+        state: started
+        enabled: true
+      become: true

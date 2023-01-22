@@ -1,0 +1,32 @@
+---
+- name: Install wireshark
+  community.general.pacman:
+    name:
+      - "{{ config.packages.pacman.wireshark_cli }}"
+      - "{{ config.packages.pacman.wireshark_qt }}"
+    state: present
+  become: true
+
+# give the current user permission to capture packets
+- name: Add user to the wireshark group
+  block:
+    - name: Disable attr temporarily
+      ansible.builtin.file:
+        path: "{{ item }}"
+        attr: -a
+      loop:
+        - /etc/passwd
+        - /etc/shadow
+    - name: Add user
+      ansible.builtin.user:
+        name: "{{ ansible_env.USER }}"
+        groups: wireshark
+        append: true
+    - name: Set back attr
+      ansible.builtin.file:
+        path: "{{ item }}"
+        attr: +a
+      loop:
+        - /etc/passwd
+        - /etc/shadow
+  become: true

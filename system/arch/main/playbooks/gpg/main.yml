@@ -1,0 +1,47 @@
+---
+- name: gpg
+  tags: gpg
+  hosts: all
+  vars:
+    gpg_workbench_dir: "{{ config.vars.workbench_dir }}/gpg"
+    gpg_pubkey_path: "{{ gpg_workbench_dir }}/{{ config.gpg.pubkey.master }}.asc"
+  tasks:
+    - name: Install GnuPG
+      community.general.pacman: name="{{ config.packages.pacman.gpgme }}" state=present
+      become: true
+
+    - name: gpg config dir
+      ansible.builtin.file:
+        path: "{{ gpg_workbench_dir }}"
+        mode: 0700
+        state: directory
+
+    - name: Download the public key file
+      ansible.builtin.get_url:
+        url: "{{ config.gpg.pubfile.url }}"
+        dest: "{{ gpg_pubkey_path }}"
+        checksum: "{{ config.gpg.pubfile.checksum }}"
+      register: gpg_pubkey_download
+
+    - name: Verify fingerprint and import key
+      block:
+        - name: Get fingerprint of file
+          ansible.builtin.shell: |
+            gpg --show-keys --with-fingerprint "{{ gpg_pubkey_path }}" \
+              | awk 'NR==2' \
+              | sed -r 's/\s+//g'
+          register: fingerprint_keyfile
+
+        - name: Fail if fingerprints not equal
+          ansible.builtin.fail:
+            msg: "Fingerprints do not match!"
+          when: "fingerprint_keyfile.stdout != config.gpg.pubkey.master"
+
+        - name: Import key
+          ansible.builtin.shell: |
+            gpg --import "{{ gpg_pubkey_path }}"
+      when: gpg_pubkey_download.changed
+
+    - name: Setup pass
+      ansible.builtin.import_tasks: pass.yml
+      tags: gpg.pass

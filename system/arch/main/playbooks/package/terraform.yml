@@ -1,0 +1,16 @@
+---
+# Terraform
+# https://www.terraform.io/
+#
+- name: Terraform install
+  community.general.pacman: name="{{ config.packages.pacman.terraform }}" state=present
+  become: true
+
+- name: Tooling install
+  kewlfft.aur.aur:
+    use: yay
+    name:
+      - "{{ config.packages.aur.terraform_ls }}"  # LSP for terraform https://github.com/hashicorp/terraform-ls
+      - "{{ config.packages.aur.tflint_bin }}"  # https://github.com/terraform-linters/tflint
+      - "{{ config.packages.aur.terraform_docs_bin }}"  # https://github.com/terraform-docs/terraform-docs
+    state: present

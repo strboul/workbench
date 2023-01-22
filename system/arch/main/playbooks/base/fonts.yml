@@ -1,0 +1,56 @@
+---
+# Fonts
+#
+# List fonts
+#   fc-list
+#
+# Match a font from the list
+#   fc-match emoji
+#
+
+# https://www.gnu.org/software/freefont/
+- name: Install GNU Free Fonts
+  community.general.pacman: name="{{ config.packages.pacman.gnu_free_fonts }}" state=present
+  become: true
+
+# https://fonts.google.com/noto
+- name: Install noto-fonts
+  community.general.pacman:
+    name:
+      - "{{ config.packages.pacman.noto_fonts }}"
+      - "{{ config.packages.pacman.noto_fonts_extra }}"
+      - "{{ config.packages.pacman.noto_fonts_emoji }}"
+      - "{{ config.packages.pacman.noto_fonts_cjk }}"
+    state: present
+  become: true
+
+# https://www.jetbrains.com/lp/mono/
+# https://www.nerdfonts.com/font-downloads
+- name: Install JetBrains Mono Nerd Fonts
+  community.general.pacman: name="{{ config.packages.pacman.jetbrains_mono_nerd }}" state=present
+  become: true
+
+- name: Setup fontconfig
+  block:
+    - name: Create fontconfig directory
+      ansible.builtin.file:
+        path: "{{ ansible_env.HOME }}/.config/fontconfig"
+        mode: 0700
+        state: directory
+
+    - name: Create config for fonts.conf
+      ansible.builtin.copy:
+        dest: "{{ ansible_env.HOME }}/.config/fontconfig/fonts.conf"
+        content: |
+          <?xml version="1.0"?>
+          <!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd">
+          <fontconfig>
+          <alias>
+             <family>monospace</family>
+             <prefer>
+               <family>JetBrainsMono Nerd Font Mono</family>
+               <family>Noto Color Emoji</family>
+             </prefer>
+           </alias>
+          </fontconfig>
+        mode: 0644

@@ -1,0 +1,76 @@
+---
+- name: Base
+  tags: base
+  hosts: all
+  vars:
+    yay_command: /usr/bin/yay
+    yay_install_dir: "{{ config.vars.workbench_dir }}/yay"
+    pacman_updated_file: "{{ config.vars.workbench_dir }}/.ansible_pacman_updated"
+  tasks:
+    - name: NTP installed
+      community.general.pacman: name="{{ config.packages.pacman.ntp }}" state=present
+      become: true
+      notify: NTP running
+
+    - name: Create workbench dir belonging to main user
+      ansible.builtin.file:
+        path: "{{ config.vars.workbench_dir }}"
+        owner: "{{ ansible_env.USER }}"
+        group: "{{ ansible_env.USER }}"
+        mode: 0700
+        state: directory
+      become: true
+
+    - name: Setup etckeeper
+      ansible.builtin.import_tasks: etckeeper.yml
+      tags: base.etckeeper
+
+    - name: Setup pacman
+      ansible.builtin.import_tasks: pacman.yml
+      tags: base.pacman
+
+    - name: Install yay
+      ansible.builtin.import_tasks: yay.yml
+      tags: base.yay
+
+    - name: Base packages
+      ansible.builtin.import_tasks: packages.yml
+      tags: base.packages
+
+    - name: Setup fonts
+      ansible.builtin.import_tasks: fonts.yml
+      tags: base.fonts
+
+    - name: Setup xdg
+      ansible.builtin.import_tasks: xdg.yml
+      tags: base.xdg
+
+    - name: qrcode
+      ansible.builtin.import_tasks: qrcode.yml
+      tags: base.qrcode
+
+    - name: Change attributes of some files
+      block:
+        - name: Append only files
+          ansible.builtin.file:
+            path: "{{ item }}"
+            attr: +a
+          loop:
+            - /etc/passwd
+            - /etc/shadow
+        - name: Immutable files
+          ansible.builtin.file:
+            path: "{{ item }}"
+            attr: +i
+          loop:
+            - /etc/resolv.conf
+            - /etc/hosts
+      become: true
+
+  handlers:
+    - name: NTP running
+      ansible.builtin.systemd:
+        name: systemd-timesyncd
+        state: started
+        enabled: true
+      become: true

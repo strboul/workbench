@@ -1,0 +1,46 @@
+---
+# OpenSSH defaults:
+#  - TCP port: 22
+#  - System-wide Server config: /etc/ssh/sshd_config
+#  - System-wide client config: /etc/ssh/ssh_config
+#  - User-specific config: $HOME/.ssh/
+#
+- name: ssh
+  tags: ssh
+  hosts: all
+  tasks:
+    - name: Install ssh packages
+      community.general.pacman:
+        name:
+          - "{{ config.packages.pacman.libssh }}"
+          - "{{ config.packages.pacman.libssh2 }}"
+          - "{{ config.packages.pacman.openssh }}"
+      become: true
+
+    - name: Be sure sshd is always running
+      ansible.builtin.command: /bin/true
+      notify: sshd running
+
+    - meta: flush_handlers
+
+    - name: Setup ssh server
+      ansible.builtin.import_tasks: server.yml
+      tags: ssh.server
+
+    - name: Setup ssh client
+      ansible.builtin.import_tasks: client.yml
+      tags: ssh.client
+
+  handlers:
+    - name: sshd running
+      ansible.builtin.systemd:
+        name: sshd
+        state: started
+        enabled: true
+      become: true
+
+    - name: sshd restart
+      ansible.builtin.systemd:
+        name: sshd
+        state: restarted
+      become: true

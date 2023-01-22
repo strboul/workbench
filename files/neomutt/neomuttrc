@@ -12,5 +12,5 @@ set mail_check = 120
 set sort=threads
 set sort_aux=reverse-last-date-received
 
-source ~/dotfiles/files/neomutt/neomuttrc.work
-folder-hook work 'source ~/dotfiles/files/neomutt/neomuttrc.work'
+source ~/workbench/files/neomutt/neomuttrc.work
+folder-hook work 'source ~/workbench/files/neomutt/neomuttrc.work'

@@ -6,7 +6,7 @@
 
 set -Eeuo pipefail
 
-source "$HOME"/dotfiles/bin/__utils/utils.sh
+source "$HOME"/workbench/bin/__utils/utils.sh
 
 usage() {
   cat << EOF
@@ -44,7 +44,7 @@ do_link() {
 
   utils__check_file_or_dir_exists \
     "$arg_source" \
-    "$(printf "file or folder not exist in dotfiles: \"%s\"" "$arg_source")"
+    "$(printf "file or folder not exist in workbench files: \"%s\"" "$arg_source")"
 
   if "$clean"; then
     rm -f "$arg_target"
@@ -79,7 +79,7 @@ stop_if_broken_symlinks() {
 }
 
 read_conf_file() {
-  conf_file="$(cat symlinks.conf)"
+  conf_file="$(cat "$HOME/workbench/files/symlinks.conf")"
   list="$(echo "$conf_file" | grep -Ev '^#')"
   echo "$list"
 }
@@ -92,7 +92,7 @@ do_loop_list() {
     arg_source="$(echo "$line" | awk '{split($0,a," -> "); print a[2]}')"
     # add paths to the arguments
     path_target="$HOME/$arg_target"
-    path_source="$HOME/dotfiles/files/$arg_source"
+    path_source="$HOME/workbench/files/$arg_source"
     do_link "$path_target" "$path_source"
   done <<< "$list"
 }

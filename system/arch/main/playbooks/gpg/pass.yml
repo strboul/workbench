@@ -1,0 +1,16 @@
+---
+# pass: the standard unix password manager
+#
+# - https://www.passwordstore.org
+# - https://wiki.archlinux.org/title/Pass
+#
+- name: Install pass (passwordstore)
+  community.general.pacman: name="{{ config.packages.pacman.pass }}" state=present
+  become: true
+
+- name: Create pass folder
+  ansible.builtin.shell: |
+    pass init "{{ config.gpg.pubkey.subkey_encrypt }}"
+  changed_when: false
+
+# TODO: set up pass git ... stuff

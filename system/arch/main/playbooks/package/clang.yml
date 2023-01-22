@@ -1,0 +1,14 @@
+---
+- name: Install clang
+  community.general.pacman: name="{{ config.packages.pacman.clang }}" state=present
+  become: true
+
+- name: Install valgrind
+  community.general.pacman: name="{{ config.packages.pacman.valgrind }}" state=present
+  become: true
+
+- name: Install clang-format
+  kewlfft.aur.aur:
+    use: yay
+    name: "{{ config.packages.aur.clang_format_static_bin }}"
+    state: present

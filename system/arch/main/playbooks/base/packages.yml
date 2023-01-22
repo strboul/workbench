@@ -1,0 +1,35 @@
+---
+- name: Install base packages
+  community.general.pacman:
+    name:
+      - "{{ config.packages.pacman.coreutils }}"
+      - "{{ config.packages.pacman.man_db }}"
+      - "{{ config.packages.pacman.man_pages }}"
+      - "{{ config.packages.pacman.vi }}"
+      - "{{ config.packages.pacman.curl }}"
+      - "{{ config.packages.pacman.git }}"
+      - "{{ config.packages.pacman.wget }}"
+      - "{{ config.packages.pacman.vim }}"
+      - "{{ config.packages.pacman.tree }}"
+      - "{{ config.packages.pacman.lsof }}"
+      - "{{ config.packages.pacman.xclip }}"
+      - "{{ config.packages.pacman.strace }}"
+      - "{{ config.packages.pacman.pwgen }}"
+      - "{{ config.packages.pacman.gdb }}"
+      - "{{ config.packages.pacman.fwupd }}"
+    state: present
+  become: true
+
+- name: Install network tools/packages
+  community.general.pacman:
+    name:
+      - "{{ config.packages.pacman.traceroute }}"  # print the route packets trace to network host
+      - "{{ config.packages.pacman.iputils }}"  # network monitoring tools, incl. ping
+      - "{{ config.packages.pacman.inetutils }}"  # collection of common network programs, e.g. telnet
+      - "{{ config.packages.pacman.bind }}"  # dns stuff
+      - "{{ config.packages.pacman.gnu_netcat }}"  # netcat, the network piping application
+      - "{{ config.packages.pacman.socat }}"  # multipurpose relay
+      - "{{ config.packages.pacman.nmap }}"  # utility for network discovery and security auditing
+      - "{{ config.packages.pacman.tcpdump }}"  # powerful command-line packet analyzer
+    state: present
+  become: true

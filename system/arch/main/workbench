@@ -1,0 +1,315 @@
+#!/usr/bin/env python
+
+# workbench
+#
+# It's my own flavored script to manage Ansible playbooks and profiles. I like
+# Ansible that is to automate my workbench that is organized and granular as
+# much as possible with the current playbook, task. However, I dislike "roles"
+# because it clutters my directory. I want to be able to keep handlers, vars,
+# files in a single playbook; and import tasks in playbooks. In different
+# project, "roles" structure might be a good fit, but I don't want it in my
+# workbench project where I want to minimize the number of files.
+#
+# Usage:
+#
+#   ./workbench <type: playbook/profile> <playbook name/profile name> <..extra-args..>
+#
+# Examples:
+#
+#   ./workbench playbook base --tags="base.fonts,base.etckeeper"
+#   ./workbench playbook base bluetooth
+#
+#   ./workbench profile personal
+#
+# Details:
+#
+#   1. Every playbook is defined at the folder level, for instance,
+#   `playbooks/base` is the `base` playbook, which has always one `main.yml`
+#   file. Folders start with an underscore (`_`) are not valid, they aren't
+#   included in the list.
+#
+#   `main.yml` file is the entrypoint of the playbooks and it's always run.
+#   If `main.yml` is not found, the script looks for `main_vault.yml`. If it's
+#   also not found, the script exits.
+#
+#   2. A playbook file must have a `main.yml` but also it can have multiple
+#   task files that are usually imported by the main file.
+#
+#   3. `--vault_password_file` command is appended automatically if a playbook
+#   folder contains a file ending with `_vault.yml`. A playbook file (either
+#   `main.yml` or any `<task>.yml`) has to be ended with `_vault` in order to
+#   add the vault password parameter; otherwise, Ansible throws a missing vault
+#   password error anyway.
+#
+#   4. Profiles contain sets of tags of the playbooks bundled together in an
+#   ordered manner. All profiles are read from the `profiles.yml` file.
+#
+# Technical notes:
+#
+#   Used `subprocess` to run Ansible commands instead of the `ansible` Python
+#   module because it is not recommended by the Ansible team that it may be
+#   subject to change.
+#
+
+# TODO: and a few more commands and add 1st argument `command`
+#
+# ./workbench run
+#   ./workbench run playbook base
+#   ./workbench run profile personal
+#
+# ./workbench list
+#   ./workbench list unused-tags (lists unused tags in any profile)
+#
+# ./workbench check config_vars # checks if all config vars are in use.
+#
+
+import argparse
+import logging
+import os
+import pathlib
+import subprocess
+import sys
+import tempfile
+import time
+from dataclasses import dataclass
+
+import yaml
+
+logging.basicConfig(format="%(levelname)s: %(message)s")
+logging.addLevelName(
+    logging.ERROR, "\x1b[0;31;40m%s\x1b[0m" % logging.getLevelName(logging.ERROR)
+)
+logging.addLevelName(
+    logging.INFO, "\x1b[0;33;49m%s\x1b[0m" % logging.getLevelName(logging.INFO)
+)
+log = logging.getLogger(__name__)
+log.setLevel(logging.INFO)
+
+
+_PATH_PROFILES = "profiles.yml"
+_MAIN_FILES = ["main.yml", "main_vault.yml"]
+_PATH_CONFIG = "config.yml"
+_PATH_VAULT_PASS_FILE = "vault_pass.sh"
+
+
+@dataclass
+class Playbook:
+    path: pathlib.Path
+    name: str
+    has_vault: bool
+
+
+@dataclass
+class Profile:
+    name: str
+    playbooks: list[Playbook]
+    tags: str
+
+
+def flatten(x):
+    """
+    Helper to flatten the multi-dimensional list to 1d.
+    """
+    for xi in x:
+        if isinstance(xi, (list, tuple)):
+            yield from flatten(xi)
+        else:
+            yield xi
+
+
+def get_timestamp():
+    return time.strftime("%Y-%m-%dT%H:%M:%S", time.localtime(time.time()))
+
+
+def set_ansible_log_path(fill_args: dict, log_dir_name="log"):
+    """
+    To record logs from Ansible.
+    """
+    log_dir = pathlib.Path(log_dir_name)
+    log_dir.mkdir(exist_ok=True)  # create log dir if not exists
+    txt_fill_args = " ".join([f"{k}={v}" for k, v in fill_args.items()])
+    timestamp = get_timestamp()
+    log_file_name = pathlib.Path(f'ansible_"{txt_fill_args}"_{timestamp}.log')
+    file_path = str(log_dir.joinpath(log_file_name))
+    os.environ["ANSIBLE_LOG_PATH"] = file_path
+
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("type", nargs="?")
+    parser.add_argument("name", nargs="?")
+    parser.add_argument(
+        "--tags",
+        nargs="?",
+        help="optional tags, only to be used with playbook",
+    )
+    args, extra = parser.parse_known_args()
+    if not args.type:
+        raise ValueError("provide type.")
+    if not args.name:
+        raise ValueError("provide name.")
+    fill_args = {k: v for k, v in vars(args).items() if v is not None}
+    log.info("called with: %r", fill_args)
+    return args, extra, fill_args
+
+
+def get_playbook_paths() -> list[pathlib.Path]:
+    paths = []
+    playbooks_dir = pathlib.Path("playbooks").iterdir()
+    for pb in playbooks_dir:
+        if not pb.is_dir():
+            continue
+        if pb.name.startswith("_"):
+            continue
+        paths.append(pb)
+    return paths
+
+
+def get_playbook(name: str, playbook_paths: list[pathlib.Path]) -> Playbook:
+    for path in playbook_paths:
+        path_name = path.name
+        if name == path_name:
+            has_vault = False
+            folder = path.iterdir()
+            files = []
+            for file in folder:
+                if file.name in _MAIN_FILES:
+                    files.append(file)
+                if file.name.endswith("_vault.yml"):
+                    has_vault = True
+            if len(files) != 1:
+                raise ValueError(f"playbook {name} having no right main file.")
+            main_path = files[0]
+            return Playbook(
+                path=main_path,
+                name=name,
+                has_vault=has_vault,
+            )
+    raise ValueError(f"playbook {name} not found.")
+
+
+def read_profiles_from_file() -> dict:
+    with open(_PATH_PROFILES, mode="r", encoding="utf-8") as stream:
+        profiles = yaml.safe_load(stream)
+    for key, value in profiles.items():
+        flat = list(flatten(value))
+        profiles[key] = flat
+    return profiles
+
+
+def extract_playbooks_from_tags(
+    tags: list[str], playbook_paths: list[pathlib.Path]
+) -> list[Playbook]:
+    """
+    Detects the name of the playbooks from the profiles file. Profiles file
+    includes the tags. For example: the tags `p1, p2.t1, p2.t2.t3, p3.t1`
+    gives `p1, p2, p3` playbooks.
+    """
+    playbook_names = [path.name for path in playbook_paths]
+    profile_playbooks = []  # note: list instead of set because order matters
+    for tag in tags:
+        playbook_name = tag.split(".")[0]
+        if playbook_name not in playbook_names:
+            raise ValueError(f"playbook {playbook_name} not found")
+        playbook = get_playbook(playbook_name, playbook_paths)
+        if playbook not in profile_playbooks:
+            profile_playbooks.append(playbook)
+    return profile_playbooks
+
+
+def get_profile(name: str, playbook_paths: list[pathlib.Path]) -> Profile:
+    profiles = read_profiles_from_file()
+    tags = profiles[name]
+    profile_playbooks = extract_playbooks_from_tags(tags, playbook_paths)
+    tags_str = ",".join(tags)
+    return Profile(
+        name=name,
+        playbooks=profile_playbooks,
+        tags=tags_str,
+    )
+
+
+def create_main_playbook_file(playbooks: list[Playbook]) -> pathlib.Path:
+    header = "---\n- name: Main\n  hosts: all\n  gather_facts: true"
+    imports = ""
+    for playbook in playbooks:
+        abs_path = str(playbook.path.absolute())
+        imports += f"- import_playbook: {abs_path}\n"
+    content = header + "\n\n" + imports + "\n"
+    with tempfile.NamedTemporaryFile(
+        mode="w+",
+        prefix="ansible_",
+        suffix=".yml",
+        delete=False,
+    ) as tmp:
+        path = tmp.name
+        tmp.write(content)
+    return pathlib.Path(path)
+
+
+def get_has_any_main_vault(playbooks: list[Playbook]) -> bool:
+    for playbook in playbooks:
+        if playbook.has_vault:
+            return True
+    return False
+
+
+def get_git_repo_path() -> pathlib.Path:
+    cmd = ["git", "rev-parse", "--show-toplevel"]
+    path = subprocess.check_output(cmd).strip().decode("utf-8")
+    return pathlib.Path(path)
+
+
+def run_playbook(
+    main_playbook_filepath: pathlib.Path,
+    has_any_main_vault: bool,
+    tags: str | None,
+    extra: list[str],
+) -> None:
+    cmd = [
+        "ansible-playbook",
+        "-v",
+        "--inventory-file",
+        "localhost.inventory",
+        f"--extra-vars=@{_PATH_CONFIG}",
+        "--ask-become-pass",
+    ]
+    log.info("🔴 will ask the become (sudo) pass")
+    if has_any_main_vault:
+        log.info("🔑 vault file detected, will ask the key")
+        git_path = get_git_repo_path()
+        vault_password_file = git_path.joinpath(_PATH_VAULT_PASS_FILE)
+        cmd.append(f"--vault-password-file={vault_password_file}")
+    if tags:
+        cmd.append(f"--tags={tags}")
+    cmd.append(str(main_playbook_filepath.absolute()))
+    if extra:
+        cmd.append(" ".join(extra))
+    log.info("running playbook: %r", " ".join(cmd))
+    try:
+        subprocess.run(cmd, check=True)
+    except subprocess.CalledProcessError as exc:
+        sys.exit(exc.returncode)
+
+
+def main():
+    args, extra, fill_args = parse_args()
+    set_ansible_log_path(fill_args)
+    playbook_paths = get_playbook_paths()
+    if args.type == "playbook":
+        playbook = get_playbook(args.name, playbook_paths)
+        playbooks = [playbook]
+        tags = args.tags
+    elif args.type == "profile":
+        profile = get_profile(args.name, playbook_paths)
+        playbooks = profile.playbooks
+        tags = profile.tags
+    else:
+        raise ValueError("Unknown arg type")
+    main_playbook_filepath = create_main_playbook_file(playbooks)
+    has_any_main_vault = get_has_any_main_vault(playbooks)
+    run_playbook(main_playbook_filepath, has_any_main_vault, tags, extra)
+
+
+if __name__ == "__main__":
+    main()

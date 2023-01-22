@@ -35,5 +35,5 @@
 [credential]
 	helper = cache
 [init]
-	templatedir = ~/dotfiles/files/git/git_templates
+	templatedir = ~/workbench/files/git/git_templates
 	defaultBranch = master

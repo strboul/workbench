@@ -1,0 +1,82 @@
+---
+- name: Set variables
+  ansible.builtin.set_fact:
+    vars_ssh:
+      client_path: "{{ ansible_env.HOME }}/.ssh"
+      key_id: "id_ed25519-workbench_{{ ansible_hostname }}"
+
+- name: Create ssh user directory if not exist
+  ansible.builtin.file:
+    path: "{{ vars_ssh.client_path }}"
+    mode: 0700
+    state: directory
+
+- name: Create a keypair
+  block:
+    - name: Check if key exists
+      ansible.builtin.stat:
+        path: "{{ vars_ssh.client_path }}/{{ vars_ssh.key_id }}"
+      register: ssh_key_file
+
+    - name: Generate an OpenSSH keypair with ed25519
+      community.crypto.openssh_keypair:
+        path: "{{ vars_ssh.client_path }}/{{ vars_ssh.key_id }}"
+        type: ed25519
+        comment: "{{ vars_ssh.key_id }}_{{ ansible_date_time.date }}"
+      when: not ssh_key_file.stat.exists
+
+- name: Make key restrictive key file permission
+  ansible.builtin.file:
+    path: "{{ vars_ssh.client_path }}/{{ vars_ssh.key_id }}"
+    mode: 0400
+    state: file
+
+# Details:
+#
+# - File mode 0600: Because of the potential for abuse, this file must have
+# strict permissions. Read/write for the user, and not accessible by
+# others. It may be group-writable, provided that the group in question
+# contains only the user.
+#
+# - AddKeysToAgent: Automatically add keys to ssh-agent at first use.
+#
+- name: Create user ssh config file
+  ansible.builtin.blockinfile:
+    path: "{{ vars_ssh.client_path }}/config"
+    block: |
+      # default for all
+      Host *
+        IdentityFile {{ vars_ssh.client_path }}/{{ vars_ssh.key_id }}
+        AddKeysToAgent yes
+    mode: 0600
+    create: true
+    state: present
+  notify: sshd restart
+
+- name: Add current pub key to authorized keys
+  ansible.builtin.blockinfile:
+    path: "{{ vars_ssh.client_path }}/authorized_keys"
+    block: |
+      # current key '{{ vars_ssh.key_id }}.pub':
+      {{ lookup('file', '{{ vars_ssh.client_path }}/{{ vars_ssh.key_id }}.pub') }}
+
+      # *** Add other authorized public keys down below (!! outside the managed block !!) ***
+    # This file is not highly sensitive, but the recommended permissions
+    # are read/write for the user, and not accessible by others.
+    mode: 0600
+    create: true
+    state: present
+  notify: sshd restart
+
+- import_tasks: ../_utils/util_notify.yml
+  vars:
+    id: check-ssh-key-passphrase
+    command: |
+      "{{ ansible_env.HOME }}/workbench/bin/check-ssh-key-passphrase {{ vars_ssh.client_path }}/{{ vars_ssh.key_id }} | grep -v '**NOT** passphrase protected!'"
+    additional_message: |
+      Add passphrase with the following command
+
+      sudo ssh-keygen -p -f {{ vars_ssh.client_path }}/{{ vars_ssh.key_id }}
+    timer:
+      time: "1h"
+      explain: "every hour"

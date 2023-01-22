@@ -1,0 +1,8 @@
+---
+- name: Install QR code generator and readers
+  community.general.pacman:
+    name:
+      - "{{ config.packages.pacman.qrencode }}"
+      - "{{ config.packages.pacman.zbar }}"
+    state: present
+  become: true

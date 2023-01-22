@@ -1,0 +1,45 @@
+---
+- name: Virtualization
+  tags: virt
+  hosts: all
+  tasks:
+    - name: Install libvirt
+      community.general.pacman: name="{{ config.packages.pacman.libvirt }}" state=present
+      become: true
+      tags: virt.libvirt
+      notify: libvirtd running
+
+    - name: Install virt-manager
+      community.general.pacman: name="{{ config.packages.pacman.virt_manager }}" state=present
+      become: true
+      tags: virt.virt_manager
+
+    # https://www.vagrantup.com/
+    # Note: brings a lot of ruby dependencies.
+    - name: Install vagrant
+      community.general.pacman: name="{{ config.packages.pacman.vagrant }}" state=present
+      become: true
+      tags: virt.vagrant
+
+    # https://www.virtualbox.org/
+    - name: Install VirtualBox
+      community.general.pacman:
+        name:
+          - "{{ config.packages.pacman.virtualbox }}"
+          - "{{ config.packages.pacman.virtualbox_guest_utils }}"
+        state: present
+      become: true
+      tags: virt.virtualbox
+
+    - name: Install gnome-boxes
+      community.general.pacman: name="{{ config.packages.pacman.gnome_boxes }}" state=present
+      become: true
+      tags: virt.gnome_boxes
+
+  handlers:
+    - name: libvirtd running
+      ansible.builtin.systemd:
+        name: libvirt
+        state: started
+        enabled: true
+      become: true

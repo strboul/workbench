@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# Get the line of:
+#
+#   ...
+#   coretemp-isa-0000
+#   Adapter: ISA adapter
+#   Package id 0:  +63.0°C  (high = +100.0°C, crit = +100.0°C)
+#   ...
+#
+
+_sensors="$(/usr/bin/sensors)"
+_temperature="$(echo "$_sensors" | awk '/^coretemp-.*/ { for(i=2;i;--i) { getline }; print $4 }')"
+echo "<txt>$_temperature</txt>"
+echo "<tool>$_sensors</tool>"
+
+# open task manager on click
+_task_manager="xfce4-terminal \
+  --command='/usr/bin/htop' \
+  --title='htop' \
+  --geometry 150x50 \
+  --zoom=-1.5 \
+  --hide-scrollbar \
+  --hide-menubar"
+echo "<txtclick>$_task_manager</txtclick>"

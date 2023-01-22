@@ -1,0 +1,20 @@
+---
+- name: Install Thunderbird
+  community.general.pacman: name="{{ config.packages.pacman.thunderbird }}" state=present
+  become: true
+
+# TODO: generalize this by custom ansible wrapper
+- name: Start Thunderbird on startup
+  ansible.builtin.blockinfile:
+    path: "{{ ansible_env.HOME }}/.config/autostart/thunderbird.desktop"
+    block: |
+      [Desktop Entry]
+      Name=Thunderbird
+      Exec=/bin/sh -c "sleep 3 && /usr/bin/thunderbird"
+      Type=Application
+      Icon=thunderbird
+      StartupNotify=true
+      Terminal=false
+    mode: 0644
+    create: true
+    state: present

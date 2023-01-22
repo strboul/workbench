@@ -1,0 +1,21 @@
+---
+- name: Install etckeeper
+  community.general.pacman: name="{{ config.packages.pacman.etckeeper }}" state=present
+  become: true
+
+- name: Check if etckeeper set up
+  ansible.builtin.stat:
+    path: /etc/.git/config
+  register: etckeeper_git
+  become: true
+
+- name: Initialize etckeeper
+  ansible.builtin.shell:
+    etckeeper init \
+    && pushd /etc \
+    && git config --local user.name "root" \
+    && git config --local user.email "root@{{ ansible_hostname }}" \
+    && etckeeper commit -m "Initial commit" \
+    && popd
+  when: not etckeeper_git.stat.exists
+  become: true

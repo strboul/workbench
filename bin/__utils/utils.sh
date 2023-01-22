@@ -1,4 +1,4 @@
-# Reusable util functions for the dotfiles - aims to be POSIX compatible.
+# Reusable util functions - aims to be POSIX compatible.
 
 # --------------------------------------------------------------------------- #
 # log ----

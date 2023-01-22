@@ -1,0 +1,13 @@
+---
+- name: Change sshd_config
+  ansible.builtin.blockinfile:
+    path: /etc/ssh/sshd_config
+    block: |
+      ChallengeResponseAuthentication no
+      PasswordAuthentication no
+      UsePAM no
+      AuthenticationMethods publickey
+      PubkeyAuthentication yes
+    state: present
+  become: true
+  notify: sshd restart

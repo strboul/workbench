@@ -1,0 +1,34 @@
+---
+- name: Install cli utils via pacman
+  community.general.pacman:
+    name:
+      - "{{ config.packages.pacman.htop }}"  # https://github.com/htop-dev/htop
+      - "{{ config.packages.pacman.fzf }}"  # https://github.com/junegunn/fzf
+      - "{{ config.packages.pacman.ripgrep }}"  # https://github.com/BurntSushi/ripgrep
+      - "{{ config.packages.pacman.lazygit }}"  # https://github.com/jesseduffield/lazygit
+      - "{{ config.packages.pacman.fd }}"  # https://github.com/sharkdp/fd
+      - "{{ config.packages.pacman.bat }}"  # https://github.com/sharkdp/bat
+      - "{{ config.packages.pacman.jq }}"  # https://github.com/stedolan/jq
+      - "{{ config.packages.pacman.ipython }}"  # https://github.com/ipython/ipython
+      - "{{ config.packages.pacman.direnv }}"  # https://github.com/direnv/direnv
+      - "{{ config.packages.pacman.hyperfine }}"  # https://github.com/sharkdp/hyperfine
+      - "{{ config.packages.pacman.ranger }}"  # https://github.com/ranger/ranger
+      - "{{ config.packages.pacman.gdu }}"  # https://github.com/dundee/gdu
+      - "{{ config.packages.pacman.neofetch }}"  # https://github.com/dylanaraps/neofetch
+      - "{{ config.packages.pacman.onefetch }}"  # https://github.com/o2sh/onefetch
+      - "{{ config.packages.pacman.neovim }}"
+      - "{{ config.packages.pacman.tmux }}"
+    state: present
+  become: true
+
+- name: Install cli utils via pip
+  ansible.builtin.pip:
+    name:
+      - virtualenv
+      - pylint  # https://github.com/PyCQA/pylint
+      - bpython  # https://github.com/bpython/bpython
+      - git-substatus  # https://github.com/strboul/git-substatus
+      - pre-commit  # https://pre-commit.com/#installation
+    state: present
+  environment:
+    PIP_REQUIRE_VIRTUALENV: false

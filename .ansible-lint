@@ -1,0 +1,7 @@
+# .ansible-lint
+
+# include only relevant system/ paths.
+exclude_paths:
+  - .pre-commit-config.yaml
+  - bin
+  - files

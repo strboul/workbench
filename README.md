@@ -1,17 +1,22 @@
-# dotfiles
-
-My custom config files
+# workbench
 
 ## Setup
 
 Clone this repository into your home (`$HOME/`) directory, and then change
-directory into the `dotfiles` folder. After all, execute the script that
-creates the symbolic links.
+directory into the `workbench` folder.
 
-```bash
-git clone https://github.com/strboul/dotfiles.git "$HOME"/dotfiles
-cd "$HOME"/dotfiles && ./.symlink
+```sh
+git clone https://github.com/strboul/workbench.git "$HOME"/workbench
+cd "$HOME"/workbench
 ```
+
+Recommended steps to install the parts in the following order.
+
+1. Install core `system/.../core`,
+
+2. Link dotfiles `files`,
+
+3. Configure main system `system/.../main`.
 
 ## Development
 

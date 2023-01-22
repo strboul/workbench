@@ -1,0 +1,9 @@
+---
+- name: Install Kubernetes tools
+  community.general.pacman:
+    name:
+      - "{{ config.packages.pacman.k9s }}"  # https://k9scli.io/
+      - "{{ config.packages.pacman.kubectx }}"  # https://github.com/ahmetb/kubectx
+      - "{{ config.packages.pacman.minikube }}"  # https://github.com/kubernetes/minikube
+    state: present
+  become: true

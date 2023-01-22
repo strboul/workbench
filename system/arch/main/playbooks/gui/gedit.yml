@@ -1,0 +1,11 @@
+---
+- name: Install gedit
+  community.general.pacman: name="{{ config.packages.pacman.gedit }}" state=present
+  become: true
+
+- name: Tweak gedit configuration
+  ansible.builtin.shell: |
+    gsettings set org.gnome.gedit.preferences.editor display-line-numbers true
+    gsettings set org.gnome.gedit.preferences.editor insert-spaces true
+    gsettings set org.gnome.gedit.preferences.editor tabs-size 2
+  changed_when: true

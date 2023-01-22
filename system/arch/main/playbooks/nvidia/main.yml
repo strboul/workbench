@@ -1,0 +1,39 @@
+---
+# Disable Nvidia GPU.
+# https://wiki.archlinux.org/title/Hybrid_graphics#Fully_power_down_discrete_GPU
+#
+# lspci -k | grep -A 2 -E "(VGA|3D)"
+# # 00:02.0 VGA compatible controller: Intel Corporation CoffeeLake-H GT2 [UHD Graphics 630]
+# #         DeviceName:  Onboard IGD
+# #         Subsystem: Dell Device 0905
+# # --
+# # 01:00.0 3D controller: NVIDIA Corporation TU117M [GeForce GTX 1650 Mobile / Max-Q] (rev a1)
+# #         Subsystem: Dell Device 0905
+# #         Kernel modules: nouveau
+- name: Disable Nvidia GPU on Dell XPS 7590
+  block:
+    - name: Blacklist the nouveau drivers
+      ansible.builtin.blockinfile:
+        path: /etc/modprobe.d/blacklist-nouveau.conf
+        block: |
+          blacklist nouveau
+          options nouveau modeset=0
+        mode: 0644
+        state: present
+      become: true
+
+    - name: Create udev rules
+      ansible.builtin.blockinfile:
+        path: /etc/udev/rules.d/00-remove-nvidia.rules
+        block: |
+          # Remove NVIDIA USB xHCI Host Controller devices, if present
+          ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x0c0330", ATTR{power/control}="auto", ATTR{remove}="1"
+          # Remove NVIDIA USB Type-C UCSI devices, if present
+          ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x0c8000", ATTR{power/control}="auto", ATTR{remove}="1"
+          # Remove NVIDIA Audio devices, if present
+          ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x040300", ATTR{power/control}="auto", ATTR{remove}="1"
+          # Remove NVIDIA VGA/3D controller devices
+          ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x03[0-9]*", ATTR{power/control}="auto", ATTR{remove}="1"
+        mode: 0644
+        state: present
+      become: true

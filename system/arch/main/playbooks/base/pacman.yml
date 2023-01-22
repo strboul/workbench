@@ -1,0 +1,89 @@
+---
+# See the pacman.conf config file in:
+# https://archlinux.org/pacman/pacman.conf.5.html
+#
+- name: Update the pacman config file
+  ansible.builtin.lineinfile:
+    path: /etc/pacman.conf
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  loop:
+    # Log action messages through syslog(). This will insert log entries into
+    # /var/log/messages or equivalent.
+    - { regexp: "^#UseSyslog", line: "UseSyslog" }
+    # Automatically enable colors only when pacman’s output is on a tty.
+    - { regexp: "^#Color", line: "Color" }
+    # Displays name, version and size of target packages formatted as a table
+    # for upgrade, sync and remove operations.
+    - { regexp: "^#VerbosePkgLists", line: "VerbosePkgLists" }
+  become: true
+
+# https://archlinux.org/mirrors/status/
+# (go to 'Successfully Syncing Mirrors' and sort by 'Mirror Score')
+#
+# choose only https mirrors
+#
+- name: Update the mirrorlist (only https)
+  ansible.builtin.copy:
+    dest: /etc/pacman.d/mirrorlist
+    content: |
+      # Worldwide
+      Server = https://geo.mirror.pkgbuild.com/$repo/os/$arch
+      Server = https://mirror.rackspace.com/archlinux/$repo/os/$arch
+
+      # Netherlands
+      Server = https://mirror.i3d.net/pub/archlinux/$repo/os/$arch
+      Server = https://mirror.lyrahosting.com/archlinux/$repo/os/$arch
+      Server = https://archlinux.mirror.liteserver.nl/$repo/os/$arch
+      Server = https://mirror.serverion.com/archlinux/$repo/os/$arch
+
+      # Turkey
+      Server = https://depo.turkiye.linux.web.tr/archlinux/$repo/os/$arch
+    mode: 0644
+  become: true
+
+# TODO: remove this block of update. Add `pacman -Syu` as a prerequisite to the
+# README of system/arch/main.
+
+# Create a dummy file to check if system is updated via Ansible in the
+# beginning. Because I only want to update the system via Ansible once in the
+# beginning, and for the subsequent runs, I want to control this process
+# myself.
+- name: Check file for pacman updated
+  ansible.builtin.stat:
+    path: "{{ pacman_updated_file }}"
+  register: pacman_system_updated_status
+
+- name: Update archlinux-keyring
+  community.general.pacman: name="{{ config.packages.pacman.archlinux_keyring }}" state=present
+  become: true
+
+- name: pacman -Syu to update the system
+  community.general.pacman:
+    update_cache: true
+    upgrade: true
+  become: true
+  throttle: 1  # don't hammer arch servers
+  when: not pacman_system_updated_status.stat.exists
+  register: pacman_system_updated
+
+- name: Create file for pacman updated
+  ansible.builtin.copy:
+    dest: "{{ pacman_updated_file }}"
+    content: "{{ lookup('pipe', 'date') }}\n"  # add timestamp info inside
+    mode: 0644
+  when: pacman_system_updated.changed
+
+# Set notification service to periodically check updates.
+
+# TODO: In the message, use templating so you could list the packages or tell x
+# packages. Fix it if you move that task into a custom module.
+- import_tasks: ../_utils/util_notify.yml
+  vars:
+    id: check-arch-pacman-updates
+    command: "[[ $(checkupdates | wc -l) -eq 0 ]]"
+    additional_message: |
+      There are pending updates in the system.
+    timer:
+      time: "8h"
+      explain: "every 8 hours"

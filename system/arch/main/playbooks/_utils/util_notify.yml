@@ -1,0 +1,104 @@
+---
+# TODO: create a custom ansible module out of this.
+
+# Monitor, check and if there's a problem, provide an interactive notification
+# to the user.
+
+- name: Remap input arguments
+  ansible.builtin.set_fact:
+    vars_util_notify:
+      id: "{{ id }}"
+      command: "{{ command }}"
+      additional_message: "{{ additional_message }}"
+      timer:
+        time: "{{ timer.time }}"
+        explain: "{{ timer.explain }}"
+
+- name: Create notification scripts directory if not exist
+  ansible.builtin.file:
+    path: "{{ config.vars.workbench_dir }}/notify_scripts"
+    mode: 0700
+    state: directory
+  register: notify_scripts_dir
+
+- name: Create notify job script
+  ansible.builtin.copy:
+    dest: "{{ notify_scripts_dir.path }}/notify_{{ vars_util_notify.id }}"
+    content: |
+      #!/bin/sh
+      # Notes:
+      # 1. `eval` is EVIL but no idea how to unquote Ansible
+      # variable inline.
+      # 2. `notify-send` has critical and time 0 arguments to keep the
+      # notification until it's clicked.
+      output="$(eval {{ vars_util_notify.command }})"
+      ret="$?"
+      if [ "$ret" -ne 0 ]; then
+        add_msg="{{ vars_util_notify.additional_message }}"
+        explain_msg="⌛ This notification is on calendar: {{ vars_util_notify.timer.explain }}."
+        notify-send \
+          -u critical -t 0 \
+          "[workbench notify] {{ vars_util_notify.id }} ⚠️" \
+          "$(printf "%s\n\n\n%s\n\n------\n%s" "$output" "$add_msg" "$explain_msg")"
+      fi
+    mode: 0700
+  register: notify_job_script
+
+- name: Get basename of the script
+  ansible.builtin.set_fact:
+    notify_job_basename: "{{ notify_job_script.dest | basename }}"
+
+- name: Create systemd config directory
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.config/systemd/user"
+    mode: 0700
+    state: directory
+
+- name: Create systemd service and timer files
+  block:
+    - name: Service file
+      ansible.builtin.copy:
+        dest: "{{ systemd_user_config_path }}/{{ notify_job_basename }}.service"
+        content: |
+          [Unit]
+          Description={{ notify_job_basename }}
+
+          [Service]
+          ExecStart={{ notify_job_script.dest }}
+        mode: 0644
+
+    - name: Timer file
+      ansible.builtin.copy:
+        dest: "{{ systemd_user_config_path }}/{{ notify_job_basename }}.timer"
+        content: |
+          [Unit]
+          Description={{ notify_job_basename }}
+
+          [Timer]
+          # Define a monotonic timer that's relative to when the machine was booted up.
+          OnBootSec={{ vars_util_notify.timer.time }}
+          Persistent=true
+
+          [Install]
+          WantedBy=timers.target
+        mode: 0644
+
+  vars:
+    systemd_user_config_path: "{{ ansible_env.HOME }}/.config/systemd/user"
+
+- name: Enable and start systemd services
+  block:
+    - name: Enable service
+      ansible.builtin.systemd:
+        name: "{{ notify_job_basename }}.service"
+        state: started
+        enabled: true
+        daemon_reload: true
+        scope: user
+
+    - name: Enable timer
+      ansible.builtin.systemd:
+        name: "{{ notify_job_basename }}.timer"
+        state: started
+        enabled: true
+        scope: user

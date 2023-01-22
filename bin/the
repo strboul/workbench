@@ -6,7 +6,7 @@
 #
 TERM="$1"
 
-source "$HOME"/dotfiles/bin/__utils/utils.sh
+source "$HOME"/workbench/bin/__utils/utils.sh
 
 check_term_provided() {
   [ -z "$TERM" ] && utils__err_exit "term is missing."

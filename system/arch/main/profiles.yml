@@ -1,0 +1,76 @@
+# Define profiles here.
+#
+# Things will run in the same order as it's defined here.
+#
+
+# Most likely to be used in a headless environment.
+minimal: &minimal
+  - base
+  - bluetooth
+  - ssh
+  - firewalld
+
+# Programs for the dotfiles.
+dotfiles: &dotfiles
+  - *minimal
+  - python
+  - language.node
+  - language.deno
+  - language.lua
+  - language.golang
+  - package.zsh
+  - package.cli_utils
+  - package.cli_utils_extra
+  - package.pip.python_tools
+  - package.pip.other_tools
+  - package.podman
+
+# Minimal sparked DE on top of it.
+minimal-de: &minimal-de
+  - *dotfiles
+  - xfce
+
+# common utilities
+common: &common
+  - *minimal-de
+  - docker
+  - gui.alacritty
+  - gui.brave
+  - gui.chromium
+  - gui.firefox
+  - gui.gedit
+  - gui.gnome_disk_utility
+  - gui.libreoffice
+  - gui.code
+
+personal:
+  - *common
+  - gpg
+  - language.rust
+  - package.clang
+  - package.terraform
+  - package.database.sqlite
+  - printer
+  - yubikey
+  - virt.virtualbox
+  - virt.libvirt
+  - gui.gimp
+  - gui.openscad
+  - gui.signal
+  - gui.solaar
+  - gui.vlc
+  - gui.wireshark
+  - gui.xcolor
+  - gui.gthumb
+
+work:
+  - *common
+  - package.database.postgresql
+  - gui.chrome
+  - gui.thunderbird
+  - gui.dbeaver
+  - gui.slack
+  - gui.thunderbird
+  - gui.keepassxc
+  - yubikey.client
+  - work

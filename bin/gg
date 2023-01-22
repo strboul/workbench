@@ -7,7 +7,7 @@
 # Sources:
 # - https://gist.github.com/junegunn/f4fca918e937e6bf5bad
 
-source "$HOME"/dotfiles/bin/__utils/utils.sh
+source "$HOME"/workbench/bin/__utils/utils.sh
 
 clipboard_copy() {
   if [[ "$OSTYPE" == "darwin"* ]]; then

@@ -1,0 +1,50 @@
+---
+- name: Bluetooth
+  tags: bluetooth
+  hosts: all
+  vars:
+    bluetooth_conf_path: /etc/bluetooth/main.conf
+  tasks:
+    - name: Install bluetooth tools
+      community.general.pacman:
+        name:
+          - "{{ config.packages.pacman.bluez }}"
+          - "{{ config.packages.pacman.bluez_utils }}"
+        state: present
+      become: true
+
+    - name: Be sure bluetooth is always running
+      ansible.builtin.command: /bin/true
+      notify: Bluetooth running
+
+    - meta: flush_handlers
+
+    - name: Check if bluetooth conf file exists
+      ansible.builtin.stat:
+        path: "{{ bluetooth_conf_path }}"
+      register: bluetooth_conf_file
+
+    - name: Update bluetooth config
+      ansible.builtin.lineinfile:
+        path: "{{ bluetooth_conf_path }}"
+        regexp: "{{ item.regexp }}"
+        line: "{{ item.line }}"
+      loop:
+        # Enable bluetooth fast connect config
+        # https://gist.github.com/andrebrait/961cefe730f4a2c41f57911e6195e444#enable-bluetooth-fast-connect-config
+        - { regexp: "^#ReconnectAttempts=", line: "ReconnectAttempts=7" }
+        - { regexp: "^#ReconnectIntervals=", line: "ReconnectIntervals=1,2,8" }
+        - { regexp: "^#FastConnectable=", line: "FastConnectable=true" }
+        # Auto power-on after reboot or suspend
+        # https://wiki.archlinux.org/title/Bluetooth#Auto_power-on_after_boot/resume
+        - { regexp: "^#AutoEnable=", line: "AutoEnable=true" }
+      become: true
+      when: bluetooth_conf_file.stat.exists
+
+  handlers:
+    - name: Bluetooth running
+      ansible.builtin.systemd:
+        name: bluetooth
+        state: started
+        enabled: true
+      become: true
