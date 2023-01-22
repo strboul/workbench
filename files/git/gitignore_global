@@ -2,12 +2,22 @@
 #
 # This ignore file should be portable for every case. Do not add specific file
 # exclusions (e.g.'*.o').
+#
+
+# general
 .~lock*
 *.swp
 *.swo
 *.log
+
+# osx stuff.
 .DS_Store
+
+# env
 .env
 .envrc
-.venv
 .direnv
+
+# python
+.venv
+.mypy_cache

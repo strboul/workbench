@@ -110,9 +110,8 @@ setopt HIST_REDUCE_BLANKS
 setopt HIST_IGNORE_SPACE
 # record command starttime
 setopt EXTENDED_HISTORY
-# don't write these commands to the history
-# TODO test this, <c-r> or history doesn't work but cat ~/.zsh_history works
-export HISTORY_IGNORE="(history|ls|cd|cd ..|pwd|clear|exit|cd|v)"
+# don't write these commands as is to the history.
+export HISTORY_IGNORE="(history|ls|cd|cd ..|pwd|clear|exit|cd)"
 
 # ===== aliases =====
 
@@ -133,7 +132,7 @@ alias ls='ls -Fv --color=auto --group-directories-first'
 alias ll='ls -lh'
 alias la='ll -a'
 
-alias v='eval $(command -v nvim)'
+alias v='mynvim'
 # python and bpython using different PYTHONPATH (https://stackoverflow.com/a/22182421)
 bpython() {
   if test -n "$VIRTUAL_ENV"; then

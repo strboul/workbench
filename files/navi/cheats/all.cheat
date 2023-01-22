@@ -35,6 +35,12 @@ git fetch --prune
 # Squash merge branch.
 git merge --squash <uncheckout-branch>
 
+# Rename current branch
+git branch -m <newname>
+
+# Rename branch
+git branch -m <oldname> <newname>
+
 # Get remote origin.
 git remote -v
 
@@ -90,7 +96,10 @@ $ commit_sha_current_branch: git log --format="%C(auto) %H %s" --no-merges maste
 % ssh [security]
 
 # authorise ssh pub key in a remote machine.
-ssh-copy-id -i <public-key> <user>@<hostname-or-ip>
+ssh-copy-id -i <public-key> user@<hostname-or-ip>
+
+# secure copy a directory (-r: recursive)
+scp -r <local_dir> user@host:<remote_dir>
 
 $ public-key: find ~/.ssh -type f -name '*.pub'
 
@@ -234,6 +243,9 @@ socat - TCP4-LISTEN:<port>,fork,reuseaddr
 # send a message to a port
 echo "hello" | socat TCP4:<address>:<port> -
 
+# send file contents as stream
+echo "$(<<file>)" | socat TCP4:<address>:<port> -
+
 $ address: echo "192.168.1.1" --- --fzf-overrides '--no-select-1'
 $ port: echo "3333" --- --fzf-overrides '--no-select-1'
 
@@ -294,9 +306,8 @@ blkid
 ; ----------------------------------------------------------------------------
 % killall [process]
 
-; FIXME: clarify it.
 # kill all processes of that program
-killall -9 <program>
+killall <program>
 
 ; ----------------------------------------------------------------------------
 % auditctl [process]
@@ -379,7 +390,7 @@ scanimage -L
 # get printer info
 lpstat -a
 
-# get job and all statuses
+# get jobs status
 lpstat -t
 
 ; ----------------------------------------------------------------------------
@@ -525,11 +536,14 @@ pacman -Qi <installed-packages>
 # get files provided by package
 pacman -Ql <installed-packages>
 
-# query if file is owned by a package
+# query file is owned by which package
 pacman -Qo <file>
 
 # install from file (e.g. cache)
 sudo pacman -U <cache-file>
+
+# Clear all unused cache
+sudo pacman -Sc
 
 # completely (with dependencies) remove a package
 sudo pacman -Rcns <installed-packages>
@@ -683,6 +697,24 @@ btrfs subvolume delete @snapshots/<snapshot>
 ; TODO
 
 ; ----------------------------------------------------------------------------
+% attr [linux]
+
+# list file attributes
+lsattr <file>
+
+# make file immutable/append only
+chattr +ia <file>
+
+# make file mutable/non-append only
+chattr -ia <file>
+
+; ----------------------------------------------------------------------------
+% user [linux]
+
+# add user to an existing group
+usermod -a -G <group> <user>
+
+; ----------------------------------------------------------------------------
 % rg [ripgrep]
 
 # Search pattern but ignore files
@@ -696,6 +728,27 @@ pyenv versions
 
 # Install python version
 pyenv install <version>
+
+# Set global version
+pyenv global <version>
+
+# Set local version (creates .python-version file)
+pyenv local <version>
+
+# Temporarily set version
+pyenv shell <version>
+
+; ----------------------------------------------------------------------------
+% xdg [linux]
+
+# Find xdg-mime of a file.
+xdg-mime query filetype <file>
+
+# Find default application of a xdg-mime.
+xdg-mime query default <mime>
+
+# Get list of xdg desktop files.
+ls /usr/share/applications
 
 ; ----------------------------------------------------------------------------
 % test [test]

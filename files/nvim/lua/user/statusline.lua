@@ -43,7 +43,7 @@ end
 
 local function readonly()
   if vim.bo.readonly then
-    return "[RO] "
+    return "[RO]"
   end
   return ""
 end
@@ -56,12 +56,11 @@ local function statusline()
     " ",
     gitbranch(),
     "%=",
+    filename(),
     "%#WarningMsg#",
     readonly(),
-    "%#Statusline#",
-    filename(),
+    "%#StatuslineExtra#",
     "%=",
-    "%#StatusLineExtra#",
     filetype(),
     lineinfo(),
   })

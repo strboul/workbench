@@ -24,11 +24,19 @@ M.log_file = function(file_path, message)
   io.close(file)
 end
 
--- FIXME
+-- https://github.com/neovim/neovim/pull/13896
 M.get_visual_selection = function()
-  local _, ls, cs = unpack(vim.fn.getpos("v"))
-  local _, le, ce = unpack(vim.fn.getpos("."))
-  return vim.api.nvim_buf_get_text(0, ls - 1, cs - 1, le - 1, ce, {})
+  local _, start_line, start_col, _ = unpack(vim.fn.getpos("v"))
+  local _, end_line, end_col, _ = unpack(vim.fn.getpos("."))
+  -- if visual selection started from bottom to top
+  if start_line > end_line then
+    start_line, end_line = end_line, start_line
+  end
+  -- if visual selection started from right to left
+  if start_col > end_col then
+    start_col, end_col = end_col, start_col
+  end
+  return vim.api.nvim_buf_get_text(0, start_line - 1, start_col - 1, end_line - 1, end_col, {})
 end
 
 M.num_to_hex = function(num)

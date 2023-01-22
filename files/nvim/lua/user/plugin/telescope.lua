@@ -54,9 +54,8 @@ function custom_commands.grep_command(query)
 end
 
 function custom_commands.any_jump_visual_mode()
-  -- FIXME
-  print(vim.inspect(require("user.utils").get_visual_selection()))
-  -- builtin.grep_string({ search = query })
+  local visual_select = require("user.utils").get_visual_selection()
+  builtin.grep_string({ search = table.concat(visual_select) })
 end
 
 function custom_commands.any_jump_normal_mode()

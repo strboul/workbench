@@ -29,6 +29,7 @@ vim.g.coc_global_extensions = {
   "coc-vimtex",
   "coc-xml",
   "coc-yaml",
+  "coc-snippets",
 }
 
 local keyset = vim.keymap.set
@@ -65,6 +66,11 @@ keyset("i", "<c-space>", "coc#refresh()", { silent = true, expr = true })
 -- GoTo code navigation
 -- XXX Edited(my): bring the viewport to the middle of the screen afterwards.
 keyset("n", "gd", "<Plug>(coc-definition)zz", { silent = true })
+
+-- Snippets
+-- XXX Edited(my): added
+-- list snippets.
+keyset("n", "<leader>csl", ":CocList snippets", { silent = true, expr = true })
 
 -- Use K to show documentation in preview window
 function _G.show_documentation()
@@ -107,4 +113,8 @@ keyset("n", "<leader>cc", ":<C-u>CocList commands<cr>", coclist_opts)
 -- Find symbol of current document
 keyset("n", "<leader>co", ":<C-u>CocList outline<cr>", coclist_opts)
 -- Search workspace symbols
-keyset("n", "<leader>cs", ":<C-u>CocList -I symbols<cr>", coclist_opts)
+keyset("n", "<leader>cws", ":<C-u>CocList -I symbols<cr>", coclist_opts)
+
+-- Completion item colors
+-- check list in `:h CocSymbol`.
+vim.cmd([[ hi! link CocSymbolSnippet CocListBgMagenta ]])

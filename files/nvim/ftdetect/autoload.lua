@@ -1,6 +1,8 @@
 -- Various nvim autoloads.
 --
 
+local user_utils = require("user.utils")
+
 local augroup_autosave_buffer = vim.api.nvim_create_augroup("AutoSaveBuffer", { clear = true })
 
 -- FIXME: why it's lagging??
@@ -16,16 +18,15 @@ vim.api.nvim_create_autocmd({ "BufLeave", "CursorHold", "FocusLost" }, {
 
 local augroup_trailing_whitespace = vim.api.nvim_create_augroup("TrailingWhitespace", { clear = true })
 
-vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
+vim.api.nvim_create_autocmd({ "FileType" }, {
   desc = [[
     Show trailing whitespace and spaces before a tab (except when typing at the
     end of a line).
   ]],
   group = augroup_trailing_whitespace,
   callback = function()
-    -- FIXME: doesn't work.
-    -- FIXME: make it array.includes check.
-    if vim.bo.buftype == "terminal" or vim.bo.buftype == "nofile" then
+    local ignorelist = user_utils.set({ "nofile", "terminal", "help" })
+    if ignorelist[vim.bo.buftype] then
       return
     end
     vim.cmd([[ match TrailingWhitespace /\s\+\%#\@<!$/ ]])

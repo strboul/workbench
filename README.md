@@ -10,7 +10,7 @@ creates the symbolic links.
 
 ```bash
 git clone https://github.com/strboul/dotfiles.git "$HOME"/dotfiles
-cd "$HOME"/dotfiles && ./.symlinks
+cd "$HOME"/dotfiles && ./.symlink
 ```
 
 ## Development

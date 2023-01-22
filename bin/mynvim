@@ -2,9 +2,6 @@
 
 # Run neovim in container (with podman)
 #
-# Usage:
-#   v2
-#
 
 set -euo pipefail
 
@@ -14,8 +11,8 @@ HOST_PWD="$(pwd)"
 HOST_USER="$(id -un)"
 ARGS="$*"
 
-ID="v2-nvim"
-IMAGE_TAG="localhost/v2-nvim"
+ID="mynvim"
+IMAGE_TAG="localhost/mynvim"
 
 is_image_exist() {
   podman image inspect "$IMAGE_TAG" &> /dev/null
@@ -39,12 +36,13 @@ create_container() {
   podman run -it \
     --volume "$HOME/.gitconfig:/root/.gitconfig" \
     --volume "$HOME/.gitignore:/root/.gitignore" \
-    --volume "$HOME/dotfiles/files/nvim/init.lua:/root/.config/nvim/init.lua:ro" \
-    --volume "$HOME/dotfiles/files/nvim/lua:/root/.config/nvim/lua:ro" \
-    --volume "$HOME/dotfiles/files/nvim/after:/root/.config/nvim/after:ro" \
-    --volume "$HOME/dotfiles/files/nvim/ftdetect:/root/.config/nvim/ftdetect:ro" \
-    --volume "$HOME/dotfiles/files/nvim/syntax:/root/.config/nvim/syntax:ro" \
-    --volume "$HOME/dotfiles/files/nvim/coc-settings.json:/root/.config/nvim/coc-settings.json:ro" \
+    --volume "$HOME/dotfiles/files/nvim/init.lua:/root/.config/nvim/init.lua" \
+    --volume "$HOME/dotfiles/files/nvim/lua:/root/.config/nvim/lua" \
+    --volume "$HOME/dotfiles/files/nvim/after:/root/.config/nvim/after" \
+    --volume "$HOME/dotfiles/files/nvim/ftdetect:/root/.config/nvim/ftdetect" \
+    --volume "$HOME/dotfiles/files/nvim/syntax:/root/.config/nvim/syntax" \
+    --volume "$HOME/dotfiles/files/nvim/coc-settings.json:/root/.config/nvim/coc-settings.json" \
+    --volume "$HOME/dotfiles/files/nvim/snippets:/root/.config/coc/ultisnips" \
     --volume "$PWD:/root/cwd" \
     --volume "$ID:/root" \
     --env "host_PWD=$HOST_PWD" \
