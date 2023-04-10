@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+# Get the status of git-crypt
+#
+# Usage: git-crypt-status
+#
+
+set -e
+
+get_encrypted_files() {
+  git-crypt status -e | sed 's/^ *//g'
+}
+
+is_locked() {
+  git config --local --get filter.git-crypt.smudge > /dev/null \
+    && echo "🚨 files are **not** locked 🚨" \
+    || echo "🔒 files are locked 🔒"
+}
+
+main() {
+  echo "---------- git-crypt ----------"
+  get_encrypted_files
+  echo
+  is_locked
+  echo "-------------------------------"
+}
+
+main

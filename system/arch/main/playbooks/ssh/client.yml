@@ -11,6 +11,8 @@
     mode: 0700
     state: directory
 
+# TODO create keypairs.
+# Get this information from e.g. files/ssh/keys.yml
 - name: Create a keypair
   block:
     - name: Check if key exists
@@ -31,27 +33,46 @@
     mode: 0400
     state: file
 
-# Details:
-#
-# - File mode 0600: Because of the potential for abuse, this file must have
+# Because of the potential for abuse, this file must have
 # strict permissions. Read/write for the user, and not accessible by
 # others. It may be group-writable, provided that the group in question
 # contains only the user.
-#
-# - AddKeysToAgent: Automatically add keys to ssh-agent at first use.
-#
-- name: Create user ssh config file
-  ansible.builtin.blockinfile:
+- name: Check user config file permissions
+  ansible.builtin.file:
     path: "{{ vars_ssh.client_path }}/config"
-    block: |
-      # default for all
-      Host *
-        IdentityFile {{ vars_ssh.client_path }}/{{ vars_ssh.key_id }}
-        AddKeysToAgent yes
     mode: 0600
-    create: true
-    state: present
   notify: sshd restart
+
+# Use `ssh-keyscan -t ed25519 github.com` to gather the public keys.
+#
+# !! Don't forget to validate the keys from another secure channel that are
+# correct. !!
+#
+- name: Update known hosts
+  block:
+    - name: Get ssh host server pubkey
+      ansible.posix.authorized_key:
+        key: "{{ lookup('file', '/etc/ssh/ssh_host_ed25519_key.pub') }}"
+        user: "{{ ansible_user_id }}"
+        state: present
+      register: ssh_host_ed25519_key
+
+    - name: Update file
+      # I could use `ansible.builtin.known_hosts` but I want block markers.
+      ansible.builtin.blockinfile:
+        path: "{{ vars_ssh.client_path }}/known_hosts"
+        block: |
+          # current host
+          {{ ansible_hostname }} ssh-ed25519 {{ ssh_host_ed25519_key.key.split()[1] }}
+
+          # https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/githubs-ssh-key-fingerprints
+          github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl
+
+          # gitlab doesn't have a website :(
+          gitlab.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAfuCHKVTjquxvt6CM6tdG4SLp1Btn/nOeHHE5UOzRdf
+        mode: 0644
+        create: true
+        state: present
 
 - name: Add current pub key to authorized keys
   ansible.builtin.blockinfile:
@@ -61,22 +82,29 @@
       {{ lookup('file', '{{ vars_ssh.client_path }}/{{ vars_ssh.key_id }}.pub') }}
 
       # *** Add other authorized public keys down below (!! outside the managed block !!) ***
-    # This file is not highly sensitive, but the recommended permissions
-    # are read/write for the user, and not accessible by others.
-    mode: 0600
+    # This file can be read publicly but need super-user priviledges to write.
+    # TODO test this.
+    mode: 0444
     create: true
     state: present
+  become: true
   notify: sshd restart
 
-- import_tasks: ../_utils/util_notify.yml
-  vars:
-    id: check-ssh-key-passphrase
-    command: |
-      "{{ ansible_env.HOME }}/workbench/bin/check-ssh-key-passphrase {{ vars_ssh.client_path }}/{{ vars_ssh.key_id }} | grep -v '**NOT** passphrase protected!'"
-    additional_message: |
+- name: Set notification service to check if ssh key is passphrase protected
+  strboul.notify.check:
+    id: ssh-key-has-passphrase
+    condition: |
+      {{ ansible_env.HOME }}/workbench/bin/check-ssh-key-passphrase {{ vars_ssh.client_path }}/{{ vars_ssh.key_id }} \
+        || returncode="$?" \
+        || true \
+        && test "$returncode" -eq 16
+    message: |
       Add passphrase with the following command
 
       sudo ssh-keygen -p -f {{ vars_ssh.client_path }}/{{ vars_ssh.key_id }}
+    options:
+      urgency: critical
     timer:
-      time: "1h"
-      explain: "every hour"
+      OnBootSec: 1h
+      OnUnitActiveSec: 1h
+      Persistent: true

@@ -1,4 +1,11 @@
 ---
+- name: Install pacman helpers
+  community.general.pacman:
+    name:
+      - "{{ config.packages.pacman.pacman_contrib }}"
+    state: present
+  become: true
+
 # See the pacman.conf config file in:
 # https://archlinux.org/pacman/pacman.conf.5.html
 #
@@ -74,16 +81,17 @@
     mode: 0644
   when: pacman_system_updated.changed
 
-# Set notification service to periodically check updates.
-
-# TODO: In the message, use templating so you could list the packages or tell x
-# packages. Fix it if you move that task into a custom module.
-- import_tasks: ../_utils/util_notify.yml
-  vars:
-    id: check-arch-pacman-updates
-    command: "[[ $(checkupdates | wc -l) -eq 0 ]]"
-    additional_message: |
+- name: Set notification service to check package updates
+  strboul.notify.check:
+    id: pacman-updates
+    condition: checkupdates
+    message: |
       There are pending updates in the system.
+
+      $(checkupdates)
+    options:
+      urgency: critical
     timer:
-      time: "8h"
-      explain: "every 8 hours"
+      OnBootSec: 8h
+      OnUnitActiveSec: 8h
+      Persistent: true

@@ -10,18 +10,31 @@ M.set = function(list)
   return set
 end
 
--- Log a message to a file.
+-- Write a message to a file.
 -- https://www.lua.org/pil/21.1.html
 --
 -- Details:
 -- Useful for logging nvim events, such as:
---   require(user.utils).log_file('log1.log', vim.inspect(picker))
+--   require("user.utils").file_write('log1.log', vim.inspect(picker))
 --
-M.log_file = function(file_path, message)
-  local file = io.open(file_path, "w")
+M.file_write = function(filepath, message)
+  local file = io.open(filepath, "w")
   io.output(file)
   io.write(message)
   io.close(file)
+end
+
+-- Returns boolean whether a file exists.
+M.file_exists = function(filepath)
+  local file = io.open(filepath, "r")
+  return file ~= nil and io.close(file)
+end
+
+M.file_read = function(filepath)
+  local file = io.open(filepath, "r")
+  local content = file:read("*a")
+  io.close(file)
+  return content
 end
 
 -- https://github.com/neovim/neovim/pull/13896

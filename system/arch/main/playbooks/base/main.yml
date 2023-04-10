@@ -49,24 +49,6 @@
       ansible.builtin.import_tasks: qrcode.yml
       tags: base.qrcode
 
-    - name: Change attributes of some files
-      block:
-        - name: Append only files
-          ansible.builtin.file:
-            path: "{{ item }}"
-            attr: +a
-          loop:
-            - /etc/passwd
-            - /etc/shadow
-        - name: Immutable files
-          ansible.builtin.file:
-            path: "{{ item }}"
-            attr: +i
-          loop:
-            - /etc/resolv.conf
-            - /etc/hosts
-      become: true
-
   handlers:
     - name: NTP running
       ansible.builtin.systemd:

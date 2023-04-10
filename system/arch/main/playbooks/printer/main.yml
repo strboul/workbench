@@ -29,13 +29,16 @@
         - name: Install ghostscript  # brother printer requires it.
           community.general.pacman: name="{{ config.packages.pacman.ghostscript }}" state=present
           become: true
+
+        - meta: flush_handlers
+
         # lpadmin
         # -p destination  Specify/add the named destination. This can be arbitrary e.g. foobar.
         # -E              Enable and accept jobs on the printer (after -p)
         # -v device-uri   Specify the device URI for the printer.
         # -m model        Specify a standard model/PPD file for the printer. Must be 'everywhere'.
         # See: https://wiki.gentoo.org/wiki/Driverless_printing
-        - name: Add printer to the sytem
+        - name: Add printer
           ansible.builtin.shell: |
             lpadmin -p "{{ printer.name }}" -E -v "ipp://{{ printer.ipv4_address }}/ipp" -m everywhere
           changed_when: false
@@ -55,7 +58,6 @@
               - "{{ config.packages.aur.brscan4 }}"
               - "{{ config.packages.aur.brscan_skey }}"
             state: present
-          become: true
 
         - name: Add scanner
           ansible.builtin.shell: |

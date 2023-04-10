@@ -12,13 +12,10 @@ cd system/.../main
 
 Install Ansible and Ansible Galaxy requirements.
 
-`sudo pacman -S python-packaging` until resolved: https://bugs.archlinux.org/task/75661
-
 ```sh
 sudo pacman -S ansible
 ansible-galaxy collection install -r ansible-galaxy.yml
 ```
-
 
 ## 2. Run
 
@@ -68,7 +65,7 @@ View/decrypt the encrypted files with `view`, `decrypt` respectively.
 Edit the encrypted file with your favorite editor.
 
 ```sh
-EDITOR=vim ansible-vault edit --vault-password-file="$(git rev-parse --show-toplevel)/vault_pass.sh" <file_vault>
+ansible-vault edit --vault-password-file="$(git rev-parse --show-toplevel)/vault_pass.sh" <file_vault>
 ```
 
 #### Resources

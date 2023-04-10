@@ -1,31 +1,11 @@
-# Containerfile for neovim
-#
-
-# Build neovim nightly.
-FROM docker.io/library/alpine:latest as base
-RUN apk --no-cache add \
-  autoconf \
-  automake \
-  build-base \
-  cmake \
-  ninja \
-  coreutils \
-  curl \
-  gettext-tiny-dev \
-  git \
-  libtool \
-  pkgconf \
-  unzip
-RUN git clone https://github.com/neovim/neovim.git
-ARG VERSION=master
-RUN cd neovim && git checkout ${VERSION} && make CMAKE_BUILD_TYPE=RelWithDebInfo install
-
-# Setup neovim runtime.
 FROM docker.io/library/alpine:latest
-# copy from base.
-COPY --from=base /usr/local/lib/nvim /usr/local/lib/nvim
-COPY --from=base /usr/local/share/nvim /usr/local/share/nvim
-COPY --from=base /usr/local/bin/nvim /usr/local/bin/nvim
+# # download latest neovim binary
+# RUN \
+#   wget https://github.com/neovim/neovim/releases/download/nightly/nvim-linux64.tar.gz -O /tmp/nvim-linux64.tar.gz && \
+#   tar xzvf /tmp/nvim-linux64.tar.gz -C /tmp && \
+#   cp /tmp/nvim-linux64/bin/nvim /usr/local/bin/nvim
+# install neovim stable
+RUN apk --no-cache add neovim
 # install base libraries/packages.
 RUN apk --no-cache add \
   git \
@@ -47,8 +27,12 @@ RUN apk --no-cache add \
   nodejs \
   yarn \
   python3 \
-  lua && \
-  ln -sf "$(find /usr/bin -regex '/usr/bin/lua[0-9]\.[0-9]')" /usr/bin/lua
+  go \
+  lua5.3
+# symlink lua
+RUN ln -sf "$(find /usr/bin -regex '/usr/bin/lua[0-9]\.[0-9]')" /usr/bin/lua
+# add go path
+RUN echo 'PATH="${PATH}:/usr/local/go/bin"' >> /root/.bashrc
 RUN nvim --headless -c 'CocInstall' -c 'qa'
 
 WORKDIR /root/cwd

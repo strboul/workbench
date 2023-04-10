@@ -1,6 +1,8 @@
 #!/bin/bash
 
-# Get the line of:
+# Get cpu temperature
+#
+# In Intel:
 #
 #   ...
 #   coretemp-isa-0000
@@ -8,9 +10,23 @@
 #   Package id 0:  +63.0°C  (high = +100.0°C, crit = +100.0°C)
 #   ...
 #
+# In AMD:
+#
+#   ...
+#   k10temp-pci-00c3
+#   Adapter: PCI adapter
+#   Tctl:         +34.2°C
+#   ...
+#
 
 _sensors="$(/usr/bin/sensors)"
-_temperature="$(echo "$_sensors" | awk '/^coretemp-.*/ { for(i=2;i;--i) { getline }; print $4 }')"
+_temperature="$(
+  echo "$_sensors" \
+    | awk '/^(coretemp|k10temp)-.*/ { for(i=2;i;--i) { getline } ; print $0 }' \
+    | sed -n 's/^.*:\(.*\)/\1/p' \
+    | awk '{ print $1 }' \
+    | sed 's/\.[0-9]*//'
+)"
 echo "<txt>$_temperature</txt>"
 echo "<tool>$_sensors</tool>"
 

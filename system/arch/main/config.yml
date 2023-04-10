@@ -19,6 +19,7 @@ config:
   packages:
     pacman:
       alacritty: community/alacritty
+      arc_gtk_theme: community/arc-gtk-theme
       archlinux_keyring: core/archlinux-keyring
       bandwhich: community/bandwhich
       base_devel: base-devel
@@ -36,6 +37,7 @@ config:
       dbeaver: community/dbeaver
       deno: community/deno
       direnv: community/direnv
+      dmidecode: extra/dmidecode
       docker: community/docker
       docker_compose: community/docker-compose
       etckeeper: community/etckeeper
@@ -53,15 +55,17 @@ config:
       ghostscript: extra/ghostscript
       gimp: extra/gimp
       git: extra/git
+      gcr: extra/gcr
       gnome_boxes: community/gnome-boxes
       gnome_disk_utility: extra/gnome-disk-utility
       gnome_keyring: extra/gnome-keyring
-      gnucash: community/gnucash
+      gnome_sound_recorder: extra/gnome-sound-recorder
       gnu_free_fonts: extra/gnu-free-fonts
       gnu_netcat: extra/gnu-netcat
       golang: community/go
       gpgme: core/gpgme
       gthumb: extra/gthumb
+      gvfs: extra/gvfs
       htop: extra/htop
       hyperfine: community/hyperfine
       inetutils: core/inetutils
@@ -96,7 +100,9 @@ config:
       ntp: extra/ntp
       onefetch: community/onefetch
       openscad: community/openscad
+      opensnitch: community/opensnitch
       openssh: core/openssh
+      pacman_contrib: community/pacman-contrib
       pass: community/pass
       peek: community/peek
       podman: community/podman
@@ -120,6 +126,7 @@ config:
       tmux: community/tmux
       traceroute: core/traceroute
       tree: extra/tree
+      usbutils: core/usbutils
       vagrant: extra/vagrant
       valgrind: extra/valgrind
       vi: core/vi
@@ -130,24 +137,24 @@ config:
       virtualbox_guest_utils: community/virtualbox-guest-utils
       vlc: extra/vlc
       wget: extra/wget
+      whois: extra/whois
       wireguard_tools: extra/wireguard-tools
       wireshark_cli: community/wireshark-cli
       wireshark_qt: community/wireshark-qt
       xclip: extra/xclip
       xcolor: community/xcolor
       xdg_utils: extra/xdg-utils
-      xfce4_clipman_plugin: extra/xfce4-clipman-plugin
-      xfce4_genmon_plugin: extra/xfce4-genmon-plugin
-      xfce4_whiskermenu_plugin: community/xfce4-whiskermenu-plugin
+      xfce4_goodies: xfce4-goodies
       xfwm4_themes: extra/xfwm4-themes
       xorg_xev: extra/xorg-xev
       yamllint: community/yamllint
       yubikey_manager: community/yubikey-manager
       yubikey_manager_qt: community/yubikey-manager-qt
       yubikey_touch_detector: community/yubikey-touch-detector
+      zathura: community/zathura
+      zathura_pdf_poppler: community/zathura-pdf-poppler
       zbar: extra/zbar
       zsh: extra/zsh
-
     # beware aur packages - audit them before you add here
     #
     # list all aur packages with `pacman -Qm`
@@ -160,7 +167,9 @@ config:
       docker_credential_secretservice: docker-credential-secretservice
       google_chrome: google-chrome
       lazydocker: lazydocker
+      mullvad_vpn_bin: mullvad-vpn-bin
       navi: navi
+      opensnitch_ebpf_module: opensnitch-ebpf-module
       shellcheck: shellcheck-bin
       slack_desktop: slack-desktop
       terraform_docs_bin: terraform-docs-bin

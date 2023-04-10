@@ -5,7 +5,7 @@
 
 set -euo pipefail
 
-source "$HOME"/workbench/bin/__utils/utils.sh
+source "$HOME"/workbench/bin/_utils/utils.sh
 
 HOST_PWD="$(pwd)"
 HOST_USER="$(id -un)"

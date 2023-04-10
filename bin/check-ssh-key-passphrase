@@ -8,26 +8,29 @@
 # Usage:
 #   check-ssh-key-passphrase ~/.ssh/<key_file>
 #
+# It returns different arbitrary return codes depending upon the output.
+#
 
 main() {
   path_to_keyfile="$1"
 
   if [ -z "$path_to_keyfile" ]; then
     echo "provide a private key file"
-    return 1
+    return 14
   fi
 
   if [ ! -f "$path_to_keyfile" ]; then
     echo "private key file not exist: \"$path_to_keyfile\""
-    return 1
+    return 15
   fi
 
   if ssh-keygen -y -P "" -f "$path_to_keyfile" > /dev/null 2>&1; then
     echo "ssh key \"$path_to_keyfile\" is **NOT** passphrase protected!"
-    return 1
+    return 16
   fi
 
   echo "ssh key \"$path_to_keyfile\" is passphrase protected"
+  return 0
 }
 
 main "$@"

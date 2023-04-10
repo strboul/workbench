@@ -3,3 +3,6 @@ collections:
   - name: kewlfft.aur
     type: git
     source: https://github.com/kewlfft/ansible-aur
+  - name: strboul.ansible_notify_check
+    type: git
+    source: https://github.com/strboul/ansible-notify-check

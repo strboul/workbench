@@ -90,6 +90,10 @@ _PATH_PROFILES = "profiles.yml"
 _MAIN_FILES = ["main.yml", "main_vault.yml"]
 _PATH_CONFIG = "config.yml"
 _PATH_VAULT_PASS_FILE = "vault_pass.sh"
+_BIN_VERSIONS = {
+    "ansible": "/usr/bin/ansible",
+    "ansible-playbook": "/usr/bin/ansible-playbook",
+}
 
 
 @dataclass
@@ -267,7 +271,7 @@ def run_playbook(
     extra: list[str],
 ) -> None:
     cmd = [
-        "ansible-playbook",
+        _BIN_VERSIONS["ansible-playbook"],
         "-v",
         "--inventory-file",
         "localhost.inventory",

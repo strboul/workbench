@@ -76,22 +76,6 @@
   become: true
 
 - name: Change default shell to zsh
-  block:
-    - name: Disable attr temporarily
-      ansible.builtin.file:
-        path: "{{ item }}"
-        attr: -a
-      loop:
-        - /etc/passwd
-        - /etc/shadow
-    - name: Change shell for user
-      ansible.builtin.command: "chsh -s {{ vars_zsh.zsh_command }} {{ ansible_env.USER }}"
-      changed_when: false
-    - name: Set back attr
-      ansible.builtin.file:
-        path: "{{ item }}"
-        attr: +a
-      loop:
-        - /etc/passwd
-        - /etc/shadow
+  ansible.builtin.command: "chsh -s {{ vars_zsh.zsh_command }} {{ ansible_env.USER }}"
+  changed_when: false
   become: true

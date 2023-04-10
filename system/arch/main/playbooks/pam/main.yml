@@ -1,0 +1,24 @@
+---
+- name: PAM
+  tags: pam
+  hosts: all
+  tasks:
+    - name: Comment out unused systemd-home cluttering journald
+      ansible.builtin.replace:
+        path: /etc/pam.d/system-auth
+        regexp: "^(.*)pam_systemd_home\\.so(.*)$"
+        replace: "# \\1pam_systemd_home.so\\2"
+      become: true
+      tags: pam.remove_systemd_home
+
+    # Faillock is annoying and `faillock --reset` resets it anyway. Set it to a
+    # high number.
+    - name: Increase faillock number
+      ansible.builtin.lineinfile:
+        path: /etc/security/faillock.conf
+        regexp: "{{ item.regexp }}"
+        line: "{{ item.change }}"
+      become: true
+      tags: pam.faillock
+      loop:
+        - { regexp: "# deny = 3", change: "deny = 10" }

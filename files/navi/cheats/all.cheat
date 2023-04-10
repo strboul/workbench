@@ -41,17 +41,23 @@ git branch -m <newname>
 # Rename branch
 git branch -m <oldname> <newname>
 
-# Get remote origin.
+# List remote origins
 git remote -v
 
 # Set remote address
 git remote add <ssh_or_https>
 
-# Search a string in the git logs
-git log -p -G <string>
+# History of file
+git log -p <filename>
 
-# Search/grep a string in a file/folder with history
-git grep '<string>' "$(git rev-list --all -- <file-or-folder>)" -- <file-or-folder>
+# Search a query in the git logs
+git log -p -G <query>
+
+# Search in history
+git grep '<query>' $(git rev-list --all)
+
+# Search a query in a file/folder with history
+git grep '<query>' "$(git rev-list --all -- <file-or-folder>)" -- <file-or-folder>
 
 # Amend and don't edit the commit message
 git commit --amend --no-edit
@@ -65,11 +71,23 @@ git commit --fixup <commit_sha_current_branch>
 # By skipping commit hooks
 git commit --no-verify
 
+# Commit with a date ISO 8601 format
+git commit --date="YYYY-MM-DDTHH:MM:SS"
+
+# Reset head commit
+git reset HEAD~
+
 # Get a stash diff
 git stash show -p stash@{0}
 
 # List tags by creation date (descending)
 git tag --sort=-creatordate
+
+# List ignored files
+git ls-files --ignored --exclude-standard --others
+
+# change remote url
+git remote set-url origin git@example.com:user/repo.git
 
 # Add a new module
 git submodule add <repository> <path>
@@ -86,6 +104,9 @@ git submodule foreach git pull origin master
 # Update all submodules
 git submodule update --init --recursive
 
+# Create zip archive (respecting gitignore)
+git archive --format=zip --output <filename>.zip master
+
 $ name: git log --format='%an' | sort -u
 $ email: git log --format='%ae' | sort -u
 $ uncheckout-branch: git branch --list | awk '{ if ($1 != "*") { print $1 } }'
@@ -100,6 +121,15 @@ ssh-copy-id -i <public-key> user@<hostname-or-ip>
 
 # secure copy a directory (-r: recursive)
 scp -r <local_dir> user@host:<remote_dir>
+
+# jump through multiple hosts
+ssh -J user@host1,user@host2 user@host3
+
+# restart ssh agent
+eval "$(ssh-agent -s)"
+
+# create ssh keypair
+ssh-keygen -t ed25519 -C "<email>"
 
 $ public-key: find ~/.ssh -type f -name '*.pub'
 
@@ -167,19 +197,26 @@ openssl x509 -text -noout -in <crt-file>
 ; ----------------------------------------------------------------------------
 % nmap [network]
 
-# find dhcp addresses
-nmap --script broadcast-dhcp-discover -e <interface>
+# Scan all open ports in an address
+nmap 192.168.1.1
 
-# get all valid IP addresses in network (255 netmask)
-sudo nmap -sP 192.168.1.0/24
+; -sP: uses ping
+# Get all valid IP addresses in network (255 netmask)
+nmap -sP 192.168.1.0/24
+
+# Find dhcp addresses
+nmap --script broadcast-dhcp-discover -e <interface>
 
 $ interface: ip -o a show | awk '{ if ($3 == "inet") { print $2; } }'
 
 ; ----------------------------------------------------------------------------
 % ip [network]
 
-# get ip address
-ip route get 1.2.3.4 | awk '{ print $7 }'
+# list routing table
+ip route
+
+# get ip route
+ip route get 1 | awk '{ print $7 }'
 
 ; ----------------------------------------------------------------------------
 % nmcli [network]
@@ -231,6 +268,9 @@ tcpdump -l
 # Get route from an interface
 tcpdump -nn -i wlan0
 
+# Monitor outgoing connections except ssh
+tcpdump -i eth0 port not 22 and src <source-ip>
+
 ; ----------------------------------------------------------------------------
 % socat [network]
 
@@ -254,7 +294,7 @@ $ port: echo "3333" --- --fzf-overrides '--no-select-1'
 
 ; warnings: scans with different resolutions can be problematic.
 # concatenate/merge pdf files
-qpdf --pages input-*.pdf -- output.pdf
+qpdf --empty --pages input-*.pdf -- output.pdf
 
 ; ----------------------------------------------------------------------------
 % convert [imagemagick, jpg, pdf]
@@ -313,7 +353,16 @@ killall <program>
 % auditctl [process]
 
 # Check which process is modifying a certain directory or file.
-sudo auditctl -w <directory> -p war
+auditctl -w <directory> -p war
+
+; ----------------------------------------------------------------------------
+% mount [linux]
+
+# mount devices
+mount /dev/sda /mnt/<dir>
+
+# list mounts and filter by type
+mount -l -t ext4
 
 ; ----------------------------------------------------------------------------
 % getconf [linux]
@@ -342,6 +391,14 @@ free -m
 ; ----------------------------------------------------------------------------
 % ss [network, socket, process]
 
+; -a: all, both listening and non-listening, tcp established
+; -n: don't resolve service names, show numbers
+; -t: show threads using socket
+; -l: Display only listening sockets
+; -p: show process
+# list all open sockets
+ss -antlp
+
 # show ipv4 connections (-r: resolve, -p: show process)
 ss -4 -r -p
 
@@ -359,6 +416,12 @@ dig +short mx example.com
 
 # soa: 'Start Of Authority' records
 dig +short soa example.com
+
+; ----------------------------------------------------------------------------
+% nslookup [network, dns]
+
+# Reverse DNS lookup
+nslookup 127.0.0.1
 
 ; ----------------------------------------------------------------------------
 % ip [network]
@@ -379,7 +442,7 @@ chattr +i <file>
 % scanimage [printer, scanner]
 
 # scan an image
-scanimage --progress --resolution=150 --format=pdf --output-file ~/scans/"$(date +'%Y-%m-%dT%H:%M:%S')".pdf
+scanimage --progress --resolution=150 --format=pdf --output-file "$(date +'%Y-%m-%dT%H:%M:%S')".pdf
 
 # list devices
 scanimage -L
@@ -408,43 +471,80 @@ nc -z -v 127.0.0.1 <port>
 ; ----------------------------------------------------------------------------
 % telnet [network]
 
+; prefer netcat over telnet!
 # ping a port
 telnet 127.0.0.1 <port>
 
 ; ----------------------------------------------------------------------------
+% systemd [systemd]
+
+# inspect users, groups
+userdbctl
+
+; ----------------------------------------------------------------------------
 % journalctl [systemd]
 
-# Get the logs of a systemd unit.
-journalctl -u <service-file>
+# Follow log messages.
+journalctl -f
+
+# Listen logs of an executable.
+journalctl -f /usr/bin/<program>
+
+# Show log disk usage
+journalctl --disk-usage
+
+# Get logs since the current boot.
+journalctl -b
+
+# Get logs from the previous boot.
+journalctl -b-1
+
+# List boots from the current year.
+journalctl --list-boots
+
+# Show messages since
+journalctl --since "1 day ago"
+
+# Show only error, critical, alert priority messages.
+journalctl -p err..alert
+
+# Get logs since the boot and of a unit.
+journalctl -b -u <service-file>
 
 $ service-file: systemctl list-unit-files | grep enabled | awk '{ print $1 }'
+
+; ----------------------------------------------------------------------------
+% resolvectl [systemd]
+
+# Resolve domain names
+resolvectl --cache=false query strboul.com
 
 ; ----------------------------------------------------------------------------
 % firewalld [systemd]
 
 # Open tcp port (temporarily)
-sudo firewall-cmd --add-port=8000/tcp
+firewall-cmd --add-port=8000/tcp
 
 # Open tcp port (permanently)
-sudo firewall-cmd --permanent --add-port=8000/tcp
+firewall-cmd --permanent --add-port=8000/tcp
 
 # Close tcp port (permanently)
-sudo firewall-cmd --permanently --remove-port=8000/tcp
+firewall-cmd --permanently --remove-port=8000/tcp
 
-# List open ports
-sudo firewall-cmd --list-ports
+# List allowed ports
+firewall-cmd --list-ports
 
 # List active zones
-sudo firewall-cmd --get-active-zones
+firewall-cmd --get-active-zones
 
 # List running services
-sudo firewall-cmd --list-services
+firewall-cmd --list-services
 
 # List everything added or enabled
-sudo firewall-cmd --list-all
+firewall-cmd --list-all
 
 # Reload firewalld
-sudo firewall-cmd --reload
+firewall-cmd --reload
 
 ; ----------------------------------------------------------------------------
 % pwgen
@@ -476,6 +576,9 @@ systemctl --user list-timers
 # Stop a user timer
 systemctl --user <user-timer-unit>
 
+# Show failed services
+systemctl --failed
+
 $ service: systemctl list-units --type=service --no-pager --quiet | awk '{ print $1 }'
 $ user-timer-unit: systemctl --user list-timers --no-pager --quiet | perl -pe 's/^.*(\s+)(.*)(?<=\.timer).*$/\2/g'
 
@@ -503,6 +606,12 @@ docker rm -f $(docker ps -aq)
 # Inspect a container or image
 docker inspect <container-or-image-sha>
 
+# Copy from host to container
+docker cp foo.txt container_id:/foo.txt
+
+# Copy from container to host
+docker cp container_id:/foo.txt foo.txt
+
 ; ----------------------------------------------------------------------------
 % docker-compose [docker]
 
@@ -516,10 +625,10 @@ docker compose down
 % fdisk [disk]
 
 # list disk partitions
-sudo fdisk -l
+fdisk -l
 
 ; ----------------------------------------------------------------------------
-% pacman [arch]
+% pacman [arch, linux]
 
 # list cache packages
 ls -l /var/cache/pacman/pkg | grep '<query>'
@@ -540,13 +649,13 @@ pacman -Ql <installed-packages>
 pacman -Qo <file>
 
 # install from file (e.g. cache)
-sudo pacman -U <cache-file>
+pacman -U <cache-file>
 
 # Clear all unused cache
-sudo pacman -Sc
+pacman -Sc
 
 # completely (with dependencies) remove a package
-sudo pacman -Rcns <installed-packages>
+pacman -Rcns <installed-packages>
 
 $ cache-file: find /var/cache/pacman/pkg -type f -name '*.zst'
 $ installed-packages: pacman -Qq
@@ -555,13 +664,25 @@ $ installed-packages: pacman -Qq
 % dmesg [linux]
 
 # get usb device names
-sudo dmesg -T | grep 'USB'
+dmesg -T | grep 'USB'
 
 ; ----------------------------------------------------------------------------
 % id [linux]
 
 # get user name
 id -un
+
+; ----------------------------------------------------------------------------
+% chmod, chown, chgrp [linux]
+
+# Change file permissions with octal
+chmod 0600 <filename>
+
+# Change user ownership of a file
+chgrp <new-user> <filename>
+
+# Change group ownership of a file
+chgrp <new-group> <filename>
 
 ; ----------------------------------------------------------------------------
 % virsh [virt, libvirt]
@@ -609,7 +730,7 @@ rm -f "$(virsh dumpxml --domain <vm_name> | grep -oP "source file='\K[^']*")"
 shred -u <file>
 
 ; ----------------------------------------------------------------------------
-% usermod, gpasswd [linux]
+% useradd, usermod, gpasswd [linux]
 
 # list user groups.
 groups
@@ -617,11 +738,20 @@ groups
 # list all groups.
 getent group | cut -d: -f1
 
+# add a new user with home directory and password
+useradd --create-home --shell /usr/bin/zsh <username> && passwd <username>
+
+# delete user and its home directory
+userdel -rf <username>
+
+# add user to sudoers group
+usermod -aG wheel <user>
+
 # add user to group
 usermod -aG <group> <user>
 
 # remove user from group
-sudo gpasswd -d <group> <user>
+gpasswd -d <group> <user>
 
 $ user: getent passwd | cut -d: -f1
 $ group: getent group | cut -d: -f1
@@ -643,8 +773,12 @@ $ method: echo -e 'GET\nPOST\nPUT\nDELETE\nPATCH'
 ; ----------------------------------------------------------------------------
 % strace [linux]
 
+# Trace a command
+
+strace -f echo "hello world"
+
 # Trace a process and write to a file.
-sudo strace -f -p <pid> -e trace=write -o strace_pid_<pid>.capture
+strace -f -p <pid> -e trace=write -o strace_pid_<pid>.capture
 
 $ pid: ps a | tail -n +2 | fzf | awk '{ print $1 }'
 
@@ -652,11 +786,25 @@ $ pid: ps a | tail -n +2 | fzf | awk '{ print $1 }'
 % bash [linux]
 
 # For loop over the files
-for file in ls *; do echo "$file"; done
+for filename in ls *; do echo "$filename"; done
 
-; TODO: more here: https://linuxize.com/post/how-to-compare-strings-in-bash/
-# Check if two strings are equal
+# Ternary string comparison
 [[ "str1" == "str2" ]] && echo "equal" || echo "not equal"
+
+# Check if a string contains a substring
+if [[ "Arch Linux" =~ .*Linux.* ]]; then; echo "it contains"; fi
+
+# Check if a string is empty
+if [[ -z '' ]]; then echo "it is empty"; fi
+
+# Check if a string is not empty
+if [[ -n 'foo' ]]; then echo "it is not empty"; fi
+
+; ----------------------------------------------------------------------------
+% uname [linux]
+
+# print system information
+uname -a
 
 ; ----------------------------------------------------------------------------
 % psql [database]
@@ -715,10 +863,55 @@ chattr -ia <file>
 usermod -a -G <group> <user>
 
 ; ----------------------------------------------------------------------------
+% zip [linux]
+
+# Archive files
+zip archive.zip file1 file2
+
+# Add file or folders to the zip archive
+zip -r archive.zip file_or_folder
+
+; ----------------------------------------------------------------------------
+% hexdump [linux]
+
+# Display text with hexadecimal
+echo "text" | hexdump -Cc
+
+; ----------------------------------------------------------------------------
 % rg [ripgrep]
 
+# Search in a single file
+rg <query> <file>
+
+# Search in dir recursively
+rg <query> <folder>/
+
+# Search literally i.e. without regex
+rg -F '<query>'
+
+# Search files not containing the query
+rg --files-without-match <query>
+
 # Search pattern but ignore files
-rg <search> -g '!*<pattern>'
+rg <query> -g '!*<pattern>'
+
+; ----------------------------------------------------------------------------
+% python [python]
+
+# pip install requirements
+python -m pip install -r requirements.txt
+
+# pip freeze requirements
+python -m pip freeze > requirements.txt
+
+# Create a single http server on directory
+python -m http.server <port> --bind <address>
+
+# Convert unix time to datetime
+python -c "import datetime; print(datetime.datetime.fromtimestamp(0))"
+
+$ port: echo "3333" --- --fzf-overrides '--no-select-1'
+$ address: echo "127.0.0.1" --- --fzf-overrides '--no-select-1'
 
 ; ----------------------------------------------------------------------------
 % pyenv [python]
@@ -751,9 +944,37 @@ xdg-mime query default <mime>
 ls /usr/share/applications
 
 ; ----------------------------------------------------------------------------
-% test [test]
+% xdg [linux]
 
-# multiline
-echo one
-echo two
-echo three
+# Copy file contents to the clipboard
+xclip -selection clipboard < ~/.ssh/id_rsa.pub
+
+; ----------------------------------------------------------------------------
+% neomutt [mutt, email]
+
+# Read an mbox file
+neomutt -f all.mbox
+
+; ----------------------------------------------------------------------------
+% direnv [env, security]
+
+# Get status
+direnv status
+
+; ----------------------------------------------------------------------------
+% git-crypt [git, security]
+
+# Lock repository
+git-crypt lock
+
+# Unlock repository
+git-crypt unlock
+
+# List encrypted files
+git-crypt status -e
+
+; ----------------------------------------------------------------------------
+% apropos [unix]
+
+# find command by query
+apropos <query>

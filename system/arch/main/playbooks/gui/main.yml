@@ -44,6 +44,16 @@
       become: true
       tags: gui.code
 
+    # https://wiki.archlinux.org/title/Zathura
+    - name: Install Zathura
+      community.general.pacman:
+        name:
+          - "{{ config.packages.pacman.zathura }}"
+          - "{{ config.packages.pacman.zathura_pdf_poppler }}"
+        state: present
+      become: true
+      tags: gui.zathura
+
     # https://dbeaver.io/
     - name: Install DBeaver
       community.general.pacman: name="{{ config.packages.pacman.dbeaver }}" state=present
@@ -110,6 +120,11 @@
       community.general.pacman: name="{{ config.packages.pacman.gnome_disk_utility }}" state=present
       become: true
       tags: gui.gnome_disk_utility
+
+    - name: Install gnome-sound-recorder
+      community.general.pacman: name="{{ config.packages.pacman.gnome_sound_recorder }}" state=present
+      become: true
+      tags: gui.gnome_sound_recorder
 
     # https://meldmerge.org
     - name: Install meld

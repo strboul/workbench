@@ -6,7 +6,7 @@
 --
 
 vim.g.coc_global_extensions = {
-  "@yaegassy/coc-ansible",
+  -- "@yaegassy/coc-ansible",
   "@yaegassy/coc-nginx",
   "coc-clangd",
   "coc-cmake",

@@ -11,7 +11,6 @@ My notes of Arch Linux installation.
 
 - BTRFS as the root filesystem with multiple subvolumes.
 
-
 This document should be followed on top of the official
 [Installation Guide](https://wiki.archlinux.org/title/installation_guide).
 
@@ -38,7 +37,7 @@ directory does not exist, the system is booted in BIOS mode. This document
 requires the UEFI boot with GPT disk partition.
 
 ```sh
-ls /sys/firmware/efi/efivars
+ls /sys/firmware/efi/efivars || { echo 'boot not uefi!'; exit 1; }
 ```
 
 ## Network
@@ -95,7 +94,7 @@ lsblk --fs -o +PARTLABEL
 
 Declare the disk variable.
 
-```
+```sh
 DISK="/dev/sda0"
 ```
 
@@ -197,25 +196,25 @@ Mount options:
   `:3`.
 
 ```sh
+mount_opts_btrfs="rw,defaults,noatime,compress=zstd:1"
 # mount cryptsystem.
-btrfs_mount_opts="rw,defaults,noatime,compress=zstd:1"
-mount -o "$btrfs_mount_opts,subvol=@" /dev/mapper/cryptsystem /mnt
+mount -o "subvol=@,$mount_opts_btrfs" /dev/mapper/cryptsystem /mnt
 # mount boot
 mkdir /mnt/boot
 mount "${DISK}p1" /mnt/boot
 # mount swap
 mkdir /mnt/swap
-mount -o "$btrfs_mount_opts,subvol=@swap" /dev/mapper/cryptsystem /mnt/swap
+mount -o "subvol=@swap,$btrfs_mount_opts" /dev/mapper/cryptsystem /mnt/swap
 # mount subvolumes.
 mkdir -p /mnt/{home,.snapshots}
-mount -o "$btrfs_mount_opts,subvol=@home" /dev/mapper/cryptsystem /mnt/home
-mount -o "$btrfs_mount_opts,subvol=@snapshots" /dev/mapper/cryptsystem /mnt/.snapshots
+mount -o "subvol=@home,$btrfs_mount_opts" /dev/mapper/cryptsystem /mnt/home
+mount -o "subvol=@snapshots,$btrfs_mount_opts" /dev/mapper/cryptsystem /mnt/.snapshots
 ```
 
 ## Swap
 
 <!--
-XXX: make swap a separate encryped partition unlocked at boot.
+XXX: make swap a separate encrypted partition unlocked at boot.
 Update.
 /boot/loader/entries/arch.conf
 and
@@ -246,9 +245,10 @@ fallocate --length "$swapsize" "$swapfile"
 # make swap and enable.
 mkswap "$swapfile"
 swapon "$swapfile"
+
 # check swap
-# free -m
-# swapon --show
+free -m
+swapon --show
 ```
 
 ## Installation
@@ -263,16 +263,18 @@ pacman --noconfirm -Sy archlinux-keyring
 Install base packages.
 
 ```sh
-# base essentials.
-pacstrap /mnt base base-devel linux linux-firmware
-# microcode: intel.
-pacstrap /mnt intel-ucode
-# microcode: amd.
-# pacstrap /mnt amd-ucode
+# Install Linux kernel both `linux` or `linux-lts`. You choose one in the boot
+# loader below.
+pacstrap /mnt base linux linux-headers linux-lts linux-lts-headers linux-firmware
+# !! select correct microcode !!
+# microcode: intel:
+# pacstrap /mnt intel-ucode
+# microcode: amd:
+pacstrap /mnt amd-ucode
 # btrfs.
 pacstrap /mnt btrfs-progs
 # utils.
-pacstrap /mnt dhcpcd iwd openssh vi vim git
+pacstrap /mnt dhcpcd iwd openssh vim git
 ```
 
 Generate the fstab to make the mounts persistent.
@@ -287,6 +289,12 @@ Change to root in the mount. The following commands are from the chroot.
 
 ```sh
 arch-chroot /mnt
+```
+
+Verify fstab entries
+
+```sh
+findmnt --verify --verbose
 ```
 
 Change hostname.
@@ -316,14 +324,14 @@ Using the modern [systemd-boot](https://wiki.archlinux.org/title/systemd-boot).
 bootctl --path=/boot install
 ```
 
-Regenerate initramfs. Update `/etc/mkinitcpio.conf` as follows:
+Regenerate initramfs. Update `vim /etc/mkinitcpio.conf` as follows:
 
 ```
 # ** update file `/etc/mkinitcpio.conf` **
 MODULES=(btrfs)
 BINARIES=(/usr/bin/btrfs)
 # systemd, sd-vconsole and sd-encrypt are replaced by udev, keymap and encrypt
-HOOKS=(base udev autodetect keyboard keymap modconf block encrypt filesystems fsck)
+HOOKS=(base udev autodetect keyboard keymap modconf block encrypt filesystems resume fsck)
 ```
 
 Then update with `mkinitcpio -P`.
@@ -334,14 +342,32 @@ Create the boot entry.
 system_part="/dev/sda2" # <-- !! change !!
 system_partuuid="$(blkid -s PARTUUID -o value $system_part)"
 system_luks_label="cryptsystem"
-microcode="/intel-ucode.img"
+# !! select correct microcode !!
+# microcode="/intel-ucode.img"
+microcode="/amd-ucode.img"
 
-cat << EOF > /boot/loader/entries/arch.conf
+cat << EOF > /boot/loader/entries/arch-linux.conf
 title   Arch Linux
-linux   /vmlinuz-linux
 initrd  $microcode
 initrd  /initramfs-linux.img
+linux   /vmlinuz-linux
 options cryptdevice=PARTUUID=$system_partuuid:cryptsystem root=/dev/mapper/$system_luks_label rw
+EOF
+
+cat << EOF > /boot/loader/entries/arch-linux-lts.conf
+title   Arch Linux LTS
+initrd  $microcode
+initrd  /initramfs-linux-lts.img
+linux   /vmlinuz-linux-lts
+options cryptdevice=PARTUUID=$system_partuuid:cryptsystem root=/dev/mapper/$system_luks_label rw
+EOF
+
+# Set bootloader config
+cat << EOF > /boot/loader/loader.conf
+default arch-linux.conf
+timeout 4
+console-mode max
+editor no
 EOF
 ```
 
@@ -351,21 +377,21 @@ Enable Internet connection for the next boot.
 systemctl enable dhcpcd iwd
 ```
 
-Quit chroot.
+Leave chroot and reboot.
 
-1. Exit chroot with <kbd>CTRL</kbd>+<kbd>D</kbd>.
+1. Exit chroot with `exit` or <kbd>CTRL</kbd>+<kbd>D</kbd>.
 
-2. Ummount all:
+2. Run below to exit gracefully.
 
 ```sh
-swapoff "$swapfile"
-umount -R /mnt
-/usr/bin/cryptsetup luksClose /dev/mapper/cryptsystem
+swapoff "$swapfile"  # disable swap
+umount -R /mnt  # unmount all
+/usr/bin/cryptsetup luksClose /dev/mapper/cryptsystem  # close LUKS
 ```
 
 3. Shutdown with `shutdown now`.
 
-4. Remove the ISO media (e.g. in a pluggable device) or choose from
+4. Remove the ISO media (ie. pluggable devices) or choose from
    boot menu to boot the system.
 
 ## Post-installation
@@ -399,9 +425,8 @@ sudo pacman -S lightdm lightdm-gtk-greeter
 ```
 
 Set the default greeter by changing the [Seat:*] section of the LightDM
-configuration file, like so:
-
-`/etc/lightdm/lightdm.conf`
+configuration file
+`vim /etc/lightdm/lightdm.conf`
 
 [Seat:*]
 ...
@@ -414,15 +439,28 @@ Enable the lightdm service.
 sudo systemctl enable lightdm
 ```
 
-Network manager.
+Network.
 
 ```sh
 sudo pacman -S networkmanager network-manager-applet
 # disable iwd and dhcpcd.
 sudo systemctl disable iwd
 sudo systemctl disable dhcpcd
-# enable network manager.
+# enable network manager (alternative is systemd-networkd).
 sudo systemctl enable NetworkManager
+# enable systemd-resolved
+sudo systemctl enable systemd-resolved
+```
+
+Sound. Pipewire.
+
+```sh
+sudo pacman -S pipewire pipewire-alsa pipewire-pulse pipewire-jack wireplumber alsa-utils
+systemctl --user enable --now pipewire-pulse.service
+
+# test
+pactl info | grep PipeWire
+speaker-test -c 2 -t wav -l 1
 ```
 
 ## End
@@ -434,6 +472,4 @@ TODO
 ## Future
 
 - Enable secure boot.
-
-- Set up BIOS password.
 -->

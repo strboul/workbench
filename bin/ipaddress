@@ -1,0 +1,29 @@
+#!/usr/bin/env python
+
+import argparse
+import ipaddress
+
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("address")
+    args = parser.parse_args()
+    return args
+
+
+def print_ipv4_addresses(address):
+    network = ipaddress.IPv4Network(address)
+    for ip in network:
+        print(str(ip))
+    print("---")
+    print(f"total of {network.num_addresses} addresses")
+    print(f"netmask {str(network.netmask)}")
+    print(f"broadcast address {str(network.broadcast_address)}")
+
+
+def main():
+    args = parse_args()
+    print_ipv4_addresses(args.address)
+
+
+main()

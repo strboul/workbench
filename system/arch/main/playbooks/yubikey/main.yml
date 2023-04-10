@@ -13,6 +13,12 @@
   tags: yubikey
   hosts: all
   tasks:
+    - name: Start PC/SC Smart Card Daemon service
+      ansible.builtin.command: /bin/true
+      notify: pcsd.service running
+
+    - meta: flush_handlers
+
     # ykman: YubiKey Manager CLI
     # https://github.com/Yubico/yubikey-manager
     #
@@ -26,7 +32,6 @@
           - "{{ config.packages.pacman.yubikey_manager_qt }}"
         state: present
       become: true
-      notify: pcsd.service running
       tags: yubikey.manager
 
     - name: Install yubikey client programs (to use yubikey on other machines)
@@ -51,7 +56,7 @@
   handlers:
     - name: pcsd.service running
       ansible.builtin.systemd:
-        name: pcsd
+        name: pcsd.service
         state: started
         enabled: true
       become: true

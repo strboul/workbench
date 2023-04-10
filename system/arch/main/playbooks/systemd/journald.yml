@@ -1,0 +1,18 @@
+---
+- name: Create /etc/systemd/journald.conf.d dir if not exist
+  ansible.builtin.file:
+    path: /etc/systemd/journald.conf.d
+    owner: "{{ ansible_env.USER }}"
+    group: "{{ ansible_env.USER }}"
+    mode: 0700
+    state: directory
+  become: true
+
+- name: Setup journald conf
+  ansible.builtin.copy:
+    dest: /etc/systemd/journald.conf.d/00-journal-size.conf
+    content: |
+      [Journal]
+      # entries older than the specified time span are deleted
+      MaxRetentionSec=6month
+    mode: 0644

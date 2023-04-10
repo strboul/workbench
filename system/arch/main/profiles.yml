@@ -21,8 +21,6 @@ dotfiles: &dotfiles
   - package.zsh
   - package.cli_utils
   - package.cli_utils_extra
-  - package.pip.python_tools
-  - package.pip.other_tools
   - package.podman
 
 # Minimal sparked DE on top of it.
@@ -51,15 +49,12 @@ personal:
   - package.terraform
   - package.database.sqlite
   - printer
-  - yubikey
   - virt.virtualbox
-  - virt.libvirt
   - gui.gimp
-  - gui.openscad
+  - gui.zathura
   - gui.signal
   - gui.solaar
   - gui.vlc
-  - gui.wireshark
   - gui.xcolor
   - gui.gthumb
 
@@ -70,7 +65,6 @@ work:
   - gui.thunderbird
   - gui.dbeaver
   - gui.slack
-  - gui.thunderbird
   - gui.keepassxc
   - yubikey.client
   - work

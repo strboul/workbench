@@ -8,9 +8,22 @@
   community.general.pacman: name="{{ config.packages.pacman.pass }}" state=present
   become: true
 
+- name: Check if password store dir exists
+  block:
+    - name: Get password store dirname
+      ansible.builtin.shell: |
+        [[ -z "$PASSWORD_STORE_DIR" ]] && echo "~/.password-store" || echo "$PASSWORD_STORE_DIR"
+      changed_when: false
+      register: password_store_dirname
+
+    - name: Check dir
+      ansible.builtin.stat:
+        path: "{{ password_store_dirname.stdout }}"
+      register: password_store_dir
+
 - name: Create pass folder
   ansible.builtin.shell: |
     pass init "{{ config.gpg.pubkey.subkey_encrypt }}"
-  changed_when: false
+  when: not password_store_dir.stat.exists
 
 # TODO: set up pass git ... stuff

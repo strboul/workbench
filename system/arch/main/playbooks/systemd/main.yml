@@ -1,0 +1,8 @@
+---
+- name: Systemd
+  tags: systemd
+  hosts: all
+  tasks:
+    - name: Setup journald
+      ansible.builtin.import_tasks: journald.yml
+      tags: systemd.journald

@@ -14,7 +14,7 @@ Recommended steps to install the parts in the following order.
 
 1. Install core `system/.../core`,
 
-2. Link dotfiles `files`,
+2. Link dotfiles `files` with `./files/symlink`.
 
 3. Configure main system `system/.../main`.
 

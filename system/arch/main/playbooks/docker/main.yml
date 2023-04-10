@@ -37,28 +37,10 @@
       become: true
 
     - name: Add user to the docker group
-      block:
-        # TODO. usermod is annoying that wants to open the file instead of
-        # appending. Probably because of sorting?
-        - name: Disable attr temporarily
-          ansible.builtin.file:
-            path: "{{ item }}"
-            attr: -a
-          loop:
-            - /etc/passwd
-            - /etc/shadow
-        - name: Add user
-          ansible.builtin.user:
-            name: "{{ ansible_env.USER }}"
-            groups: docker
-            append: true
-        - name: Set back attr
-          ansible.builtin.file:
-            path: "{{ item }}"
-            attr: +a
-          loop:
-            - /etc/passwd
-            - /etc/shadow
+      ansible.builtin.user:
+        name: "{{ ansible_env.USER }}"
+        groups: docker
+        append: true
       become: true
 
     # force ansible run the notified handlers up to this point

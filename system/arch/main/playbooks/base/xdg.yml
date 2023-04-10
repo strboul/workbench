@@ -5,6 +5,7 @@
       text_editor: gnome.gedit.desktop
       image_viewer: viewnior.desktop
       media_player: vlc.desktop
+      pdf_viewer: org.pwmt.zathura.desktop
 
 - name: Install xdg utils
   community.general.pacman: name="{{ config.packages.pacman.xdg_utils }}" state=present
@@ -24,4 +25,5 @@
     - { application: "{{ vars_base_xdg.image_viewer }}", mimetype: "image/jpeg" }
     - { application: "{{ vars_base_xdg.image_viewer }}", mimetype: "image/png" }
     - { application: "{{ vars_base_xdg.media_player }}", mimetype: "video/mp4" }
+    - { application: "{{ vars_base_xdg.pdf_viewer }}", mimetype: "application/pdf" }
   changed_when: false

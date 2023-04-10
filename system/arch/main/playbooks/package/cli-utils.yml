@@ -24,11 +24,9 @@
 - name: Install cli utils via pip
   ansible.builtin.pip:
     name:
-      - virtualenv
-      - pylint  # https://github.com/PyCQA/pylint
-      - bpython  # https://github.com/bpython/bpython
       - git-substatus  # https://github.com/strboul/git-substatus
       - pre-commit  # https://pre-commit.com/#installation
+      - edir  # https://github.com/bulletmark/edir
     state: present
   environment:
     PIP_REQUIRE_VIRTUALENV: false

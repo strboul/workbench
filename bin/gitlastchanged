@@ -7,7 +7,7 @@
 #   gitlastchanged <folder>
 #
 
-source "$HOME"/workbench/bin/__utils/utils.sh
+source "$HOME"/workbench/bin/_utils/utils.sh
 
 utils__stop_if_not_command_exists "git"
 

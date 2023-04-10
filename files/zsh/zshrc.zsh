@@ -1,14 +1,15 @@
-# disable the update prompt from oh-my-zsh, just update.
+# disable the update prompt from oh-my-zsh, just update when it comes.
 export DISABLE_UPDATE_PROMPT=true
 
-# set locales
+# main locale is US.
 export LANG="en_US.UTF-8"
-# time is British (start week from Monday)
+# time locale is British (start week from Monday).
 export LC_TIME="en_GB.UTF-8"
-# paper is British (A4 etc.)
+# paper locale is British (A4, etc.).
 export LC_PAPER="en_GB.UTF-8"
 
-# XDG base (https://wiki.archlinux.org/title/XDG_Base_Directory)
+# XDG base
+# (https://wiki.archlinux.org/title/XDG_Base_Directory)
 export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_CACHE_HOME="$HOME/.cache"
 export XDG_DATA_HOME="$HOME/.local/share"
@@ -78,6 +79,8 @@ export PATH="$HOME/workbench/bin:$PATH"
 # zsh keybindings
 source "$HOME"/workbench/files/zsh/keybindings.zsh
 source "$HOME"/workbench/files/zsh/navi_keybindings.zsh
+# hooks
+source "$HOME"/workbench/files/zsh/hooks.zsh
 
 # for gnupg
 GPG_TTY="$(tty)"
@@ -85,12 +88,12 @@ export GPG_TTY
 
 # ===== settings =====
 
-export EDITOR="nvim -u DEFAULTS"
+export EDITOR="vim"
 export DISABLE_AUTO_TITLE="true"
 
-# don't change dir without 'cd' command
+# don't change dir without 'cd' command.
 unsetopt AUTO_CD
-# don't use `less` pager for some commands, e.g. git
+# don't use `less` pager for some commands.
 unset LESS
 
 # History settings
@@ -111,7 +114,7 @@ setopt HIST_IGNORE_SPACE
 # record command starttime
 setopt EXTENDED_HISTORY
 # don't write these commands as is to the history.
-export HISTORY_IGNORE="(history|ls|cd|cd ..|pwd|clear|exit|cd)"
+export HISTORY_IGNORE="(ls|cd|cd ..|pwd|exit)"
 
 # ===== aliases =====
 
@@ -132,7 +135,9 @@ alias ls='ls -Fv --color=auto --group-directories-first'
 alias ll='ls -lh'
 alias la='ll -a'
 
+# Neovim.
 alias v='mynvim'
+
 # python and bpython using different PYTHONPATH (https://stackoverflow.com/a/22182421)
 bpython() {
   if test -n "$VIRTUAL_ENV"; then
@@ -154,29 +159,24 @@ export LG_CONFIG_FILE="$XDG_CONFIG_HOME/lazygit/config.yml"
 # makefile
 zstyle ":completion:*:*:make:*" tag-order "targets"
 
-# ===== hooks =====
-# always ls after cd into folders
-__cdls() {
-  emulate -L zsh
-  ls
-}
-add-zsh-hook chpwd __cdls
-
 # ===== configs =====
 
 # https://github.com/BurntSushi/ripgrep/blob/0.8.0/GUIDE.md#configuration-file
-export RIPGREP_CONFIG_PATH="$HOME"/.ripgreprc
+export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
 # https://github.com/sharkdp/bat#configuration-file
-export BAT_CONFIG_PATH="$HOME"/.batconf
-export PYTHONSTARTUP=$HOME/.pythonstartup
+export BAT_CONFIG_PATH="$HOME/.batconf"
+export PYTHONSTARTUP="$HOME/.pythonstartup"
+
+# fd (https://github.com/sharkdp/fd)
+__fd_custom="$(command -v fd) --hidden --follow --exclude .git"
+alias fd='eval $__fd_custom'
 
 # fzf (https://github.com/junegunn/fzf)
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 export FZF_DEFAULT_OPTS="--no-separator"
-# use 'fd' (https://github.com/sharkdp/fd) in fzf to ignore git files.
-# (Source: https://github.com/junegunn/dotfiles/blob/ba5013726515e5185a2840b4b133991fe37b8827/bashrc#L369-L373)
+
+# Use fd to list fzf files.
 if command -v fd > /dev/null; then
-  __fd_custom="$(command -v fd) --hidden --follow --exclude .git"
   export FZF_DEFAULT_COMMAND="$__fd_custom --type f"
   export FZF_ALT_C_COMMAND="$__fd_custom --type d"
   export FZF_CTRL_T_COMMAND="$__fd_custom --type f --type d"

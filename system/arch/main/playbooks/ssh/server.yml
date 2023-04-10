@@ -3,10 +3,12 @@
   ansible.builtin.blockinfile:
     path: /etc/ssh/sshd_config
     block: |
-      ChallengeResponseAuthentication no
+      # > Specifies whether to use password authentication. The argument to this
+      # > keyword must be yes (the default) or no.
       PasswordAuthentication no
-      UsePAM no
-      AuthenticationMethods publickey
+
+      # > Specifies whether to try public key authentication. The argument to
+      # > this keyword must be yes (the default).
       PubkeyAuthentication yes
     state: present
   become: true

@@ -47,7 +47,7 @@ repos:
 
 # python: isort
 -   repo: https://github.com/pycqa/isort
-    rev: 5.10.1
+    rev: 5.12.0
     hooks:
       - id: isort
         name: "[py] isort"
@@ -89,6 +89,9 @@ repos:
     hooks:
     -   id: ansible-lint
         name: "[ansible] ansible-lint"
+        # ansible-lint doesn't yet accept files/exclude for pre-commit :(
+        # https://github.com/ansible/ansible-lint/issues/611
+        # when fixed, just run this on the yml files in the system dir.
         pass_filenames: false
         always_run: true
 

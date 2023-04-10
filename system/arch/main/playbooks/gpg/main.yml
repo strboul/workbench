@@ -6,8 +6,12 @@
     gpg_workbench_dir: "{{ config.vars.workbench_dir }}/gpg"
     gpg_pubkey_path: "{{ gpg_workbench_dir }}/{{ config.gpg.pubkey.master }}.asc"
   tasks:
-    - name: Install GnuPG
-      community.general.pacman: name="{{ config.packages.pacman.gpgme }}" state=present
+    - name: Install GnuPG tools
+      community.general.pacman:
+        name:
+          - "{{ config.packages.pacman.gpgme }}"
+          - "{{ config.packages.pacman.gcr }}"  # pinentry-gnome3 requires this package
+        state: present
       become: true
 
     - name: gpg config dir

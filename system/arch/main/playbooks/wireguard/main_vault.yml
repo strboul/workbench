@@ -33,9 +33,19 @@
       private: false
   tasks:
     - name: Install wireguard tools
-      community.general.pacman: name="{{ config.packages.pacman.wireguard_tools }}" state=present
+      community.general.pacman:
+        name:
+          - "{{ config.packages.pacman.wireguard_tools }}"
+        state: present
       become: true
       tags: wireguard.install
+
+    - name: Install Mullvad
+      kewlfft.aur.aur:
+        use: yay
+        name: "{{ config.packages.aur.mullvad_vpn_bin }}"
+        state: present
+      tags: wireguard.mullvad
 
     # This config file isn't really needed except for creating qrcode with:
     #   (use sudo because private key in the file should be accessed with privilege)

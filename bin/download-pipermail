@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+
+# This script downloads all the gzip'ed text from a (pipermail) mailing list
+# archive, and then merges them into a single mbox file.
+#
+# It's easier to read a mailing list archive by a MUA, like mutt/neomutt,
+# rather than the pipermail's web interface.
+#
+# Usage:
+#
+#   download-pipermail https://lists.freedesktop.org/archives/pipewire-devel
+#   neomutt -f pipewire-devel/all.mbox
+#
+
+set -e
+
+source "$HOME"/workbench/bin/_utils/utils.sh
+
+LINK="$1"
+
+download() {
+  # wget parameters
+  # `-r`: recursive retrieving
+  # `-l`: recurse depth level
+  # `-np`: no parent
+  # `-nd`: when retrieving, don't create hiearchy of directories
+  # `-A`: acclist. comma-separated list, file suffixes or patterns to accept.
+  #  `-q` and `--show-progress`: to reduce output verbosity.
+  wget -r -l1 -n d -A gz -q --show-progress "$LINK"
+}
+
+main() {
+  folder="$(basename "$LINK")"
+  mkdir "$folder"
+  pushd "$folder" \
+    && download "$LINK" \
+    && gunzip ./*.gz \
+    && cat ./* > all.mbox \
+    && popd
+  utils__log__info "saved in $(pwd)/$folder"
+}
+
+main

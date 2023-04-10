@@ -1,0 +1,64 @@
+---
+# Pulseaudio control - details
+#   pactl info
+#
+# Pipewire control - details
+#   wpctl status
+#
+- name: Pipewire
+  tags: pipewire
+  hosts: all
+  tasks:
+    # - name: Install pipewire
+
+    - name: Create pipewire user config dir
+      ansible.builtin.file:
+        path: "{{ ansible_env.HOME }}/.config/pipewire/pipewire.conf.d"
+        mode: 0700
+        state: directory
+      register: pipewire_config_dir
+
+    # https://gitlab.freedesktop.org/pipewire/pipewire/-/wikis/Virtual-Devices
+    - name: Arturia device
+      block:
+        - name: Create config file
+          ansible.builtin.file:
+            path: "{{ pipewire_config_dir.path }}/10-arturia-minifuse2.conf"
+            mode: 0644
+            state: touch
+          register: minifuse2_config
+
+        - name: Virtual sink to convert mono mic to stereo output
+          ansible.builtin.blockinfile:
+            path: "{{ minifuse2_config.dest }}"
+            block: |
+              context.modules = [
+                  {   name = libpipewire-module-loopback
+                          args = {
+                                  node.description = "Arturia Stereo Input Microphone"
+                                  capture.props = {
+                                          node.name = "capture.arturia_stereo_input"
+                                          audio.position = [ AUX0 ]
+                                          stream.dont-remix = true
+                                          target.object = "alsa_input.usb-ARTURIA_ArturiaMsd-00.analog-stereo"
+                                          node.passive = true
+                                  }
+                                  playback.props = {
+                                          node.name = "arturia_stereo_input"
+                                          media.class = "Audio/Source"
+                                          audio.position = [ MONO ]
+                                  }
+                          }
+                  }
+              ]
+            mode: 0644
+          notify: Restart pipewire
+
+    - meta: flush_handlers
+
+  handlers:
+    - name: Restart pipewire
+      ansible.builtin.systemd:
+        name: pipewire
+        state: restarted
+        scope: user

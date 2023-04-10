@@ -13,7 +13,7 @@
 
 set -e
 
-source "$HOME"/workbench/bin/__utils/utils.sh
+source "$HOME"/workbench/bin/_utils/utils.sh
 
 FROM_REF="$1"
 TO_REF="$2"

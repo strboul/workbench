@@ -10,7 +10,7 @@ local languages = {
   "dockerfile",
   "go",
   "hcl",
-  "help",
+  "vimdoc",
   "html",
   "javascript",
   "json",

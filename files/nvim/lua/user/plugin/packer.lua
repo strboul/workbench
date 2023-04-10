@@ -5,12 +5,44 @@ https://github.com/wbthomason/packer.nvim
 Notes:
 - When you change this file, don't forget to run `:PackerCompile`.
 -
-
 --]]
+
+local user_utils = require("user.utils")
+local packer = require("packer")
+
+-- Autoupdate packer.nvim if the last update was x time ago. Keep the last update
+-- date in the disk.
+--
+local function autoupdate()
+  local filepath = table.concat({
+    os.getenv("HOME"),
+    "/.config/nvim/.plugin_last_updated",
+  })
+  if not user_utils.file_exists(filepath) then
+    user_utils.file_write(filepath, os.time())
+    return
+  end
+  local file_ts = user_utils.file_read(filepath)
+  local diff = os.date("%d", os.difftime(os.time(), tonumber(file_ts)))
+  local diff_days_limit = 7
+  if tonumber(diff) > diff_days_limit then
+    packer.compile()
+    packer.update()
+    user_utils.file_write(filepath, os.time())
+  end
+end
+local augroup_autoupdate = vim.api.nvim_create_augroup("PackerAutoUpdate", { clear = true })
+vim.api.nvim_create_autocmd({ "VimEnter" }, {
+  desc = [[
+    Automatically update the plugin packages if the date last passed x days.
+  ]],
+  group = augroup_autoupdate,
+  callback = autoupdate,
+})
 
 vim.cmd([[ packadd packer.nvim ]])
 
-require("packer").startup(function(use)
+packer.startup(function(use)
   -- package manager.
   use("https://github.com/wbthomason/packer.nvim")
 

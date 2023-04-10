@@ -79,7 +79,32 @@ echo "panel plugin: actions" \
   && xfconf-query -c xfce4-panel -p /plugins/plugin-13/appearance -t int -s '0' -n \
   && xfconf-query -c xfce4-panel -p /plugins/plugin-13/ask-confirmation -t bool -s 'true' -n \
   && xfconf-query -c xfce4-panel -p /plugins/plugin-13/button-title -t int -s 1 -n \
-  && xfconf-query -c xfce4-panel -p /plugins/plugin-13/items -t bool -s 'true' -n
+  && xfconf-query -c xfce4-panel -p /plugins/plugin-13/items \
+    -t string \
+    -t string \
+    -t string \
+    -t string \
+    -t string \
+    -t string \
+    -t string \
+    -t string \
+    -t string \
+    -t string \
+    -t string \
+    -t string \
+    -s '-lock-screen' \
+    -s '-switch-user' \
+    -s '-separator' \
+    -s '-suspend' \
+    -s '-hibernate' \
+    -s '-hybrid-sleep' \
+    -s '-separator' \
+    -s '-shutdown' \
+    -s '-restart' \
+    -s '-separator' \
+    -s '+logout' \
+    -s '-logout-dialog' \
+    -n
 
 # ===== xfce4-keyboard-shortcuts =====
 

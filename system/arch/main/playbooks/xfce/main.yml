@@ -13,19 +13,30 @@
         state: present
       become: true
 
+    - name: Create xprofile
+      ansible.builtin.blockinfile:
+        path: /etc/xprofile
+        block: |
+          # stop the annoying beep.
+          xset -b
+        mode: 0644
+        create: true
+        state: present
+      become: true
+
     - name: Install xfce plugins
       community.general.pacman:
         name:
-          - "{{ config.packages.pacman.xfce4_whiskermenu_plugin }}"
-          - "{{ config.packages.pacman.xfce4_clipman_plugin }}"
-          - "{{ config.packages.pacman.xfce4_genmon_plugin }}"
+          - "{{ config.packages.pacman.xfce4_goodies }}"
           - "{{ config.packages.pacman.xfwm4_themes }}"
+          - "{{ config.packages.pacman.arc_gtk_theme }}"
         state: present
       become: true
 
     - name: Install other relevant programs
       community.general.pacman:
         name:
+          - "{{ config.packages.pacman.gvfs }}"  # For Trash in Thunar
           - "{{ config.packages.pacman.galculator }}"
           - "{{ config.packages.pacman.blueman }}"
           - "{{ config.packages.pacman.viewnior }}"
@@ -87,6 +98,6 @@
             # remap insert to escape
             - { regexp: "^    key  <INS>", change: "    key  <INS> {[  Escape  ]};" }
       vars:
-        keyboard_conf_file: "/usr/share/X11/xkb/symbols/pc"
+        keyboard_conf_file: /usr/share/X11/xkb/symbols/pc
       become: true
       tags: xfce.keyboard

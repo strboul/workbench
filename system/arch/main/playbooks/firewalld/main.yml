@@ -28,18 +28,20 @@
       changed_when: false
       become: true
 
-    - import_tasks: ../_utils/util_notify.yml
-      vars:
-        id: check-firewalld-running
-        command: |
-          systemctl is-active --quiet firewalld
-        additional_message: |
-          firewalld isn't running. Start and enable it.
+    - name: Set notification service to check if firewalld is running
+      strboul.notify.check:
+        id: firewalld-running
+        condition: "! systemctl is-active --quiet firewalld"
+        message: |
+          firewalld isn't running. Enable and start it.
 
-          systemctl start firewalld --enable
+          systemctl enable --now firewalld
+        options:
+          urgency: critical
         timer:
-          time: "1h"
-          explain: "every hour"
+          OnBootSec: 1h
+          OnUnitActiveSec: 1h
+          Persistent: true
 
   handlers:
     - name: firewalld running

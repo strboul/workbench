@@ -15,7 +15,7 @@
 
 set -e
 
-source "$HOME"/workbench/bin/__utils/utils.sh
+source "$HOME"/workbench/bin/_utils/utils.sh
 
 BRANCH_NAME=$1
 

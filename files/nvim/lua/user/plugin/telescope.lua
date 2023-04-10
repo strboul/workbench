@@ -79,6 +79,7 @@ end, { nargs = 1 })
 telescope.setup({
   pickers = {
     find_files = {
+      theme = "dropdown",
       -- use `fd` for finding and show hidden files.
       find_command = { "fd", "--type", "f", "--hidden", "--exclude", ".git" },
     },

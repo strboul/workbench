@@ -46,6 +46,17 @@
       register: pyenv_install
       notify: Set default pyenv version
 
+    - name: Install some packages
+      ansible.builtin.pip:
+        name:
+          - virtualenv
+          - pylint  # https://github.com/PyCQA/pylint
+          - black  # https://github.com/psf/black
+          - bpython  # https://github.com/bpython/bpython
+      state: present
+      environment:
+        PIP_REQUIRE_VIRTUALENV: false
+
   handlers:
     # Set the highest Python version as global initially.
     - name: Set default pyenv version

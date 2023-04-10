@@ -1,0 +1,46 @@
+# OpenSnitch is a GNU/Linux interactive application firewall inspired by Little
+# Snitch (Mac OS).
+# https://github.com/evilsocket/opensnitch/
+#
+# Opensnitch doesn't yet have an cli/headless version so set the following
+# after a fresh install.
+# - Open `opensnitch-ui`
+# - Go to Preferences.
+#   - Under "Pop-ups"
+#     - Default timeout: "99"
+#     - Action: "deny"
+#     - Duration: "until reboot"
+#     - Default target: "by destination ip"
+#     - Select checkbox "Show advanced view by default"
+#   - Under "Nodes"
+#     - Select checkbox "Debug invalid connections" # for wg/vpn connections.
+#
+---
+- name: Opensnitch
+  tags: opensnitch
+  hosts: all
+  tasks:
+    - name: Install opensnitch
+      block:
+        - community.general.pacman: name="{{ config.packages.pacman.opensnitch }}" state=present
+          become: true
+        - kewlfft.aur.aur:
+            use: yay
+            name:
+              - "{{ config.packages.aur.opensnitch_ebpf_module }}"
+            state: present
+      notify: Opensnitchd running
+
+    - name: Autostart the GUI on boot
+      ansible.builtin.file:
+        src: /usr/share/applications/opensnitch_ui.desktop
+        dest: "{{ ansible_env.HOME }}/.config/autostart/opensnitch_ui.desktop"
+        state: link
+
+  handlers:
+    - name: Opensnitchd running
+      ansible.builtin.systemd:
+        name: opensnitchd.service
+        state: started
+        enabled: true
+      become: true
