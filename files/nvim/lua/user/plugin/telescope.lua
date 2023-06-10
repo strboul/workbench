@@ -92,6 +92,8 @@ telescope.setup({
         ["<esc>"] = actions.close, -- also easy close in insert mode.
         ["<cr>"] = custom_actions.my_smart_select,
         ["<C-a>"] = actions.select_all,
+        ["<ScrollWheelUp>"] = actions.preview_scrolling_up,
+        ["<ScrollWheelDown>"] = actions.preview_scrolling_down,
       },
       n = {
         ["<cr>"] = custom_actions.my_smart_select,

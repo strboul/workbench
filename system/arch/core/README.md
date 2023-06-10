@@ -1,5 +1,3 @@
-# Arch Linux Installation
-
 ## Introduction
 
 My notes of Arch Linux installation.
@@ -14,7 +12,9 @@ My notes of Arch Linux installation.
 This document should be followed on top of the official
 [Installation Guide](https://wiki.archlinux.org/title/installation_guide).
 
-## Prerequisite
+## Setup
+
+### Prerequisite
 
 - Prepare an installation medium and boot it with that environment.
 
@@ -30,7 +30,7 @@ On UEFI:
   - On Dell, change `Fastboot` from `Minimal` to `Thorough` to perform complete
     hardware and configuration testing.
 
-## Verify boot mode
+### Verify boot mode
 
 Verify system is booted via UEFI by listing contents of efivars. If the
 directory does not exist, the system is booted in BIOS mode. This document
@@ -40,7 +40,7 @@ requires the UEFI boot with GPT disk partition.
 ls /sys/firmware/efi/efivars || { echo 'boot not uefi!'; exit 1; }
 ```
 
-## Network
+### Network
 
 Connect to Wi-Fi.
 
@@ -56,7 +56,7 @@ Check the connection.
 ping archlinux.org -c 1
 ```
 
-## Access ssh
+### Access ssh
 
 Also possible to access the machine over `ssh` (if you are in the same network):
 
@@ -74,7 +74,9 @@ Also possible to access the machine over `ssh` (if you are in the same network):
 ssh -o PubkeyAuthentication=no -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@<target-ip-address>
 ```
 
-## Partition disks
+## Preparation
+
+### Disk partitions
 
 <!--
 TODO use labels instead of partition disks because they can break if partitions
@@ -133,15 +135,15 @@ Check partitions.
 sgdisk -p "$DISK"
 ```
 
-## 1. Boot
+### Format partitions
 
-Format boot/EFI.
+1. Format boot/EFI.
 
 ```sh
 mkfs.fat -F32 "${DISK}p1"
 ```
 
-## 2. System
+2. Format the system (main encrypted partition).
 
 Prepare LUKS.
 
@@ -186,7 +188,7 @@ btrfs subvolume create /mnt/@snapshots
 umount /mnt
 ```
 
-## Mounts
+### Mounts
 
 Mount options:
 
@@ -211,7 +213,7 @@ mount -o "subvol=@home,$btrfs_mount_opts" /dev/mapper/cryptsystem /mnt/home
 mount -o "subvol=@snapshots,$btrfs_mount_opts" /dev/mapper/cryptsystem /mnt/.snapshots
 ```
 
-## Swap
+### Swap
 
 <!--
 XXX: make swap a separate encrypted partition unlocked at boot.
@@ -448,6 +450,10 @@ sudo systemctl disable iwd
 sudo systemctl disable dhcpcd
 # enable network manager (alternative is systemd-networkd).
 sudo systemctl enable NetworkManager
+# disable network manager wait online because it increases the boot time.
+# enable it back if it causes problems with any services.
+sudo systemctl disable NetworkManager-wait-online.service
+sudo systemctl mask NetworkManager-wait-online.service
 # enable systemd-resolved
 sudo systemctl enable systemd-resolved
 ```

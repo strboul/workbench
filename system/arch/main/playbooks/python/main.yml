@@ -9,10 +9,17 @@
     - name: Ensure system Python is installed
       ansible.builtin.stat:
         path: /usr/bin/python
+      register: system_python
+
+    - name: Fail if system python not found
+      ansible.builtin.fail:
+        msg: "System Python not found!"
+      when: not system_python.stat.exists
 
     - name: Ensure pip is ready
-      command: /usr/bin/python -m ensurepip --upgrade
-      changed_when: false
+      ansible.builtin.command: /usr/bin/python -m ensurepip --upgrade
+      register: system_python_pip_ensure
+      changed_when: system_python_pip_ensure.rc != 0
 
     - name: Install pyenv
       community.general.pacman: name="{{ config.packages.pacman.pyenv }}" state=present
@@ -21,13 +28,14 @@
     - name: Add pyenv to zsh profile
       ansible.builtin.blockinfile:
         path: "{{ ansible_env.HOME }}/.zshenv"
+        marker: "# {mark} ANSIBLE MANAGED BLOCK: pyenv"
         block: |
           typeset -U path PATH
           path=($HOME/.pyenv/bin $path)
           export PATH
           eval "$(pyenv init --path)"
           eval "$(pyenv init -)"
-        mode: 0644
+        mode: "0644"
         create: true
         state: present
 
@@ -42,25 +50,28 @@
         creates: "{{ ansible_env.HOME }}/.pyenv/versions/{{ item }}"
       loop:
         - "2.7.18"  # last release of Python 2
+        - "3.8-dev"
         - "3.11-dev"
       register: pyenv_install
       notify: Set default pyenv version
 
-    - name: Install some packages
+    - name: Install some Python packages
       ansible.builtin.pip:
         name:
           - virtualenv
           - pylint  # https://github.com/PyCQA/pylint
           - black  # https://github.com/psf/black
           - bpython  # https://github.com/bpython/bpython
-      state: present
+          - requests  # https://github.com/psf/requests
+        state: present
       environment:
-        PIP_REQUIRE_VIRTUALENV: false
+        PIP_REQUIRE_VIRTUALENV: "false"
 
   handlers:
     # Set the highest Python version as global initially.
     - name: Set default pyenv version
-      ansible.builtin.shell: |
+      ansible.builtin.command: |
+        set -o pipefail
         version="$(pyenv versions |
           sed '/.*system.*/d' |
           sort -r --version-sort |

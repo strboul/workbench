@@ -5,10 +5,10 @@
       client_path: "{{ ansible_env.HOME }}/.ssh"
       key_id: "id_ed25519-workbench_{{ ansible_hostname }}"
 
-- name: Create ssh user directory if not exist
+- name: Create ssh user directory
   ansible.builtin.file:
     path: "{{ vars_ssh.client_path }}"
-    mode: 0700
+    mode: "0700"
     state: directory
 
 # TODO create keypairs.
@@ -30,7 +30,7 @@
 - name: Make key restrictive key file permission
   ansible.builtin.file:
     path: "{{ vars_ssh.client_path }}/{{ vars_ssh.key_id }}"
-    mode: 0400
+    mode: "0400"
     state: file
 
 # Because of the potential for abuse, this file must have
@@ -40,7 +40,7 @@
 - name: Check user config file permissions
   ansible.builtin.file:
     path: "{{ vars_ssh.client_path }}/config"
-    mode: 0600
+    mode: "0600"
   notify: sshd restart
 
 # Use `ssh-keyscan -t ed25519 github.com` to gather the public keys.
@@ -70,7 +70,7 @@
 
           # gitlab doesn't have a website :(
           gitlab.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAfuCHKVTjquxvt6CM6tdG4SLp1Btn/nOeHHE5UOzRdf
-        mode: 0644
+        mode: "0644"
         create: true
         state: present
 
@@ -84,7 +84,7 @@
       # *** Add other authorized public keys down below (!! outside the managed block !!) ***
     # This file can be read publicly but need super-user priviledges to write.
     # TODO test this.
-    mode: 0444
+    mode: "0444"
     create: true
     state: present
   become: true

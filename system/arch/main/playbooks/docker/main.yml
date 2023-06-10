@@ -19,9 +19,11 @@
 
     - name: Be sure Docker is always running
       ansible.builtin.command: /bin/true
+      changed_when: false
       notify: Docker service running
 
-    - meta: flush_handlers
+    - name: Run notified handlers
+      ansible.builtin.meta: flush_handlers
 
     # https://github.com/docker/docker-credential-helpers/tree/master/secretservice
     - name: Install docker-credential-secretservice
@@ -43,8 +45,8 @@
         append: true
       become: true
 
-    # force ansible run the notified handlers up to this point
-    - meta: flush_handlers
+    - name: Run notified handlers
+      ansible.builtin.meta: flush_handlers
 
     - name: Change the group ownership of the docker socket
       ansible.builtin.file:
@@ -57,7 +59,7 @@
         - name: Create config dir
           ansible.builtin.file:
             path: "{{ config_dir }}"
-            mode: 0700
+            mode: "0700"
             state: directory
 
         - name: Check config file exists
@@ -72,7 +74,7 @@
               {
                 "credsStore": "secretservice"
               }
-            mode: 0600
+            mode: "0600"
           when: not config_path_stat.stat.exists
 
     - name: Test Docker
@@ -80,6 +82,7 @@
         - name: Test run
           ansible.builtin.command: docker run --rm hello-world
           register: docker_test_run_cmd
+          changed_when: false
 
         - name: Error message if test run failed
           ansible.builtin.fail:

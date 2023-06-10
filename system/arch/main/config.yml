@@ -75,6 +75,7 @@ config:
       jq: community/jq
       k9s: community/k9s
       keepassxc: community/keepassxc
+      kubectl: community/kubectl
       kubectx: community/kubectx
       lazygit: community/lazygit
       libreoffice_fresh: extra/libreoffice-fresh
@@ -87,6 +88,7 @@ config:
       man_pages: core/man-pages
       meld: extra/meld
       minikube: community/minikube
+      navi: community/navi
       neofetch: community/neofetch
       neomutt: community/neomutt
       neovim: community/neovim
@@ -139,8 +141,8 @@ config:
       wget: extra/wget
       whois: extra/whois
       wireguard_tools: extra/wireguard-tools
-      wireshark_cli: community/wireshark-cli
-      wireshark_qt: community/wireshark-qt
+      wireshark_cli: extra/wireshark-cli
+      wireshark_qt: extra/wireshark-qt
       xclip: extra/xclip
       xcolor: community/xcolor
       xdg_utils: extra/xdg-utils
@@ -168,7 +170,6 @@ config:
       google_chrome: google-chrome
       lazydocker: lazydocker
       mullvad_vpn_bin: mullvad-vpn-bin
-      navi: navi
       opensnitch_ebpf_module: opensnitch-ebpf-module
       shellcheck: shellcheck-bin
       slack_desktop: slack-desktop

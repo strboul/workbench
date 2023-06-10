@@ -21,15 +21,18 @@
   hosts: all
   tasks:
     - name: Install opensnitch
+      notify: Opensnitchd running
       block:
-        - community.general.pacman: name="{{ config.packages.pacman.opensnitch }}" state=present
+        - name: Install opensnitch
+          community.general.pacman: name="{{ config.packages.pacman.opensnitch }}" state=present
           become: true
-        - kewlfft.aur.aur:
+
+        - name: Install opensnitch eBPF module
+          kewlfft.aur.aur:
             use: yay
             name:
               - "{{ config.packages.aur.opensnitch_ebpf_module }}"
             state: present
-      notify: Opensnitchd running
 
     - name: Autostart the GUI on boot
       ansible.builtin.file:

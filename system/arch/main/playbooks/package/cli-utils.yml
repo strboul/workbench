@@ -29,4 +29,4 @@
       - edir  # https://github.com/bulletmark/edir
     state: present
   environment:
-    PIP_REQUIRE_VIRTUALENV: false
+    PIP_REQUIRE_VIRTUALENV: "false"

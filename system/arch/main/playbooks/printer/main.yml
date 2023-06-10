@@ -30,7 +30,8 @@
           community.general.pacman: name="{{ config.packages.pacman.ghostscript }}" state=present
           become: true
 
-        - meta: flush_handlers
+        - name: Run notified handlers
+          ansible.builtin.meta: flush_handlers
 
         # lpadmin
         # -p destination  Specify/add the named destination. This can be arbitrary e.g. foobar.
@@ -62,6 +63,8 @@
         - name: Add scanner
           ansible.builtin.shell: |
             brsaneconfig4 -a name="{{ printer.name }}" model="{{ printer.model }}" ip="{{ printer.ipv4_address }}"
+          register: sane_config
+          changed_when: sane_config.rc != 0
           become: true
           notify: restart sane
 

@@ -5,3 +5,9 @@ exclude_paths:
   - .pre-commit-config.yaml
   - bin
   - files
+
+# See rules at https://ansible-lint.readthedocs.io/rules/
+skip_list:
+  - no-free-form  # because it's sometimes good oneline
+  - name[casing]  # because it's too rigid
+  - no-handler  # because it has false positives

@@ -35,7 +35,7 @@
     - name: Create fontconfig directory
       ansible.builtin.file:
         path: "{{ ansible_env.HOME }}/.config/fontconfig"
-        mode: 0700
+        mode: "0700"
         state: directory
 
     - name: Create config for fonts.conf
@@ -53,4 +53,4 @@
              </prefer>
            </alias>
           </fontconfig>
-        mode: 0644
+        mode: "0644"

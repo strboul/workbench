@@ -15,9 +15,11 @@
   tasks:
     - name: Start PC/SC Smart Card Daemon service
       ansible.builtin.command: /bin/true
+      changed_when: false
       notify: pcsd.service running
 
-    - meta: flush_handlers
+    - name: Run notified handlers
+      ansible.builtin.meta: flush_handlers
 
     # ykman: YubiKey Manager CLI
     # https://github.com/Yubico/yubikey-manager
@@ -35,6 +37,7 @@
       tags: yubikey.manager
 
     - name: Install yubikey client programs (to use yubikey on other machines)
+      tags: yubikey.client
       block:
         # https://github.com/maximbaz/yubikey-touch-detector
         - name: Install yubikey-touch-detector
@@ -48,10 +51,9 @@
             block: |
               YUBIKEY_TOUCH_DETECTOR_VERBOSE=true
               YUBIKEY_TOUCH_DETECTOR_LIBNOTIFY=true
-            mode: 0644
+            mode: "0644"
             create: true
             state: present
-      tags: yubikey.client
 
   handlers:
     - name: pcsd.service running

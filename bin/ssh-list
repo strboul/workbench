@@ -1,0 +1,92 @@
+#!/usr/bin/env python
+
+# List ssh hosts from a config
+#
+# Usage:
+#   ssh-list
+#
+#   # Define config file or use default if empty
+#   ssh-list --config <config_file>
+#
+#   # Print all config options
+#   ssh-list --full
+#
+
+import argparse
+import os
+
+_DEFAULT_CONFIG_PATH = os.path.join(os.environ["HOME"], ".ssh/config")
+# anything else not in this list comes after
+_CONFIG_SORT_ORDER = ["User", "HostName", "ProxyJump"]
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(allow_abbrev=False)
+    parser.add_argument(
+        "--config",
+        nargs="?",
+        default=_DEFAULT_CONFIG_PATH,
+        help="path to ssh config file, default is /home/$USER/.ssh/config",
+    )
+    parser.add_argument("--full", action="store_true", help="print full config")
+    args = parser.parse_args()
+    return args
+
+
+def parse_ssh_config(config_file):
+    config = {}
+    with open(config_file) as f:
+        details = False
+        hostname = None
+        for line in f.readlines():
+            line = line.strip()
+            if line == "" or line.startswith("#"):
+                continue
+            if line.startswith("Host "):
+                _, hostname = line.split(" ")
+                if hostname == "*":
+                    details = False
+                else:
+                    details = True
+                    config[hostname] = {}
+                    continue
+            if details:
+                key, value = line.split(" ")
+                config[hostname][key] = value
+    return config
+
+
+def _sort_by_config_order(item):
+    try:
+        return _CONFIG_SORT_ORDER.index(item[0])
+    except ValueError:
+        return len(_CONFIG_SORT_ORDER)
+
+
+def print_table(config, full):
+    max_padding = 0
+    if full:
+        max_padding = max([len(hostname) for hostname in config.keys()]) + 1
+
+    for hostname, details in config.items():
+        if full:
+            hostname = hostname.ljust(max_padding, " ")
+        print(hostname, end=" ")
+
+        if full:
+            ordered_items = sorted(
+                details.items(), key=lambda item: _sort_by_config_order(item)
+            )
+            for key, value in ordered_items:
+                print(f"\033[38;5;244m[{key}]{value}\033[0m", end=" ")
+        print("")
+
+
+def main():
+    args = parse_args()
+    ssh_config = parse_ssh_config(args.config)
+    print_table(ssh_config, args.full)
+
+
+if __name__ == "__main__":
+    main()

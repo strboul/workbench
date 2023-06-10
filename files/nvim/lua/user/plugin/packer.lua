@@ -26,6 +26,8 @@ local function autoupdate()
   local diff = os.date("%d", os.difftime(os.time(), tonumber(file_ts)))
   local diff_days_limit = 7
   if tonumber(diff) > diff_days_limit then
+    -- those packer functions use a homegrown async library. wouldn't bother
+    -- here to do a async pcall to check whether it's done. low prio.
     packer.compile()
     packer.update()
     user_utils.file_write(filepath, os.time())
@@ -88,4 +90,6 @@ packer.startup(function(use)
 
   -- ansible.
   use({ "https://github.com/pearofducks/ansible-vim" })
+
+  use({ "https://github.com/github/copilot.vim" })
 end)

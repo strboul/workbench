@@ -1,5 +1,9 @@
 local function qf_statusline()
-  local statusline = "%f %L lines%="
+  local statusline = table.concat({
+    "%f ",
+    vim.fn.nr2char(8226), -- Bullet Unicode Character
+    " %l/%L %=",
+  })
   if vim.w.quickfix_title ~= nil then
     local qf_title = table.concat({
       " ",

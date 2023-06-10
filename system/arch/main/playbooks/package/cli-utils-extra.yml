@@ -7,11 +7,12 @@
       - visidata  # https://www.visidata.org/
     state: present
   environment:
-    PIP_REQUIRE_VIRTUALENV: false
+    PIP_REQUIRE_VIRTUALENV: "false"
 
 - name: Install cli utils via pacman
   community.general.pacman:
     name:
+      - "{{ config.packages.pacman.navi }}"  # https://github.com/denisidoro/navi
       - "{{ config.packages.pacman.neomutt }}"  # https://neomutt.org/
       - "{{ config.packages.pacman.yamllint }}"  # https://github.com/adrienverge/yamllint
       - "{{ config.packages.pacman.bandwhich }}"  # https://github.com/imsnif/bandwhich
@@ -24,6 +25,5 @@
     name: "{{ item }}"
     state: present
   loop:
-    - "{{ config.packages.aur.navi }}"  # https://github.com/denisidoro/navi
     - "{{ config.packages.aur.shellcheck }}"  # AUR gives binary, dep free version https://github.com/koalaman/shellcheck
     - "{{ config.packages.aur.lazydocker }}"  # https://github.com/jesseduffield/lazydocker

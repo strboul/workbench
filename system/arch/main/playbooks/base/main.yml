@@ -17,8 +17,14 @@
         path: "{{ config.vars.workbench_dir }}"
         owner: "{{ ansible_env.USER }}"
         group: "{{ ansible_env.USER }}"
-        mode: 0700
+        mode: "0700"
         state: directory
+      become: true
+
+    - name: Create guest user with non-sudo priviledges
+      ansible.builtin.user:
+        name: guest
+        password: ""
       become: true
 
     - name: Setup etckeeper

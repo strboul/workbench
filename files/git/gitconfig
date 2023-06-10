@@ -37,3 +37,5 @@
 [init]
 	templatedir = ~/workbench/files/git/git_templates
 	defaultBranch = master
+[log]
+	showSignature = true

@@ -22,8 +22,10 @@ build_image() {
   podman build -t "$IMAGE_TAG" "$HOME/workbench/files/nvim"
 }
 
-create_volume() {
-  podman volume create "$ID"
+create_volume_if_not_exist() {
+  if ! podman volume inspect "$ID" > /dev/null; then
+    podman volume create "$ID"
+  fi
 }
 
 create_container() {
@@ -63,7 +65,7 @@ main() {
   if ! is_image_exist; then
     utils__log__info "image not found. building..."
     build_image
-    create_volume
+    create_volume_if_not_exist
   fi
   trap on_exit EXIT
   create_container

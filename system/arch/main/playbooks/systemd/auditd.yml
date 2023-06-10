@@ -1,0 +1,82 @@
+# auditd - The Linux Audit daemon
+#
+---
+# Inspired from:
+# https://github.com/Neo23x0/auditd
+#
+# Notes:
+#   - Keep it as lean as possible and don't audit anything you don't use or
+#   understand.
+#   - Every rule has a custom key `-k` to log all messages. It's useful to
+#   filter logs.
+#
+- name: Define audit rules
+  ansible.builtin.blockinfile:
+    path: /etc/audit/rules.d/audit.rules
+    marker: "# {mark} ANSIBLE MANAGED BLOCK: auditd"
+    block: |
+      ## Kernel parameters
+      -w /etc/sysctl.conf -p wa -k sysctl
+      -w /etc/sysctl.d -p wa -k sysctl
+
+      ## Kernel module loading and unloading
+      -a always,exit -F perm=x -F auid!=-1 -F path=/sbin/insmod -k modules
+      -a always,exit -F perm=x -F auid!=-1 -F path=/sbin/modprobe -k modules
+      -a always,exit -F perm=x -F auid!=-1 -F path=/sbin/rmmod -k modules
+      -a always,exit -F arch=b64 -S finit_module -S init_module -S delete_module -F auid!=-1 -k modules
+      -a always,exit -F arch=b32 -S finit_module -S init_module -S delete_module -F auid!=-1 -k modules
+
+      ## Modprobe configuration
+      -w /etc/modprobe.conf -p wa -k modprobe
+      -w /etc/modprobe.d -p wa -k modprobe
+
+      ## User, group, password databases
+      -w /etc/group -p wa -k etcgroup
+      -w /etc/passwd -p wa -k etcpasswd
+      -w /etc/gshadow -k etcgroup
+      -w /etc/shadow -k etcpasswd
+
+      ## Sudoers file changes
+      -w /etc/sudoers -p wa -k actions
+      -w /etc/sudoers.d/ -p wa -k actions
+
+      ## Passwd
+      -w /usr/bin/passwd -p x -k passwd_modification
+
+      ## Changes to other files
+      -w /etc/hosts -p wa -k network_modifications
+      -a always,exit -F dir=/etc/NetworkManager/ -F perm=wa -k network_modifications
+
+      ## Pam configuration
+      -w /etc/pam.d/ -p wa -k pam
+      -w /etc/security/limits.conf -p wa  -k pam
+      -w /etc/security/limits.d -p wa  -k pam
+      -w /etc/security/pam_env.conf -p wa -k pam
+      -w /etc/security/namespace.conf -p wa -k pam
+      -w /etc/security/namespace.d -p wa -k pam
+      -w /etc/security/namespace.init -p wa -k pam
+
+      ## SSH configuration
+      -w /etc/ssh/sshd_config -wa -k sshd
+      -w /etc/ssh/sshd_config.d -wa -k sshd
+    mode: "0644"
+    create: true
+  become: true
+  notify: Auditd running
+
+# TODO: update it if necessary.
+- name: Send periodic reports reminder notification
+  strboul.notify.check:
+    id: aureport
+    condition: true  # always run.
+    message: |
+      Interested in checking audit reports?
+
+      sudo aureport -ts boot -k --summary
+    options:
+      urgency: critical
+      icon: user-info
+    timer:
+      OnBootSec: 1min
+      OnUnitActiveSec: 3h
+      Persistent: true

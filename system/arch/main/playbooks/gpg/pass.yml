@@ -24,6 +24,8 @@
 - name: Create pass folder
   ansible.builtin.shell: |
     pass init "{{ config.gpg.pubkey.subkey_encrypt }}"
+  register: pass_init
   when: not password_store_dir.stat.exists
+  changed_when: pass_init.rc != 0
 
 # TODO: set up pass git ... stuff

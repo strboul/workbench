@@ -23,6 +23,9 @@
     # Displays name, version and size of target packages formatted as a table
     # for upgrade, sync and remove operations.
     - { regexp: "^#VerbosePkgLists", line: "VerbosePkgLists" }
+    # Specify number of concurrent downloads to make it faster. If the
+    # connection is slow, it may be better to lower this number temporarily.
+    - { regexp: "^#ParallelDownloads", line: "ParallelDownloads = 5" }
   become: true
 
 # https://archlinux.org/mirrors/status/
@@ -46,7 +49,7 @@
 
       # Turkey
       Server = https://depo.turkiye.linux.web.tr/archlinux/$repo/os/$arch
-    mode: 0644
+    mode: "0644"
   become: true
 
 # TODO: remove this block of update. Add `pacman -Syu` as a prerequisite to the
@@ -78,7 +81,7 @@
   ansible.builtin.copy:
     dest: "{{ pacman_updated_file }}"
     content: "{{ lookup('pipe', 'date') }}\n"  # add timestamp info inside
-    mode: 0644
+    mode: "0644"
   when: pacman_system_updated.changed
 
 - name: Set notification service to check package updates

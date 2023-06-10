@@ -53,8 +53,8 @@
     #
     - name: Create wg config file
       ansible.builtin.copy:
-        dest: "/tmp/{{ wg0dev1.network_id}}.conf"
-        block: |
+        dest: "/tmp/{{ wg0dev1.network_id }}.conf"
+        content: |
           [Interface]
           PrivateKey = {{ client.private_key }}
           Address = {{ wg0dev1.address }}
@@ -66,9 +66,7 @@
           Endpoint = {{ prompt_wg0dev1_server_ipv4 }}:51820
         owner: root
         group: root
-        mode: 0640
-        create: true
-        state: present
+        mode: "0640"
 
     # Terms:
     # - AllowedIPs: that's destination, not the source.
@@ -78,6 +76,9 @@
     # https://unix.stackexchange.com/questions/527705/route-an-specific-docker-network-via-systemd-wireguard-interface
     #
     - name: Add client config with systemd-networkd
+      become: true
+      notify: systemd-networkd restarted
+      tags: wireguard.wg0dev1
       block:
         - name: Create network configuration
           ansible.builtin.blockinfile:
@@ -95,7 +96,7 @@
               Destination = {{ wg0dev1.address }}
             owner: systemd-network
             group: systemd-network
-            mode: 0640
+            mode: "0640"
             create: true
             state: present
 
@@ -119,12 +120,9 @@
               PersistentKeepalive = 25
             owner: systemd-network
             group: systemd-network
-            mode: 0640
+            mode: "0640"
             create: true
             state: present
-      become: true
-      notify: systemd-networkd restarted
-      tags: wireguard.wg0dev1
 
   handlers:
     - name: systemd-networkd restarted

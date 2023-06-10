@@ -4,7 +4,7 @@
     path: /etc/systemd/journald.conf.d
     owner: "{{ ansible_env.USER }}"
     group: "{{ ansible_env.USER }}"
-    mode: 0700
+    mode: "0700"
     state: directory
   become: true
 
@@ -15,4 +15,4 @@
       [Journal]
       # entries older than the specified time span are deleted
       MaxRetentionSec=6month
-    mode: 0644
+    mode: "0644"

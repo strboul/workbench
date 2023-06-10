@@ -14,10 +14,10 @@
         state: present
       become: true
 
-    - name: gpg config dir
+    - name: Create gpg config dir
       ansible.builtin.file:
         path: "{{ gpg_workbench_dir }}"
-        mode: 0700
+        mode: "0700"
         state: directory
 
     - name: Download the public key file
@@ -25,26 +25,39 @@
         url: "{{ config.gpg.pubfile.url }}"
         dest: "{{ gpg_pubkey_path }}"
         checksum: "{{ config.gpg.pubfile.checksum }}"
+        mode: "0644"
       register: gpg_pubkey_download
 
     - name: Verify fingerprint and import key
+      when: gpg_pubkey_download.changed
       block:
         - name: Get fingerprint of file
           ansible.builtin.shell: |
+            set -o pipefail
             gpg --show-keys --with-fingerprint "{{ gpg_pubkey_path }}" \
               | awk 'NR==2' \
               | sed -r 's/\s+//g'
           register: fingerprint_keyfile
+          changed_when: fingerprint_keyfile.rc != 0
 
         - name: Fail if fingerprints not equal
           ansible.builtin.fail:
             msg: "Fingerprints do not match!"
           when: "fingerprint_keyfile.stdout != config.gpg.pubkey.master"
 
+        - name: Check if key is in keychain
+          ansible.builtin.command: |
+            gpg --list-keys "{{ config.gpg.pubkey.master }}"
+          register: list_keys
+          changed_when: false
+          failed_when: list_keys.rc not in [0, 1]
+
         - name: Import key
-          ansible.builtin.shell: |
+          ansible.builtin.command: |
             gpg --import "{{ gpg_pubkey_path }}"
-      when: gpg_pubkey_download.changed
+          when: list_keys.rc != 0
+          register: gpg_import
+          changed_when: gpg_import.rc != 0
 
     - name: Setup pass
       ansible.builtin.import_tasks: pass.yml

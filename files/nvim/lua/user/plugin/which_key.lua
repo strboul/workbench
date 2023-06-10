@@ -10,6 +10,9 @@ which_key.setup({
 which_key.register({
   ["<leader>g"] = {
     name = "+git",
+    h = {
+      name = "+hunk",
+    },
   },
   ["<leader>c"] = {
     name = "+coc",

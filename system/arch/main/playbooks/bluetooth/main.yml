@@ -15,9 +15,11 @@
 
     - name: Be sure bluetooth is always running
       ansible.builtin.command: /bin/true
+      changed_when: false
       notify: Bluetooth running
 
-    - meta: flush_handlers
+    - name: Run notified handlers
+      ansible.builtin.meta: flush_handlers
 
     - name: Check if bluetooth conf file exists
       ansible.builtin.stat:

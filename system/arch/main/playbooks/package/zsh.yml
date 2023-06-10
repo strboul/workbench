@@ -30,7 +30,9 @@
       ansible.builtin.command: "mv {{ item.from }} {{ item.to }}"
       loop:
         - { from: "{{ ansible_env.HOME }}/.zshrc.pre-oh-my-zsh", to: "{{ ansible_env.HOME }}/.zshrc" }
+      register: rename_pre_zshrc
       when: pre_zshrc_file.stat.exists
+      changed_when: rename_pre_zshrc.rc != 0
 
 - name: oh-my-zsh custom dir
   ansible.builtin.shell: "echo ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
@@ -62,9 +64,10 @@
     - name: Disable p10k configuration wizard prompt
       ansible.builtin.blockinfile:
         path: "{{ ansible_env.HOME }}/.zshenv"
+        marker: "# {mark} ANSIBLE MANAGED BLOCK: p9k"
         block: |
           POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
-        mode: 0644
+        mode: "0644"
         create: true
         state: present
 

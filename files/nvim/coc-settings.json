@@ -24,7 +24,8 @@
     "javascriptreact",
     "typescript",
     "typescriptreact",
-    "vue"
+    "vue",
+    "go"
   ],
 
   // don't have completion item selected by default

@@ -7,6 +7,7 @@
   ansible.builtin.stat:
     path: /etc/.git/config
   register: etckeeper_git
+  changed_when: false
   become: true
 
 - name: Initialize etckeeper
@@ -18,4 +19,6 @@
     && etckeeper commit -m "Initial commit" \
     && popd
   when: not etckeeper_git.stat.exists
+  register: etckeeper_init
+  changed_when: etckeeper_init.rc != 0
   become: true

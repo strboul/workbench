@@ -27,7 +27,7 @@ mkdir -p "$TMPDIRPAT"
 utils__log__info "created temp dir \"$TMPDIRPAT\""
 
 podman run --rm -it \
-  -u "$(id -u)":"$(id -g)" \
+  -u "$(id -u):$(id -g)" \
   -v "$TMPDIRPAT":/mnt \
   ghcr.io/linkchecker/linkchecker:latest \
   -Fhtml/linkchecker.html \

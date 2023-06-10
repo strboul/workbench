@@ -37,11 +37,17 @@ remove_volumes() {
   "$COMMAND" volume prune -f || true
 }
 
+remove_build_cache() {
+  utils__log__info "force removing build cache"
+  "$COMMAND" system prune -f
+}
+
 main() {
   set_command_param
   remove_containers
   remove_images
   remove_volumes
+  remove_build_cache
 }
 
 main

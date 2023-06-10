@@ -16,7 +16,6 @@ whatchanged() {
   fi
   current_branch="$(get_current_branch)"
   git diff --name-status "$branch"..."$current_branch" \
-    && echo "----" \
     && git status --porcelain
 }
 

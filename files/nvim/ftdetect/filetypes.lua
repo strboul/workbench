@@ -39,18 +39,22 @@ vim.api.nvim_create_autocmd({ "FileType" }, {
   group = augroup_common_filetypes,
   pattern = "go",
   callback = function()
-    vim.cmd([[ setlocal tabstop=2 ]])
+    vim.cmd([[
+      setlocal tabstop=4
+      setlocal noexpandtab
+    ]])
   end,
 })
 
 vim.api.nvim_create_autocmd({ "FileType" }, {
   desc = "Rules on yaml files",
   group = augroup_common_filetypes,
-  pattern = "yaml",
+  pattern = { "yaml", "yaml.*" },
   callback = function()
     vim.cmd([[
       setlocal tabstop=2
       setlocal shiftwidth=2
+      setlocal indentkeys-=0#  " disable auto tabs when adding comments
     ]])
   end,
 })

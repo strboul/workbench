@@ -19,9 +19,11 @@
 
     - name: Be sure sshd is always running
       ansible.builtin.command: /bin/true
+      changed_when: false
       notify: sshd running
 
-    - meta: flush_handlers
+    - name: Run notified handlers
+      ansible.builtin.meta: flush_handlers
 
     - name: Setup ssh server
       ansible.builtin.import_tasks: server.yml

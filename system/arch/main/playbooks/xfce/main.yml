@@ -19,7 +19,7 @@
         block: |
           # stop the annoying beep.
           xset -b
-        mode: 0644
+        mode: "0644"
         create: true
         state: present
       become: true
@@ -55,7 +55,7 @@
         - name: Create xfce dir if not exist
           ansible.builtin.file:
             path: "{{ config.vars.workbench_dir }}/xfce"
-            mode: 0700
+            mode: "0700"
             state: directory
           register: xfce_dir
 
@@ -63,7 +63,7 @@
           ansible.builtin.copy:
             src: "{{ item.src }}"
             dest: "{{ item.dest }}"
-            mode: 0700
+            mode: "0700"
           loop:
             - { src: "{{ ansible_env.PWD }}/genmon-sensors", dest: "{{ xfce_dir.path }}/genmon-sensors" }
 
@@ -71,12 +71,16 @@
       ansible.builtin.copy:
         src: "{{ item.src }}"
         dest: "{{ item.dest }}"
-        mode: 0644
+        mode: "0644"
       loop:
         - { src: "{{ ansible_env.PWD }}/whiskermenu-1.rc", dest: "{{ ansible_env.HOME }}/.config/xfce4/panel/whiskermenu-1.rc" }
         - { src: "{{ ansible_env.PWD }}/genmon-90.rc", dest: "{{ ansible_env.HOME }}/.config/xfce4/panel/genmon-90.rc" }
 
     - name: Keyboard
+      vars:
+        keyboard_conf_file: /usr/share/X11/xkb/symbols/pc
+      become: true
+      tags: xfce.keyboard
       block:
         - name: Backup the config file (if not exists)
           ansible.builtin.copy:
@@ -84,7 +88,7 @@
             dest: "{{ keyboard_conf_file }}.bak"
             owner: root
             group: root
-            mode: 0644
+            mode: "0644"
             force: false
 
         - name: Remap some keys in the keyboard
@@ -97,7 +101,3 @@
             - { regexp: "^    key <CAPS>", change: "    key <CAPS> {[  Escape  ]};" }
             # remap insert to escape
             - { regexp: "^    key  <INS>", change: "    key  <INS> {[  Escape  ]};" }
-      vars:
-        keyboard_conf_file: /usr/share/X11/xkb/symbols/pc
-      become: true
-      tags: xfce.keyboard

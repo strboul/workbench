@@ -16,6 +16,7 @@
   register: yay_cmd
 
 - name: Install yay
+  when: not yay_cmd.stat.exists
   block:
     - name: Clone yay source
       ansible.builtin.git:
@@ -27,14 +28,15 @@
     - name: Build yay
       ansible.builtin.shell:
         chdir: "{{ yay_install_dir }}"
-        cmd: "yes Y | makepkg -si"
+        cmd: |
+          set -o pipefail
+          yes Y | makepkg -si
       changed_when: false
-  when: not yay_cmd.stat.exists
 
 - name: Create yay config dir
   ansible.builtin.file:
     path: "{{ ansible_env.HOME }}/.config/yay"
-    mode: 0700
+    mode: "0700"
     state: directory
 
 - name: Create yay config file
@@ -45,4 +47,4 @@
         "upgrademenu": true,
         "combinedupgrade": true
       }
-    mode: 0644
+    mode: "0644"

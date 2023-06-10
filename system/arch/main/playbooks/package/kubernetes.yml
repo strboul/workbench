@@ -1,4 +1,12 @@
 ---
+# See package details: https://archlinux.org/packages/community/x86_64/kubernetes/
+- name: Install Kubernetes
+  community.general.pacman:
+    name:
+      - "{{ config.packages.pacman.kubectl }}"
+    state: present
+  become: true
+
 - name: Install Kubernetes tools
   community.general.pacman:
     name:

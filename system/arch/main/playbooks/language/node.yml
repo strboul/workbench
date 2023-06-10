@@ -15,7 +15,7 @@
         - name: Create a directory for global installations
           ansible.builtin.file:
             path: "{{ ansible_env.HOME }}/.npm-global"
-            mode: 0755
+            mode: "0755"
             state: directory
 
         - name: Configure npm to use the new directory path
@@ -25,11 +25,12 @@
         - name: Export the path in profile
           ansible.builtin.blockinfile:
             path: "{{ ansible_env.HOME }}/.zshenv"
+            marker: "# {mark} ANSIBLE MANAGED BLOCK: npm"
             block: |
               typeset -U path PATH
               path=({{ ansible_env.HOME }}/.npm-global/bin $path)
               export PATH
-            mode: 0644
+            mode: "0644"
             create: true
             state: present
 

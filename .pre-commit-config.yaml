@@ -85,7 +85,7 @@ repos:
 
 # ansible: ansible-lint
 -   repo: https://github.com/ansible-community/ansible-lint
-    rev: v6.11.0
+    rev: v6.17.0
     hooks:
     -   id: ansible-lint
         name: "[ansible] ansible-lint"
@@ -101,6 +101,10 @@ repos:
         name: "[custom] check text in content"
         description: check certain text not exist in the content
         language: system
+        exclude: |
+            (?x)(
+                ^.git-crypt\/*
+            )
         entry: |
             python -c '''
             import sys, os, re
@@ -110,7 +114,11 @@ repos:
             check_text = [os.environ["USER"], os.environ["HOME"]]
             for file in files:
                 with open(file) as f:
-                     content = f.read()
+                    try:
+                        content = f.read()
+                    except Exception as exc:
+                        print(file, file=sys.stderr)
+                        raise Exception from exc
                 for text in check_text:
                     is_exist = bool(re.search(text, content))
                     if (is_exist):

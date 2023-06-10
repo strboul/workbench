@@ -25,6 +25,8 @@ o.shortmess:append("I")
 o.shortmess:append("W")
 -- virtual editing on the window, can do block/rectangular selections:
 o.virtualedit = "block"
+-- default textwidth
+o.textwidth = 80
 -- darken after the 80th char
 cmd([[ let &colorcolumn=join(range(81,500),",") ]])
 -- timeout when a special key (ESC, leader, etc.) pressed.

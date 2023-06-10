@@ -1,11 +1,8 @@
-FROM docker.io/library/alpine:latest
-# # download latest neovim binary
-# RUN \
-#   wget https://github.com/neovim/neovim/releases/download/nightly/nvim-linux64.tar.gz -O /tmp/nvim-linux64.tar.gz && \
-#   tar xzvf /tmp/nvim-linux64.tar.gz -C /tmp && \
-#   cp /tmp/nvim-linux64/bin/nvim /usr/local/bin/nvim
-# install neovim stable
-RUN apk --no-cache add neovim
+# 'edge' is the dev branch, rolling release
+# FROM docker.io/library/alpine:latest
+FROM docker.io/library/alpine:edge
+# install neovim
+RUN apk --no-cache add neovim neovim-doc
 # install base libraries/packages.
 RUN apk --no-cache add \
   git \

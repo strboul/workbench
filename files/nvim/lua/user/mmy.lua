@@ -13,7 +13,8 @@ M.copy_with_metadata = function()
   local linestr = table.concat(buf_lines, "\n")
   local selected = table.concat({ "```", linestr, "```" }, "\n")
   -- get path
-  local current_dir = vim.fn.fnamemodify(vim.loop.cwd(), ":t")
+  local cwd = vim.loop.os_environ()["host_PWD"] or vim.loop.cwd()
+  local current_dir = vim.fn.fnamemodify(cwd, ":t")
   local current_bufname = vim.fn.expand("%")
   local path = table.concat({ current_dir, "/", current_bufname })
   -- row numbers

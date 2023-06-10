@@ -6,3 +6,15 @@
     - name: Setup journald
       ansible.builtin.import_tasks: journald.yml
       tags: systemd.journald
+
+    - name: Setup auditd
+      ansible.builtin.import_tasks: auditd.yml
+      tags: systemd.auditd
+
+  handlers:
+    - name: Auditd running
+      ansible.builtin.systemd:
+        name: auditd.service
+        state: started
+        enabled: true
+      become: true

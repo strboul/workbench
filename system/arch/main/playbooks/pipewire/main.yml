@@ -14,7 +14,7 @@
     - name: Create pipewire user config dir
       ansible.builtin.file:
         path: "{{ ansible_env.HOME }}/.config/pipewire/pipewire.conf.d"
-        mode: 0700
+        mode: "0700"
         state: directory
       register: pipewire_config_dir
 
@@ -24,7 +24,7 @@
         - name: Create config file
           ansible.builtin.file:
             path: "{{ pipewire_config_dir.path }}/10-arturia-minifuse2.conf"
-            mode: 0644
+            mode: "0644"
             state: touch
           register: minifuse2_config
 
@@ -51,10 +51,11 @@
                           }
                   }
               ]
-            mode: 0644
+            mode: "0644"
           notify: Restart pipewire
 
-    - meta: flush_handlers
+    - name: Run notified handlers
+      ansible.builtin.meta: flush_handlers
 
   handlers:
     - name: Restart pipewire

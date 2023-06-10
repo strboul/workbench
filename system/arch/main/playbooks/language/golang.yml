@@ -6,17 +6,18 @@
 - name: Add golang paths
   ansible.builtin.blockinfile:
     path: "{{ ansible_env.HOME }}/.zshenv"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK: golang"
     block: |
       typeset -U path PATH
       path=(/usr/local/go/bin $path)
       path=("$(go env GOPATH)/bin" $path)
       export PATH
-    mode: 0644
+    mode: "0644"
     create: true
     state: present
 
 - name: Install golang packages
-  ansible.builtin.shell: "go install {{ item }}"
+  ansible.builtin.command: "go install {{ item }}"
   changed_when: false
   loop:
     - github.com/go-delve/delve/cmd/dlv@latest  # delve debugger
