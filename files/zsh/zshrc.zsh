@@ -60,7 +60,6 @@ plugins+=(
   helm
   kubectl
   npm
-  nvm
   pass
   terraform
   yarn
@@ -72,15 +71,15 @@ source "$ZSH"/oh-my-zsh.sh
 
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/bin:$PATH"
-export PATH="$HOME/workbench/bin:$PATH"
+export PATH="$WORKBENCH_PATH/bin:$PATH"
 
 # ===== sources =====
 
 # zsh keybindings
-source "$HOME"/workbench/files/zsh/keybindings.zsh
-source "$HOME"/workbench/files/zsh/navi_keybindings.zsh
+source "$WORKBENCH_PATH/files/zsh/keybindings.zsh"
+source "$WORKBENCH_PATH/files/zsh/navi_keybindings.zsh"
 # hooks
-source "$HOME"/workbench/files/zsh/hooks.zsh
+source "$WORKBENCH_PATH/files/zsh/hooks.zsh"
 
 # for gnupg
 GPG_TTY="$(tty)"
@@ -127,11 +126,8 @@ alias cdr="__cdr"
 alias cp='cp -iv' # 'cp' prompt and verbose
 alias mv='mv -iv' # 'mv' prompt and verbose
 
-# - `-F`: appends indicator (`/` for folders, `*` for executables)
-# - `-v`: natural sorts
-# - `-h`: gives human readable file sizes
-# - `--group-directories-first`: puts directories first
-alias ls='ls -Fv --color=auto --group-directories-first'
+# list.
+alias ls='myls'
 alias ll='ls -lh'
 alias la='ll -a'
 
@@ -183,5 +179,5 @@ if command -v fd > /dev/null; then
 fi
 
 # p10k (https://github.com/romkatv/powerlevel10k)
-# To customize prompt, run `p10k configure` or edit ~/workbench/files/p10k/p10k.zsh.
-[[ ! -f ~/workbench/files/p10k/p10k.zsh ]] || source ~/workbench/files/p10k/p10k.zsh
+# To customize prompt, run `p10k configure` or edit $WORKBENCH_PATH/files/p10k/p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

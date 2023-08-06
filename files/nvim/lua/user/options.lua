@@ -3,7 +3,6 @@
 
 local o = vim.opt
 local g = vim.g
-local cmd = vim.cmd
 
 -- [[ general ]]
 -- leader key.
@@ -27,8 +26,12 @@ o.shortmess:append("W")
 o.virtualedit = "block"
 -- default textwidth
 o.textwidth = 80
--- darken after the 80th char
-cmd([[ let &colorcolumn=join(range(81,500),",") ]])
+-- darken after the default textwidth
+local color_col_range = {}
+for i = o.textwidth:get(), 500 do
+  table.insert(color_col_range, i)
+end
+o.colorcolumn = color_col_range
 -- timeout when a special key (ESC, leader, etc.) pressed.
 o.timeout = true
 o.timeoutlen = 500

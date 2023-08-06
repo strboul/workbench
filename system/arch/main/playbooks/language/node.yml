@@ -20,7 +20,8 @@
 
         - name: Configure npm to use the new directory path
           ansible.builtin.command: "npm config set prefix '{{ ansible_env.HOME }}/.npm-global'"
-          changed_when: false
+          register: node_npm_global_config
+          changed_when: node_npm_global_config.rc != 0
 
         - name: Export the path in profile
           ansible.builtin.blockinfile:

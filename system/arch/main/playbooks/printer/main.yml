@@ -42,7 +42,8 @@
         - name: Add printer
           ansible.builtin.shell: |
             lpadmin -p "{{ printer.name }}" -E -v "ipp://{{ printer.ipv4_address }}/ipp" -m everywhere
-          changed_when: false
+          register: printer_lpadmin
+          changed_when: printer_lpadmin.rc != 0
           become: true
 
     # https://wiki.archlinux.org/title/SANE
@@ -63,8 +64,8 @@
         - name: Add scanner
           ansible.builtin.shell: |
             brsaneconfig4 -a name="{{ printer.name }}" model="{{ printer.model }}" ip="{{ printer.ipv4_address }}"
-          register: sane_config
-          changed_when: sane_config.rc != 0
+          register: printer_sane_config
+          changed_when: printer_sane_config.rc != 0
           become: true
           notify: restart sane
 

@@ -20,14 +20,16 @@
     - name: Set default zone to public
       ansible.builtin.shell: |
         sudo firewall-cmd --set-default-zone=public
-      changed_when: false
+      register: firewalld_set_default_zone
+      changed_when: firewalld_set_default_zone.rc != 0
       become: true
 
     - name: Allow port range (my socat)
       ansible.builtin.shell: |
         firewall-cmd --zone=public --add-port=3333/tcp --permanent
         firewall-cmd --reload
-      changed_when: false
+      register: firewalld_set_port
+      changed_when: firewalld_set_port.rc != 0
       become: true
 
     - name: Set notification service to check if firewalld is running

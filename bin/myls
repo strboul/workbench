@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# POSIX compliant `ls` with some useful flags
+#
+# - `-F`: appends indicator (`/` for folders, `*` for executables)
+# - `-v`: natural sorts
+# - `-h`: gives human readable file sizes
+# - `--group-directories-first`: puts directories first
+#
+
+/bin/ls -Fv --color=auto --group-directories-first "${@}"

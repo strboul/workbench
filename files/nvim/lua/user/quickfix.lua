@@ -31,8 +31,6 @@ vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
     vim.opt_local.signcolumn = "no"
     vim.opt_local.list = false
     vim.opt_local.colorcolumn = ""
-    -- easy close.
-    vim.keymap.set("n", "<ESC>", ":cclose<CR>")
     -- statusline.
     vim.opt_local.statusline = qf_statusline()
   end,

@@ -26,4 +26,5 @@
     - { application: "{{ vars_base_xdg.image_viewer }}", mimetype: "image/png" }
     - { application: "{{ vars_base_xdg.media_player }}", mimetype: "video/mp4" }
     - { application: "{{ vars_base_xdg.pdf_viewer }}", mimetype: "application/pdf" }
-  changed_when: false
+  register: base_xdg_mime_types
+  changed_when: base_xdg_mime_types.rc != 0

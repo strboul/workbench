@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Creates a git worktree (https://git-scm.com/docs/git-worktree) from a branch
-# and puts in "$HOME/<repo-name>-wt/<branch>/"
+# and puts in "../<repo-name>-WT/<branch>/"
 #
 # Worktrees are useful when want to change into a new branch as it is less
 # expensive than git checkout requiring the current index to be clean. Use
@@ -15,7 +15,7 @@
 
 set -e
 
-source "$HOME"/workbench/bin/_utils/utils.sh
+source "$WORKBENCH_PATH/bin/_utils/utils.sh"
 
 BRANCH_NAME=$1
 
@@ -24,14 +24,13 @@ get_repo_name() {
 }
 
 REPO_NAME="$(get_repo_name)"
-WT_DIR_NAME="$REPO_NAME-wt"
-WT_DIR_PAT="$HOME/$WT_DIR_NAME"
-WT_PAT="$WT_DIR_PAT/$BRANCH_NAME"
+WT_DIR_NAME="${REPO_NAME}__${BRANCH_NAME}__WT"
+WT_PAT="../$WT_DIR_NAME"
 
 make_wt_dir_if_not_exists() {
-  if [ ! -d "$WT_DIR_PAT" ]; then
-    mkdir -p "$WT_DIR_PAT"
-    echo "The dir to keep worktrees does not exist. Created at: \"$WT_DIR_PAT\""
+  if [ ! -d "$WT_PAT" ]; then
+    mkdir -p "$WT_PAT"
+    echo "The dir to keep worktrees does not exist. Created at: \"$WT_PAT\""
     echo
   fi
 }

@@ -2,12 +2,13 @@
 
 ## Setup
 
-Clone this repository into your home (`$HOME/`) directory, and then change
-directory into the `workbench` folder.
+Set a directory to clone this repository, and then change directory into the
+`workbench` folder.
 
 ```sh
-git clone https://github.com/strboul/workbench.git "$HOME"/workbench
-cd "$HOME"/workbench
+echo 'export WORKBENCH_PATH="$HOME/.../workbench"' | tee -a "$HOME/.zshenv" "$HOME/.bash_profile"
+git clone https://github.com/strboul/workbench.git "$WORKBENCH_PATH"
+cd "$WORKBENCH_PATH"
 ```
 
 Recommended steps to install the parts in the following order.

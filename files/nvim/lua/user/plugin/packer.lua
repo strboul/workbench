@@ -55,7 +55,7 @@ packer.startup(function(use)
   })
 
   -- file drawer.
-  use("https://github.com/nvim-tree/nvim-tree.lua")
+  use({ "https://github.com/nvim-tree/nvim-tree.lua", commit = "9ef6c3cd8805d868d20106be09ce07f004e8232f" })
 
   -- treesitter.
   use({

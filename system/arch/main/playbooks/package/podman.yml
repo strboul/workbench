@@ -7,8 +7,11 @@
   become: true
 
 - name: Set rootless mode
-  ansible.builtin.shell: |
-    echo {{ ansible_env.USER }}:10000:65536 >> /etc/subuid
-    echo {{ ansible_env.USER }}:10000:65536 >> /etc/subgid
+  ansible.builtin.lineinfile:
+    path: "{{ item }}"
+    regexp: "^{{ ansible_env.USER }}"
+    line: "{{ ansible_env.USER }}:10000:65536"
+  loop:
+    - /etc/subuid
+    - /etc/subgid
   become: true
-  changed_when: false

@@ -48,9 +48,8 @@
         - name: Check if key is in keychain
           ansible.builtin.command: |
             gpg --list-keys "{{ config.gpg.pubkey.master }}"
-          register: list_keys
-          changed_when: false
-          failed_when: list_keys.rc not in [0, 1]
+          register: gpg_list_keys
+          changed_when: gpg_list_keys.rc != 0
 
         - name: Import key
           ansible.builtin.command: |

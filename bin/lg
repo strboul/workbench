@@ -3,7 +3,7 @@
 # lazygit wrapper (alias)
 #
 
-source "$HOME"/workbench/bin/_utils/utils.sh
+source "$WORKBENCH_PATH/bin/_utils/utils.sh"
 
 main() {
   utils__git__check_repository "$(pwd)"

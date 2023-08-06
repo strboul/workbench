@@ -42,8 +42,11 @@ def parse_ssh_config(config_file):
             line = line.strip()
             if line == "" or line.startswith("#"):
                 continue
+            # remove inline comments
+            content = line.split("#")[0].strip()
+            parts = content.split(" ")
             if line.startswith("Host "):
-                _, hostname = line.split(" ")
+                _, hostname = parts
                 if hostname == "*":
                     details = False
                 else:
@@ -51,7 +54,7 @@ def parse_ssh_config(config_file):
                     config[hostname] = {}
                     continue
             if details:
-                key, value = line.split(" ")
+                key, value = parts
                 config[hostname][key] = value
     return config
 

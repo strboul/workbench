@@ -7,6 +7,10 @@
       ansible.builtin.import_tasks: journald.yml
       tags: systemd.journald
 
+    - name: Setup resolved
+      ansible.builtin.import_tasks: resolved.yml
+      tags: systemd.resolved
+
     - name: Setup auditd
       ansible.builtin.import_tasks: auditd.yml
       tags: systemd.auditd

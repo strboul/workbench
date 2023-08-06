@@ -5,7 +5,7 @@
 
 set -euo pipefail
 
-source "$HOME"/workbench/bin/_utils/utils.sh
+source "$WORKBENCH_PATH/bin/_utils/utils.sh"
 
 HOST_PWD="$(pwd)"
 HOST_USER="$(id -un)"
@@ -19,7 +19,7 @@ is_image_exist() {
 }
 
 build_image() {
-  podman build -t "$IMAGE_TAG" "$HOME/workbench/files/nvim"
+  podman build -t "$IMAGE_TAG" "$WORKBENCH_PATH/files/nvim"
 }
 
 create_volume_if_not_exist() {
@@ -35,16 +35,17 @@ create_container() {
   else
     command="$IMAGE_TAG"
   fi
+  # shellcheck disable=SC2086 # intended splitting
   podman run -it \
     --volume "$HOME/.gitconfig:/root/.gitconfig" \
     --volume "$HOME/.gitignore:/root/.gitignore" \
-    --volume "$HOME/workbench/files/nvim/init.lua:/root/.config/nvim/init.lua" \
-    --volume "$HOME/workbench/files/nvim/lua:/root/.config/nvim/lua" \
-    --volume "$HOME/workbench/files/nvim/after:/root/.config/nvim/after" \
-    --volume "$HOME/workbench/files/nvim/ftdetect:/root/.config/nvim/ftdetect" \
-    --volume "$HOME/workbench/files/nvim/syntax:/root/.config/nvim/syntax" \
-    --volume "$HOME/workbench/files/nvim/coc-settings.json:/root/.config/nvim/coc-settings.json" \
-    --volume "$HOME/workbench/files/nvim/snippets:/root/.config/coc/ultisnips" \
+    --volume "$WORKBENCH_PATH/files/nvim/init.lua:/root/.config/nvim/init.lua" \
+    --volume "$WORKBENCH_PATH/files/nvim/lua:/root/.config/nvim/lua" \
+    --volume "$WORKBENCH_PATH/files/nvim/after:/root/.config/nvim/after" \
+    --volume "$WORKBENCH_PATH/files/nvim/ftdetect:/root/.config/nvim/ftdetect" \
+    --volume "$WORKBENCH_PATH/files/nvim/syntax:/root/.config/nvim/syntax" \
+    --volume "$WORKBENCH_PATH/files/nvim/coc-settings.json:/root/.config/nvim/coc-settings.json" \
+    --volume "$WORKBENCH_PATH/files/nvim/snippets:/root/.config/coc/ultisnips" \
     --volume "$PWD:/root/cwd" \
     --volume "$ID:/root" \
     --env "host_PWD=$HOST_PWD" \

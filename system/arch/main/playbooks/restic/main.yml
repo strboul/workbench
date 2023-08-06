@@ -1,0 +1,29 @@
+---
+# Restic - backups
+# https://restic.readthedocs.io/en/latest/index.html
+#
+- name: Restic
+  tags: restic
+  hosts: all
+  tasks:
+    - name: Install restic
+      community.general.pacman:
+        name:
+          - "{{ config.packages.pacman.restic }}"
+          - "{{ config.packages.pacman.fuse2 }}"  # needed to mount snapshots in filesystem
+        state: present
+      become: true
+
+    - name: Send periodic notifications
+      strboul.notify.check:
+        id: restic-backup
+        condition: true  # always run.
+        message: |
+          Don't forget to take a backup!
+        options:
+          urgency: critical
+          icon: user-info
+        timer:
+          OnBootSec: 1min
+          OnUnitActiveSec: 8h
+          Persistent: true

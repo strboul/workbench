@@ -12,7 +12,7 @@ AMOUNT="$1"
 FROM="$2"
 TO="$3"
 
-source "$HOME"/workbench/bin/_utils/utils.sh
+source "$WORKBENCH_PATH/bin/_utils/utils.sh"
 
 utils__stop_if_not_command_exists "deno" "Install deno (https://deno.land/)"
 
@@ -22,7 +22,7 @@ deno_cmd() {
     --allow-env=HOME \
     --allow-write \
     --allow-net="query1.finance.yahoo.com" \
-    "$HOME"/workbench/bin/_src-currency/index.ts \
+    "$WORKBENCH_PATH/bin/_src-currency/index.ts" \
     "$@"
 }
 

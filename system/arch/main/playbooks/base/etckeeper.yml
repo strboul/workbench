@@ -7,17 +7,17 @@
   ansible.builtin.stat:
     path: /etc/.git/config
   register: etckeeper_git
-  changed_when: false
+  changed_when: etckeeper_git.rc != 0
   become: true
 
 - name: Initialize etckeeper
   ansible.builtin.shell:
     etckeeper init \
-    && pushd /etc \
-    && git config --local user.name "root" \
-    && git config --local user.email "root@{{ ansible_hostname }}" \
-    && etckeeper commit -m "Initial commit" \
-    && popd
+      && pushd /etc \
+      && git config --local user.name "root" \
+      && git config --local user.email "root@{{ ansible_hostname }}" \
+      && etckeeper commit -m "Initial commit" \
+      && popd
   when: not etckeeper_git.stat.exists
   register: etckeeper_init
   changed_when: etckeeper_init.rc != 0

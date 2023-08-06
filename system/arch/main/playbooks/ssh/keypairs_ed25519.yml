@@ -1,0 +1,30 @@
+---
+- name: Set variables
+  ansible.builtin.set_fact:
+    vars_generate_keypairs:
+      key_path: "{{ vars_ssh.client_keys_path }}/id_ed25519-{{ item }}"
+
+- name: Check if key exists
+  ansible.builtin.stat:
+    path: "{{ vars_generate_keypairs.key_path }}"
+  register: ssh_key_file
+
+- name: Generate an OpenSSH keypair with ed25519 (if not exists)
+  community.crypto.openssh_keypair:
+    path: "{{ vars_generate_keypairs.key_path }}"
+    type: ed25519
+    comment: "{{ item }}_{{ ansible_date_time.date }}"
+  when: not ssh_key_file.stat.exists
+
+- name: Make key restrictive key file permission
+  ansible.builtin.file:
+    path: "{{ vars_generate_keypairs.key_path }}"
+    mode: "0400"
+    state: file
+
+- name: Check if keys have passphrase
+  ansible.builtin.command:
+    check-ssh-key-passphrase {{ vars_generate_keypairs.key_path }}
+  register: ssh_check_passphrase
+  changed_when: ssh_check_passphrase.rc != 0
+  ignore_errors: true

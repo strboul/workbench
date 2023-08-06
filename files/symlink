@@ -6,7 +6,7 @@
 
 set -Eeuo pipefail
 
-source "$HOME"/workbench/bin/_utils/utils.sh
+source "$WORKBENCH_PATH"/bin/_utils/utils.sh
 
 usage() {
   cat << EOF
@@ -79,7 +79,7 @@ stop_if_broken_symlinks() {
 }
 
 read_conf_file() {
-  conf_file="$(cat "$HOME/workbench/files/symlinks.conf")"
+  conf_file="$(cat "$WORKBENCH_PATH/files/symlinks.conf")"
   list="$(echo "$conf_file" | grep -Ev '^#')"
   echo "$list"
 }
@@ -92,7 +92,7 @@ do_loop_list() {
     arg_source="$(echo "$line" | awk '{split($0,a," -> "); print a[2]}')"
     # add paths to the arguments
     path_target="$HOME/$arg_target"
-    path_source="$HOME/workbench/files/$arg_source"
+    path_source="$WORKBENCH_PATH/files/$arg_source"
     do_link "$path_target" "$path_source"
   done <<< "$list"
 }

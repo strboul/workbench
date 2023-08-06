@@ -18,7 +18,8 @@
 
 - name: Install golang packages
   ansible.builtin.command: "go install {{ item }}"
-  changed_when: false
+  register: golang_install_packages
+  changed_when: golang_install_packages.rc != 0
   loop:
     - github.com/go-delve/delve/cmd/dlv@latest  # delve debugger
     - github.com/mvdan/sh/cmd/shfmt@latest  # shfmt

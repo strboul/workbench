@@ -13,8 +13,8 @@
     - name: Get password store dirname
       ansible.builtin.shell: |
         [[ -z "$PASSWORD_STORE_DIR" ]] && echo "~/.password-store" || echo "$PASSWORD_STORE_DIR"
-      changed_when: false
       register: password_store_dirname
+      changed_when: password_store_dirname.rc != 0
 
     - name: Check dir
       ansible.builtin.stat:
@@ -27,5 +27,3 @@
   register: pass_init
   when: not password_store_dir.stat.exists
   changed_when: pass_init.rc != 0
-
-# TODO: set up pass git ... stuff

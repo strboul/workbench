@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# Print the remote details before pushing
+#
+
+git_remote_details() {
+  git config --get remote.origin.url
+}
+
+main() {
+  printf '\e[33mpushing: %s\e[0m\n' "$(git_remote_details)"
+}
+
+main

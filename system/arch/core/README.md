@@ -56,7 +56,7 @@ Check the connection.
 ping archlinux.org -c 1
 ```
 
-### Access ssh
+### SSH access
 
 Also possible to access the machine over `ssh` (if you are in the same network):
 
@@ -149,10 +149,10 @@ Prepare LUKS.
 
 ```sh
 # create crypt.
-/usr/bin/cryptsetup luksFormat "${DISK}p2"
+cryptsetup luksFormat "${DISK}p2"
 # ... set a passphrase.
 # open crypt.
-/usr/bin/cryptsetup open "${DISK}p2" cryptsystem
+cryptsetup open "${DISK}p2" cryptsystem
 # ... enter the passphrase.
 ```
 
@@ -350,25 +350,24 @@ microcode="/amd-ucode.img"
 
 cat << EOF > /boot/loader/entries/arch-linux.conf
 title   Arch Linux
+linux   /vmlinuz-linux
 initrd  $microcode
 initrd  /initramfs-linux.img
-linux   /vmlinuz-linux
 options cryptdevice=PARTUUID=$system_partuuid:cryptsystem root=/dev/mapper/$system_luks_label rw
 EOF
 
 cat << EOF > /boot/loader/entries/arch-linux-lts.conf
-title   Arch Linux LTS
-initrd  $microcode
-initrd  /initramfs-linux-lts.img
+title   Arch Linux LTS (fallback)
 linux   /vmlinuz-linux-lts
+initrd  $microcode
+initrd  /initramfs-linux-fallback.img
 options cryptdevice=PARTUUID=$system_partuuid:cryptsystem root=/dev/mapper/$system_luks_label rw
 EOF
 
 # Set bootloader config
 cat << EOF > /boot/loader/loader.conf
-default arch-linux.conf
+default arch-linux
 timeout 4
-console-mode max
 editor no
 EOF
 ```
@@ -388,7 +387,7 @@ Leave chroot and reboot.
 ```sh
 swapoff "$swapfile"  # disable swap
 umount -R /mnt  # unmount all
-/usr/bin/cryptsetup luksClose /dev/mapper/cryptsystem  # close LUKS
+cryptsetup luksClose /dev/mapper/cryptsystem  # close LUKS
 ```
 
 3. Shutdown with `shutdown now`.

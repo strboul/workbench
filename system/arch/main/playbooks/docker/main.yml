@@ -82,7 +82,7 @@
         - name: Test run
           ansible.builtin.command: docker run --rm hello-world
           register: docker_test_run_cmd
-          changed_when: false
+          changed_when: docker_test_run_cmd.rc != 0
 
         - name: Error message if test run failed
           ansible.builtin.fail:

@@ -31,7 +31,8 @@
         cmd: |
           set -o pipefail
           yes Y | makepkg -si
-      changed_when: false
+      register: base_yay_build
+      changed_when: base_yay_build.rc != 0
 
 - name: Create yay config dir
   ansible.builtin.file:

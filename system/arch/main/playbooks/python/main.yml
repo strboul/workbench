@@ -79,4 +79,5 @@
           grep -Eo '[0-9]\.[0-9]+(\.[0-9]+|\-dev)?' |
           xargs)"
         pyenv global "$version"
-      changed_when: false
+      register: python_pyenv_set_default
+      changed_when: python_pyenv_set_default.rc != 0

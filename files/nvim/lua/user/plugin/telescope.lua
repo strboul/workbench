@@ -71,7 +71,7 @@ vim.keymap.set("n", "<leader>j", custom_commands.any_jump_normal_mode, { desc = 
 vim.keymap.set("v", "<leader>j", custom_commands.any_jump_visual_mode, { desc = "Jump search" })
 
 -- Custom commands.
-vim.api.nvim_create_user_command("Grep", function(opts)
+vim.api.nvim_create_user_command("G", function(opts)
   custom_commands.grep_command(opts.args)
 end, { nargs = 1 })
 

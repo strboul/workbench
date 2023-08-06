@@ -10,7 +10,7 @@
 # gitcommitdate
 #
 
-source "$HOME"/workbench/bin/_utils/utils.sh
+source "$WORKBENCH_PATH/bin/_utils/utils.sh"
 
 git_timestamp() {
   date "+%FT%T %z"

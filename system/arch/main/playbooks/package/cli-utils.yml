@@ -2,6 +2,8 @@
 - name: Install cli utils via pacman
   community.general.pacman:
     name:
+      - "{{ config.packages.pacman.neovim }}"
+      - "{{ config.packages.pacman.tmux }}"
       - "{{ config.packages.pacman.htop }}"  # https://github.com/htop-dev/htop
       - "{{ config.packages.pacman.fzf }}"  # https://github.com/junegunn/fzf
       - "{{ config.packages.pacman.ripgrep }}"  # https://github.com/BurntSushi/ripgrep
@@ -16,8 +18,6 @@
       - "{{ config.packages.pacman.gdu }}"  # https://github.com/dundee/gdu
       - "{{ config.packages.pacman.neofetch }}"  # https://github.com/dylanaraps/neofetch
       - "{{ config.packages.pacman.onefetch }}"  # https://github.com/o2sh/onefetch
-      - "{{ config.packages.pacman.neovim }}"
-      - "{{ config.packages.pacman.tmux }}"
     state: present
   become: true
 

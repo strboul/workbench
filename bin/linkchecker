@@ -11,7 +11,7 @@
 
 set -e
 
-source "$HOME"/workbench/bin/_utils/utils.sh
+source "$WORKBENCH_PATH/bin/_utils/utils.sh"
 
 utils__stop_if_not_command_exists "podman"
 

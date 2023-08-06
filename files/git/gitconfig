@@ -35,7 +35,7 @@
 [credential]
 	helper = cache
 [init]
-	templatedir = ~/workbench/files/git/git_templates
+	templatedir = ~/.config/git/git_templates
 	defaultBranch = master
 [log]
 	showSignature = true

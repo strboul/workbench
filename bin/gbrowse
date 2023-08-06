@@ -19,7 +19,13 @@ import subprocess
 import sys
 import urllib.parse
 
-_DEFAULT_BROWSER = "firefox"
+BROWSERS = {
+    "chrome": "google-chrome-stable",
+    "chromium": "chromium",
+    "firefox": "firefox",
+}
+
+_DEFAULT_BROWSER = BROWSERS["firefox"]
 
 
 def parse_args():
@@ -53,11 +59,7 @@ def get_git_origin_url(path):
 
 
 def get_browser_name(name):
-    browsers = {
-        "chrome": "google-chrome-stable",
-        "firefox": "firefox",
-    }
-    browser = browsers.get(name)
+    browser = BROWSERS.get(name)
     if browser is None:
         raise ValueError("unknown browser")
     return browser

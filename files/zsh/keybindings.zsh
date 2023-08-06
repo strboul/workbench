@@ -29,18 +29,6 @@ __zle_widget__git_status() {
 zle -N __zle_widget__git_status
 bindkey "^s" __zle_widget__git_status
 
-# Add all git-tracked & commit & push
-__zle_widget__git_add_commit_push() {
-  if [ -n "$BUFFER" ]; then
-    BUFFER="git add -u; git commit -m \"$BUFFER\" && git push"
-  elif [ -z "$BUFFER" ]; then
-    BUFFER="git add -u; git commit && git push"
-  fi
-  zle accept-line
-}
-zle -N __zle_widget__git_add_commit_push
-bindkey "^g" __zle_widget__git_add_commit_push
-
 # Enable Ctrl-x-e to edit long commands with the $EDITOR
 autoload -U edit-command-line
 zle -N edit-command-line

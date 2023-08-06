@@ -2,11 +2,8 @@
 
 # Check whether an ssh key is protected with a passphrase.
 #
-# To add a passphrase to a ssh key:
-#   sudo ssh-keygen -p -f ~/.ssh/id_ed25519-workbench_personal
-#
 # Usage:
-#   check-ssh-key-passphrase ~/.ssh/<key_file>
+#   check-ssh-key-passphrase <key_file>
 #
 # It returns different arbitrary return codes depending upon the output.
 #
@@ -26,6 +23,9 @@ main() {
 
   if ssh-keygen -y -P "" -f "$path_to_keyfile" > /dev/null 2>&1; then
     echo "ssh key \"$path_to_keyfile\" is **NOT** passphrase protected!"
+    echo
+    echo "Add passphrase with the following command:"
+    echo "ssh-keygen -p -f $path_to_keyfile"
     return 16
   fi
 

@@ -1,7 +1,10 @@
+# zsh hooks
+#
+
 # always ls after cd into folders
 __cdls() {
   emulate -L zsh
-  ls
+  myls
 }
 add-zsh-hook chpwd __cdls
 

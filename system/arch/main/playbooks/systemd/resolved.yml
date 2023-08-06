@@ -1,20 +1,20 @@
 ---
 - name: Create conf directory if not exist
   ansible.builtin.file:
-    path: /etc/systemd/journald.conf.d
+    path: /etc/systemd/resolved.conf.d
     owner: "{{ ansible_env.USER }}"
     group: "{{ ansible_env.USER }}"
     mode: "0700"
     state: directory
   become: true
 
-- name: Setup journald conf
+- name: Setup resolved conf
   ansible.builtin.blockinfile:
-    path: /etc/systemd/journald.conf.d/00-journal-size.conf
+    path: /etc/systemd/resolved.conf.d/00-resolve.conf
     block: |
-      [Journal]
-      # entries older than the specified time span are deleted
-      MaxRetentionSec=6month
+      [Resolve]
+      DNS=192.168.1.12
+      FallbackDNS=192.168.1.1 1.1.1.1
     mode: "0644"
     state: present
   become: true

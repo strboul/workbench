@@ -38,12 +38,3 @@ vim.keymap.set("n", "<Del>", "<nop>")
 
 -- don't select newline character when doing $.
 vim.keymap.set("x", "$", "g_")
-
--- move visually selected line up and down with <alt> key.
--- FIXME doesn't work with multi-line selection.
--- vim.keymap.set("v", "<A-k>", ":m .-2<CR>==gv")
--- vim.keymap.set("v", "<A-j>", ":m .+1<CR>==gv")
-
--- FIXME
--- disable space in normal mode going to the next char
--- vim.keymap.set("n", "<Space>", "<Nop>", { silent = true, remap = false })

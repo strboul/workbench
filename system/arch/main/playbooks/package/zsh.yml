@@ -11,13 +11,19 @@
 # add --unattended not to start the interactive prompt upon installation
 # https://github.com/ohmyzsh/ohmyzsh#unattended-install
 - name: Install oh-my-zsh
-  ansible.builtin.shell: |
-    script="$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" && \
-      sh -c "$script" "" --unattended
-  args:
-    # when this file exists, this step won't run.
-    creates: ~/.oh-my-zsh
-  changed_when: false
+  block:
+    - name: Check oh-my-zsh
+      ansible.builtin.stat:
+        path: "{{ ansible_env.HOME }}/.oh-my-zsh"
+      register: zsh_omz_dir
+
+    - name: Install oh-my-zsh
+      when: not zsh_omz_dir.stat.exists
+      ansible.builtin.shell: |
+        script="$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" && \
+          sh -c "$script" "" --unattended
+      register: zsh_install_omz
+      changed_when: zsh_install_omz.rc != 0
 
 - name: Use the pre .zshrc file if it exists
   block:
@@ -36,8 +42,8 @@
 
 - name: oh-my-zsh custom dir
   ansible.builtin.shell: "echo ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
-  register: "oh_my_zsh_custom_dir"
-  changed_when: false
+  register: oh_my_zsh_custom_dir
+  changed_when: oh_my_zsh_custom_dir.rc != 0
 
 - name: Install oh-my-zsh plugins
   ansible.builtin.git:
@@ -80,5 +86,6 @@
 
 - name: Change default shell to zsh
   ansible.builtin.command: "chsh -s {{ vars_zsh.zsh_command }} {{ ansible_env.USER }}"
-  changed_when: false
+  register: zsh_chsh
+  changed_when: zsh_chsh.rc != 0
   become: true

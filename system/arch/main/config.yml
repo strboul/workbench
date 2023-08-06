@@ -8,7 +8,7 @@ config:
   gpg:
     pubfile:
       url: https://strboul.com/keys/pgp/4C884872307BB096C0EB226D9DFB9FAB33E2BB02.asc
-      checksum: sha256:9954873f3e1395eaa4102443797dffe4f18532e83e720b532f62cc38dcaa9759
+      checksum: sha256:9662e4a52f78888755bf0661ff886da50645a0ed07445fdf0d29354cb28c725d
     pubkey:
       master: 4C884872307BB096C0EB226D9DFB9FAB33E2BB02
       subkey_sign: 2AA9C7006171519C
@@ -46,16 +46,17 @@ config:
       firefox: extra/firefox
       firewalld: community/firewalld
       flameshot: community/flameshot
+      fuse2: extra/fuse2
       fwupd: community/fwupd
       fzf: community/fzf
       galculator: community/galculator
+      gcr: extra/gcr
       gdb: extra/gdb
       gdu: community/gdu
       gedit: community/gedit
       ghostscript: extra/ghostscript
       gimp: extra/gimp
       git: extra/git
-      gcr: extra/gcr
       gnome_boxes: community/gnome-boxes
       gnome_disk_utility: extra/gnome-disk-utility
       gnome_keyring: extra/gnome-keyring
@@ -107,13 +108,14 @@ config:
       pacman_contrib: community/pacman-contrib
       pass: community/pass
       peek: community/peek
-      podman: community/podman
+      podman: extra/podman
       postgresql: extra/postgresql
       pwgen: community/pwgen
       pyenv: community/pyenv
       qrencode: extra/qrencode
       r: community/r
       ranger: community/ranger
+      restic: extra/restic
       ripgrep: community/ripgrep
       rust: extra/rust
       sane: extra/sane

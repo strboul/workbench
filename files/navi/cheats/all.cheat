@@ -152,13 +152,17 @@ eval "$(ssh-agent -s)"
 # create ssh keypair
 ssh-keygen -t ed25519 -C "<comment>"
 
+# add ssh key to agent
+ssh-add <private-key>
+
 # reverse port forwarding
 ssh -L 8001:127.0.0.1:8001 user@host
 
 # keyscan by type of domain or IP
 ssh-keyscan -t ed25519 github.com
 
-$ public-key: find ~/.ssh -type f -name '*.pub'
+$ public-key: find ~/.ssh/keys -type f -name '*.pub'
+$ private-key: find ~/.ssh/keys -type f -not -name '*.pub'
 
 ; ----------------------------------------------------------------------------
 % scp [security]
@@ -175,8 +179,8 @@ scp -J juser@jhost <file1> <file2> user@host:/
 # list public keys
 gpg --list-keys
 
-# generate key with the defaults
-gpg --gen-key
+# create/generate key with the defaults
+gpg --full-generate-key
 
 # list public keys long format with fingerprints
 gpg --list-keys --keyid-format=LONG
@@ -196,11 +200,14 @@ gpg --list-signatures <fingerprint>
 # list private keys
 gpg --list-secret-keys --keyid-format=LONG
 
-# import a public/private key from a file
+# import a public/private key from file
 gpg --import <key-file>
 
-# export armor of a public key
+# export public key as clean text
 gpg --armor --export <fingerprint>
+
+# export private key as clean text
+gpg --armor --export-secret-key <fingerprint>
 
 # remove public key
 gpg --delete-key <fingerprint>
@@ -221,6 +228,12 @@ gpg --clearsign <input_filename>
 # verify a sign
 gpg --verify <filename>
 
+# get smartcard status
+gpg --card-status
+
+# list with expired subkeys
+gpg --list-options show-unusable-subkeys --list-keys
+
 $ fingerprint: gpg-list-public-keys | fzf | awk '{ print $1 }'
 $ email: gpg-list-public-keys | fzf | perl -pe 's/^.*\<(.*)\>$/\1/g'
 
@@ -237,8 +250,12 @@ openssl x509 -text -noout -in <crt-file>
 nmap 192.168.1.1
 
 ; -sP: uses ping
-# get all valid IP addresses in network (255 netmask)
+# get all valid IP addresses in network (255 hosts)
 nmap -sP 192.168.1.0/24
+
+; -Pn: skip ping
+# get all ports in an address (1 host)
+nmap -Pn 192.168.1.0/32
 
 # find dhcp addresses
 nmap --script broadcast-dhcp-discover -e <interface>
@@ -318,6 +335,9 @@ tcpdump -i eth0 -w <file>.pcap
 
 # monitor outgoing connections except ssh
 tcpdump -i eth0 port not 22 and src <source-ip>
+
+# listen all interfaces
+tcpdump -i any
 
 ; ----------------------------------------------------------------------------
 % socat [network]
@@ -474,13 +494,14 @@ free -m
 ; ----------------------------------------------------------------------------
 % ss [network, socket, process]
 
-; -a: all, both listening and non-listening, tcp established
-; -n: don't resolve service names, show numbers
 ; -t: show threads using socket
+; -u: show udp
+; -n: don't resolve service names, show numbers
+; -a: all, both listening and non-listening, tcp established
 ; -l: Display only listening sockets
 ; -p: show process
 # list all open sockets
-ss -antlp
+ss -tunalp
 
 # show ipv4 connections (-r: resolve, -p: show process)
 ss -4 -r -p
@@ -681,6 +702,9 @@ find * -type d -name '<name>'
 # find any file modified in the last 1 min
 find * -mmin 1
 
+# find if all files in a dir can be read by the user
+find <dir> -print > /dev/null
+
 ; ----------------------------------------------------------------------------
 % systemctl [systemd]
 
@@ -729,6 +753,9 @@ docker rm -f $(docker ps -aq)
 # inspect a container or image
 docker inspect <container-or-image-sha>
 
+# inspect with format
+docker inspect --format '{{ .NetworkSettings.IPAddress }}' <container-or-image-sha>
+
 # copy from host to container
 docker cp foo.txt container_id:/foo.txt
 
@@ -743,6 +770,9 @@ docker system df
 
 # prune unused images, containers, networks, volumes
 docker system prune
+
+# get container usage statistics
+docker stats
 
 ; ----------------------------------------------------------------------------
 % docker-compose [docker]
@@ -819,6 +849,13 @@ pacman -Sc
 # completely (with dependencies) remove a package
 pacman -Rcns <installed-packages>
 
+# pacman package report
+pacman -Qkk | grep warning
+
+; do this in case of package warnings that aren't fixable.
+# force re-install all packages
+pacman -Syyu $(pacman -Qnq) --overwrite "*"
+
 $ cache-file: find /var/cache/pacman/pkg -type f -name '*.zst'
 $ installed-packages: pacman -Qq
 
@@ -840,8 +877,8 @@ id -un
 # change file permissions with octal
 chmod 0600 <filename>
 
-# change user ownership of a file
-chown <new-user> <filename>
+# change user and group ownership of a file
+chown <new-user>:<new-group> <filename>
 
 # change group ownership of a file
 chgrp <new-group> <filename>
@@ -935,6 +972,9 @@ curl -X <method> <url> -H '<headername>: <headervalue>' -d '<json>'
 
 # send a get http request and follow redirects
 curl -L <url>
+
+# use a specific interface
+curl --interface eth0 <url>
 
 $ method: echo -e 'GET\nPOST\nPUT\nDELETE\nPATCH'
 
@@ -1032,6 +1072,12 @@ zfs list
 # set/change quota
 zfs set refquota=1G <name>
 
+# list snapshots
+zfs list -t snapshot
+
+# take snapshot
+zfs snapshot <pool-name>@<snapshot_name>
+
 ; ----------------------------------------------------------------------------
 % attr [linux]
 
@@ -1045,13 +1091,28 @@ chattr +ia <file>
 chattr -ia <file>
 
 ; ----------------------------------------------------------------------------
-% zip [linux]
+% zip, unzip [archive]
 
 # archive files
 zip archive.zip file1 file2
 
 # add file or folders to the zip archive
 zip -r archive.zip file_or_folder
+
+# list files in archive
+unzip -l archive.zip
+
+# unzip to folder
+unzip archive.zip -d destination_folder
+
+; ----------------------------------------------------------------------------
+% tar [archive]
+
+# create tar archive
+tar -czvf filename.tar.gz /path/to/dir1
+
+# extract tar archive
+tar -xzvf filename.tar.gz
 
 ; ----------------------------------------------------------------------------
 % hexdump [linux]
@@ -1060,7 +1121,19 @@ zip -r archive.zip file_or_folder
 echo "text" | hexdump -Cc
 
 ; ----------------------------------------------------------------------------
-% rg [ripgrep]
+% jq [json]
+
+# get first element of array
+cat file.json | jq '.[0]'
+
+# get values by key
+cat file.json | jq '.key'
+
+# subset key by value
+cat file.json | jq 'select(.key == "value")'
+
+; ----------------------------------------------------------------------------
+% rg [ripgrep, grep]
 
 # search in a single file
 rg <query> <file>
@@ -1077,11 +1150,17 @@ rg --files-without-match <query>
 # search pattern but ignore files
 rg <query> -g '!*<pattern>'
 
+# search n lines around
+rg -C <n> <query>
+
 ; ----------------------------------------------------------------------------
 % python [python]
 
 # pip install requirements
 python -m pip install -r requirements.txt
+
+# create virtualenv
+python -m venv .venv
 
 # pip freeze requirements
 python -m pip freeze > requirements.txt
@@ -1091,6 +1170,9 @@ python -m http.server <port> --bind <address>
 
 # Convert unix time to datetime
 python -c "import datetime; print(datetime.datetime.fromtimestamp(0))"
+
+# Pretty print json
+<json> | python -m json.tool
 
 $ port: echo "3333" --- --fzf-overrides '--no-select-1'
 $ address: echo "127.0.0.1" --- --fzf-overrides '--no-select-1'
@@ -1153,7 +1235,9 @@ iptables -S
 % xdg [linux]
 
 # copy file contents to the clipboard
-xclip -selection clipboard < ~/.ssh/id_rsa.pub
+xclip -selection clipboard < <public-key>
+
+$ public-key: find ~/.ssh/keys -type f -name '*.pub'
 
 ; ----------------------------------------------------------------------------
 % neomutt [mutt, email]
@@ -1185,6 +1269,9 @@ git-crypt status -e
 # get count of the query in files
 grep -c '<query>' *txt
 
+# get match with n lines around
+grep -C 2 '<query>' *txt
+
 ; ----------------------------------------------------------------------------
 % ps [unix]
 
@@ -1195,6 +1282,12 @@ ps -aux | grep <program_name> | grep -v grep
 ps -ef | grep defunct | grep -v grep | awk '{ print $2 }' | xargs kill -9
 
 ; ----------------------------------------------------------------------------
+% xargs [unix]
+
+# example xargs usage
+ls | xargs -I {} du -sh {}
+
+; ----------------------------------------------------------------------------
 % apropos [unix]
 
 # find command by query
@@ -1202,6 +1295,9 @@ apropos <query>
 
 ; ----------------------------------------------------------------------------
 % date [unix]
+
+# get snapshot date
+date +'%FT%T%z'
 
 # get date with a format
 date +'%Y-%m-%dT%H:%M:%S'
@@ -1276,10 +1372,34 @@ kubectl logs -n <namespace> -l key=value --follow
 kubectl describe pod -n <namespace> -l key=value
 
 # exec into pod by name
-kubectl exec -n <namespace> --stdin --tty <pod_name> -- /bin/bash
+kubectl exec --stdin --tty -n <namespace> <pod_name> -- /bin/bash
 
 # exec into pod and container by names
-kubectl exec -n <namespace> --stdin --tty <pod_name> -c <container_name> -- /bin/bash
+kubectl exec -n --stdin --tty <namespace> <pod_name> -c <container_name> -- /bin/bash
+
+# restart pod
+kubectl delete pod -n <namespace> <pod_name>
+
+# get cluster information
+kubectl config get-contexts
+
+; ----------------------------------------------------------------------------
+% restic [backup]
+
+# list snapshots
+restic snapshots
+
+# diff two snapshots
+restic diff <snapshot_id> <snapshot_id>
+
+# diff last two snapshots
+restic diff $(restic snapshots --json | jq -r '.[-2:][].id')
+
+; ----------------------------------------------------------------------------
+% pass [password]
+
+# multi line insert
+pass insert -m <name>
 
 ; ----------------------------------------------------------------------------
 % misc
