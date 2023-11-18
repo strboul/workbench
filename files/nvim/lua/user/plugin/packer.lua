@@ -90,6 +90,4 @@ packer.startup(function(use)
 
   -- ansible.
   use({ "https://github.com/pearofducks/ansible-vim" })
-
-  use({ "https://github.com/github/copilot.vim" })
 end)

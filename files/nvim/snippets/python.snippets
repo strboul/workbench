@@ -82,3 +82,12 @@ endsnippet
 snippet sqlalchemy_compile "compile a statement with the variables"
 print(statement.compile(compile_kwargs={"literal_binds": True}))
 endsnippet
+
+# Reference:
+# https://docs.celeryq.dev/en/stable/userguide/debugging.html
+#
+snippet celery_debug
+from celery.contrib import rdb
+rdb.set_trace()
+# telnet localhost 6900
+endsnippet

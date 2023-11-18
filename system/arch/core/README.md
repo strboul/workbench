@@ -4,7 +4,7 @@ My notes of Arch Linux installation.
 
 - Boot with `systemd-boot` to UEFI.
 
-- GPT partition table with two partitions: required boot and LUKS encrypted
+- Newer GPT partition table with two partitions: boot and LUKS encrypted
   system.
 
 - BTRFS as the root filesystem with multiple subvolumes.
@@ -65,7 +65,7 @@ Also possible to access the machine over `ssh` (if you are in the same network):
 1. Setup a root password which is needed for an SSH connection, since the
    default Arch password for root is empty: `passwd`
 
-1. Get the target IP address: `ip route get 1.2.3.4 | awk '{ print $7 }'`
+1. Get the target IP address: `ip route get 1 | awk '{ print $7 }'`
 
 1. Connect with ssh with password (set no host key checking so get no MiTM
    attack warnings, etc.) for that ephemeral host:
@@ -160,15 +160,6 @@ btrfs filesystem with one main encrypted partition: system. With btrfs, it's
 not *needed* to create separate partitions for different directories, use
 subvolumes. It's told that btrfs is more performant than ext4 because of many
 reasons like CoW; however, it's less stable.
-
-<!--
-TODO:
-Subvolume - mountpoint:
-
-- `@home` - `/home`: preserve user data
-- `@snapshots` - `/.snapshots`: locate snapshots
-- `@log` - `/var/log`: check logs after reverting /
--->
 
 Format disk, mount and create btrfs subvolumes.
 
@@ -306,7 +297,7 @@ myhostname="" # <-- !! change !!
 echo "$myhostname" > /etc/hostname
 ```
 
-Add a user account.
+Create super user. (Don't create a separate `root` user.)
 
 ```sh
 user="" # <-- !! change !!
@@ -370,6 +361,12 @@ default arch-linux
 timeout 4
 editor no
 EOF
+```
+
+Check boot list.
+
+```sh
+bootctl list
 ```
 
 Enable Internet connection for the next boot.
@@ -471,10 +468,3 @@ speaker-test -c 2 -t wav -l 1
 ## End
 
 Reboot now with `sudo reboot`.
-
-<!--
-TODO
-## Future
-
-- Enable secure boot.
--->

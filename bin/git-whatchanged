@@ -2,7 +2,7 @@
 
 # Lists what files are changed between the branches.
 #
-# Usage: gitwhatchanged <branch(Optional)>
+# Usage: git-whatchanged <branch(Optional)>
 #
 
 get_current_branch() {

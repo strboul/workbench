@@ -13,6 +13,7 @@
 
   // --- python
   "python.linting.mypyEnabled": true,
+  "python.venvPath": ".venv",
   // "pyright.disableDiagnostics": true,
 
   // prettier

@@ -6,16 +6,22 @@ import ipaddress
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("address")
+    parser.add_argument("address", nargs="?", help="as CIDR notation")
+    parser.add_argument(
+        "--list-all",
+        action="store_true",
+        help="Print the individual addresses. Be careful with low netmask values that can flood the screen.",
+    )
     args = parser.parse_args()
     return args
 
 
-def print_ipv4_addresses(address):
+def print_ipv4_addresses(address, list_all):
     network = ipaddress.IPv4Network(address)
-    for ip in network:
-        print(str(ip))
-    print("---")
+    if list_all:
+        for ip in network:
+            print(str(ip))
+        print("---")
     print(f"total of {network.num_addresses} addresses")
     print(f"netmask {str(network.netmask)}")
     print(f"broadcast address {str(network.broadcast_address)}")
@@ -23,7 +29,7 @@ def print_ipv4_addresses(address):
 
 def main():
     args = parse_args()
-    print_ipv4_addresses(args.address)
+    print_ipv4_addresses(args.address, args.list_all)
 
 
 main()

@@ -1,5 +1,8 @@
 # git
 
+This document is follows the `.gitconfig`. The things defined there are not
+repeated here.
+
 ## User
 
 Set user email and user name in every repo (only `--local`).
@@ -19,44 +22,19 @@ git remote set-url --add all <remote-ssh>
 git push all --all
 ```
 
-## SSH signing
+## Signing
 
-Sign commits with the SSH key.
-
-```sh
-git config --local gpg.format ssh
-git config --local user.signingkey <path-to-keyfile>
-git config --local commit.gpgsign true
-```
-
-If you get this error, create a file keeping the allowed signers.
-
-> error: gpg.ssh.allowedSignersFile needs to be configured and exist for ssh signature verification
+Provide the user signing key locally to the repo.
 
 ```sh
-(mkdir -p ~/.config/git && touch ~/.config/git/allowed_signers) \
-  && echo "$(git config --local user.email) namespaces=\"git\" $(cat </path-to-keyfile>)" >> ~/.config/git/allowed_signers
-git config --local gpg.ssh.allowedSignersFile "$HOME/.config/git/allowed_signers"
+git config --local user.signingkey <path-privkey>
 ```
 
-## PGP/GPG
+The public key selected for signing have to exist in the
+`gpg.ssh.allowedSignersFile` file.
 
-Sign commits with PGP/GPG key.
-
-```sh
-git config --local user.signingkey <GPG-SIGN-KEY>
-```
-
-If you disable it in a repo.
+Disable signing requirement for a repo.
 
 ```sh
 git config --local commit.gpgsign false
-```
-
-If you temporarily disable it for next commit.
-
-```sh
-git commit --no-gpg-sign
-# or
-git -c commit.gpgsign=false commit
 ```

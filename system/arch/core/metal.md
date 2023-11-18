@@ -1,4 +1,6 @@
-# metal
+# Metal
+
+Firmware configurations, hardware standards.
 
 ## UEFI/BIOS.
 
@@ -11,15 +13,23 @@
 
 ## Keyboard
 
-- ANSI standard
+- **ANSI standard**
 
 - <kbd>\`~</kbd> is on the top left 2nd row below F-keys.
 
-- <kbd>Fn</kbd> is 2nd key from the bottom left of <kbd>Ctrl</kbd>.
+- The bottom left keys are ordered in the way:
 
-Dell keyboards seem to be the best following this format.
+   - <kbd>Ctrl</kbd>
 
-### Extra modifications:
+   - <kbd>Fn</kbd>
+
+   - <kbd>Win</kbd>
+
+   - <kbd>Alt</kbd>
+
+> Dell keyboards seem to be the best following this format.
+
+### Extra keyboard modifications
 
 - Caps Lock map to <kbd>Esc</kbd>.
 

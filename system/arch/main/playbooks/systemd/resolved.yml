@@ -13,8 +13,9 @@
     path: /etc/systemd/resolved.conf.d/00-resolve.conf
     block: |
       [Resolve]
-      DNS=192.168.1.12
-      FallbackDNS=192.168.1.1 1.1.1.1
+      # Pin the DNS server manually otherwise it's unstable due to opensnitch
+      # https://github.com/evilsocket/opensnitch/issues/1040
+      DNS=192.168.10.12
     mode: "0644"
     state: present
   become: true

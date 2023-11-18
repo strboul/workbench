@@ -7,7 +7,7 @@
 # is the person who last applied the work. ― Pro Git book
 #
 # Usage:
-# gitcommitdate
+# git-commit-date
 #
 
 source "$WORKBENCH_PATH/bin/_utils/utils.sh"

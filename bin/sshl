@@ -3,13 +3,13 @@
 # List ssh hosts from a config
 #
 # Usage:
-#   ssh-list
+#   sshl
 #
 #   # Define config file or use default if empty
-#   ssh-list --config <config_file>
+#   sshl --config <config_file>
 #
 #   # Print all config options
-#   ssh-list --full
+#   sshl --full
 #
 
 import argparse
@@ -23,10 +23,10 @@ _CONFIG_SORT_ORDER = ["User", "HostName", "ProxyJump"]
 def parse_args():
     parser = argparse.ArgumentParser(allow_abbrev=False)
     parser.add_argument(
-        "--config",
+        "config",
         nargs="?",
         default=_DEFAULT_CONFIG_PATH,
-        help="path to ssh config file, default is /home/$USER/.ssh/config",
+        help='path to ssh config file, default is "$HOME/.ssh/config"',
     )
     parser.add_argument("--full", action="store_true", help="print full config")
     args = parser.parse_args()

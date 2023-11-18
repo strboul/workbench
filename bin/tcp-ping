@@ -1,0 +1,34 @@
+#!/bin/sh
+
+# TCP based ping
+#
+# Useful if ICMP is blocked and if other TCP based ping tools aren't available.
+# No external dependency other than sh is needed so it can be used in servers
+# having no access to the package tools.
+#
+# Usage:
+#   tcp-ping 127.0.0.1 3000
+#   tcp-ping localhost 3000
+#   tcp-ping archlinux.org 443
+#
+
+set -u
+
+ADDRESS="$1"
+PORT="$2"
+
+echo "tcp-ping ${ADDRESS} on port ${PORT}"
+
+while true; do
+  _timestamp="$(date +'%FT%T%z')"
+  _start="$(date +%s%2N)"
+  /bin/sh -c ": < /dev/tcp/${ADDRESS}/${PORT}" 2> /dev/null
+  _result="$?"
+  _end="$(date +%s%2N)"
+  if [ "$_result" -eq "0" ]; then
+    echo "${_timestamp} up time=$((_end - _start)) ms"
+  else
+    echo "${_timestamp} down"
+  fi
+  sleep 1
+done

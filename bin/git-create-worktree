@@ -11,7 +11,7 @@
 # - git worktree list
 # - git worktree prune
 #
-# Usage: create-git-worktree <path>
+# Usage: git-create-worktree <path>
 
 set -e
 

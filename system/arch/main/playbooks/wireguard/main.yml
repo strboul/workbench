@@ -5,29 +5,25 @@
 # Create keypair with the wg tool:
 #   wg genkey | (umask 0077 && tee wg.key) | wg pubkey > wg.pub
 #
+# Import wg config with nmcli
+#   nmcli connection import type wireguard file <file>.conf && shred -u <file>.conf
+#
 - name: Wireguard
   tags: wireguard
   hosts: all
   vars:
     systemd_networkd_path: /etc/systemd/network
     client:
-      public_key: "ZC80pzcGrYD0Xv0rcVqwZdmPPeC+98IjCtoGCsPn/ls="
-      private_key: !vault |
-        $ANSIBLE_VAULT;1.1;AES256
-        33383430363866643034636334653466353037316464353634396137386436373831346163336563
-        3461663038376236333563313362396666323063323730640a396139623233316236373766613431
-        61303137656339323230313439343263383034653566383036353030303533646661393639303463
-        6262363663396539330a396530653662623634623631613530356262623732313332383963396531
-        39356137393834386136323936386638316530353138386530363763343932326363343237396636
-        3330366138643662663936636232386164393564666434663161
-    wg0dev1:
-      network_id: wg0dev1
+      public_key: "{{ lookup('community.general.passwordstore', 'wireguard/1/public_key')}}"
+      private_key: "{{ lookup('community.general.passwordstore', 'wireguard/1/private_key')}}"
+    wg1:
+      network_id: wg1
       address: 10.8.0.2/32
       subnet: 10.8.0.0/28
-      dns: 1.1.1.1  # cloudflare DNS
-      server_public_key: "EUubbA/pu5KkpAHhbzimsI/GcU1GvsIUqycgpMSKY1c="
+      dns: 1.1.1.1
+      peer_public_key: "{{ lookup('community.general.passwordstore', 'wireguard/1/peer_public_key')}}"
   vars_prompt:
-    - name: prompt_wg0dev1_server_ipv4
+    - name: prompt_wg1_server_ipv4
       prompt: |
         What's the host IP? (127.0.0.1)
       private: false
@@ -53,17 +49,17 @@
     #
     - name: Create wg config file
       ansible.builtin.copy:
-        dest: "/tmp/{{ wg0dev1.network_id }}.conf"
+        dest: "/tmp/{{ wg1.network_id }}.conf"
         content: |
           [Interface]
           PrivateKey = {{ client.private_key }}
-          Address = {{ wg0dev1.address }}
-          DNS = {{ wg0dev1.dns }}
+          Address = {{ wg1.address }}
+          DNS = {{ wg1.dns }}
 
           [Peer]
-          PublicKey = {{ wg0dev1.server_public_key }}
+          PublicKey = {{ wg1.peer_public_key }}
           AllowedIPs = 0.0.0.0/0
-          Endpoint = {{ prompt_wg0dev1_server_ipv4 }}:51820
+          Endpoint = {{ prompt_wg1_server_ipv4 }}:51820
         owner: root
         group: root
         mode: "0640"
@@ -78,22 +74,22 @@
     - name: Add client config with systemd-networkd
       become: true
       notify: systemd-networkd restarted
-      tags: wireguard.wg0dev1
+      tags: wireguard.wg1
       block:
         - name: Create network configuration
           ansible.builtin.blockinfile:
-            path: "{{ systemd_networkd_path }}/30-{{ wg0dev1.network_id }}.network"
+            path: "{{ systemd_networkd_path }}/30-{{ wg1.network_id }}.network"
             block: |
               [Match]
-              Name={{ wg0dev1.network_id }}
+              Name={{ wg1.network_id }}
 
               [Network]
-              Address = {{ wg0dev1.address }}
-              DNS = {{ wg0dev1.dns }}
+              Address = {{ wg1.address }}
+              DNS = {{ wg1.dns }}
 
               [Route]
-              Gateway = {{ wg0dev1.subnet }}
-              Destination = {{ wg0dev1.address }}
+              Gateway = {{ wg1.subnet }}
+              Destination = {{ wg1.address }}
             owner: systemd-network
             group: systemd-network
             mode: "0640"
@@ -102,10 +98,10 @@
 
         - name: Create virtual network device
           ansible.builtin.blockinfile:
-            path: "{{ systemd_networkd_path }}/30-{{ wg0dev1.network_id }}.netdev"
+            path: "{{ systemd_networkd_path }}/30-{{ wg1.network_id }}.netdev"
             block: |
               [NetDev]
-              Name = {{ wg0dev1.network_id }}
+              Name = {{ wg1.network_id }}
               Kind = wireguard
               Description = Wireguard
 
@@ -114,8 +110,8 @@
               PrivateKey = {{ client.private_key }}
 
               [WireGuardPeer]
-              PublicKey = {{ wg0dev1.server_public_key }}
-              Endpoint = {{ prompt_wg0dev1_server_ipv4 }}:51820
+              PublicKey = {{ wg1.peer_public_key }}
+              Endpoint = {{ prompt_wg1_server_ipv4 }}:51820
               AllowedIPs = 0.0.0.0/0
               PersistentKeepalive = 25
             owner: systemd-network

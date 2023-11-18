@@ -14,6 +14,7 @@
         name:
           - "{{ config.packages.pacman.docker }}"
           - "{{ config.packages.pacman.docker_compose }}"
+          - "{{ config.packages.pacman.docker_buildx }}"
         state: present
       become: true
 

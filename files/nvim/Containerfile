@@ -21,6 +21,7 @@ RUN nvim --headless -c 'lua require("nvim-treesitter.install").update({ with_syn
 # Setup coc-nvim.
 RUN apk --no-cache add \
   nodejs \
+  npm \
   yarn \
   python3 \
   go \

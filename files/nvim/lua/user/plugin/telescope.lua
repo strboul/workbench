@@ -76,6 +76,7 @@ vim.api.nvim_create_user_command("G", function(opts)
 end, { nargs = 1 })
 
 -- Package setup.
+-- https://github.com/nvim-telescope/telescope.nvim/wiki/Configuration-Recipes
 telescope.setup({
   pickers = {
     find_files = {
@@ -90,12 +91,18 @@ telescope.setup({
     mappings = {
       i = {
         ["<esc>"] = actions.close, -- also easy close in insert mode.
+        ["<tab>"] = actions.toggle_selection,
         ["<cr>"] = custom_actions.my_smart_select,
         ["<C-a>"] = actions.select_all,
         ["<ScrollWheelUp>"] = actions.preview_scrolling_up,
         ["<ScrollWheelDown>"] = actions.preview_scrolling_down,
+        -- use <C-u> to clear the prompt instead of scrolling the previewer.
+        ["<C-u>"] = false,
+        -- no need to keep scrolling previewer down as scroll up is used for clear the prompt.
+        ["<C-d>"] = false,
       },
       n = {
+        ["<tab>"] = actions.toggle_selection,
         ["<cr>"] = custom_actions.my_smart_select,
         ["<C-a>"] = actions.select_all,
       },

@@ -4,7 +4,7 @@
 #
 # Usage:
 # (If folder isn't provided, lists all)
-#   gitlastchanged <folder>
+#   git-lastchanged <folder>
 #
 
 source "$WORKBENCH_PATH/bin/_utils/utils.sh"
@@ -21,7 +21,7 @@ get_git_file_changes() {
   # * MY note: Github uses author date when viewing a file, and committer date when
   # viewing a file in a directory (as of 07-21).
   git ls-files "$PAT" \
-    | xargs -I{} git log -1 --format="%ai|%ci|{}|%s" {} \
+    | xargs -I{} git -c log.showSignature=false log -1 --format="%ai|%ci|{}|%s" {} \
     | sort -r
 }
 

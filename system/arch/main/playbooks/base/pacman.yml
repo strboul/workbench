@@ -52,6 +52,25 @@
     mode: "0644"
   become: true
 
+- name: Create unneeded packages hook
+  ansible.builtin.blockinfile:
+    path: /etc/pacman.d/hooks/unneeded-packages.hook
+    block: |
+      [Trigger]
+      Operation = Install
+      Operation = Upgrade
+      Operation = Remove
+      Type = Package
+      Target = *
+
+      [Action]
+      Description = Checking for unneeded packages
+      When = PostTransaction
+      Exec = /bin/bash -c '/usr/bin/pacman -Qtdq || true'
+    mode: "0644"
+    create: true
+  become: true
+
 # TODO: remove this block of update. Add `pacman -Syu` as a prerequisite to the
 # README of system/arch/main.
 

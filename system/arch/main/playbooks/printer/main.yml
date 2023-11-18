@@ -1,9 +1,6 @@
 ---
 # Brother printer setup
 #
-# lpstat -a   # get printer info
-# lpstat -t   # get jobs status
-#
 # Test it with:
 #   echo 'IPP everywhere' | lp
 #
@@ -16,8 +13,7 @@
     printer:
       name: "brother-dcp-l2530dw"
       model: "DCP-L2530DW"
-      # TODO: Set a DCHP reservation static ip for this printer by it's MAC address.
-      ipv4_address: "192.168.1.124"
+      ipv4_address: 192.168.50.10
   tasks:
     - name: Setup printer
       block:
@@ -44,6 +40,13 @@
             lpadmin -p "{{ printer.name }}" -E -v "ipp://{{ printer.ipv4_address }}/ipp" -m everywhere
           register: printer_lpadmin
           changed_when: printer_lpadmin.rc != 0
+          become: true
+
+        - name: Enable the printer
+          ansible.builtin.shell: |
+            cupsenable "{{ printer.name }}"
+          register: printer_cupsenable
+          changed_when: printer_cupsenable.rc != 0
           become: true
 
     # https://wiki.archlinux.org/title/SANE

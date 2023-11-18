@@ -39,3 +39,9 @@
 	defaultBranch = master
 [log]
 	showSignature = true
+[gpg]
+	format = ssh
+[commit]
+	gpgsign = true
+[gpg "ssh"]
+	allowedSignersFile = ~/.config/git/allowed_signers

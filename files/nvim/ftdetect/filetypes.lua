@@ -54,7 +54,8 @@ vim.api.nvim_create_autocmd({ "FileType" }, {
     vim.cmd([[
       setlocal tabstop=2
       setlocal shiftwidth=2
-      setlocal indentkeys-=0#  " disable auto tabs when adding comments
+      " remove some indenting rules
+      setlocal indentexpr=
     ]])
   end,
 })

@@ -1,5 +1,9 @@
-require("indent_blankline").setup({
-  char_highlight_list = {
-    "IndentBlanklineIndent",
+-- indent-blankline.nvim
+--
+
+require("ibl").setup({
+  -- don't use scope, not useful.
+  scope = {
+    enabled = false,
   },
 })

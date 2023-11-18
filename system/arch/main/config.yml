@@ -40,6 +40,8 @@ config:
       dmidecode: extra/dmidecode
       docker: community/docker
       docker_compose: community/docker-compose
+      docker_buildx: community/docker-buildx
+      duf: extra/duf
       etckeeper: community/etckeeper
       fd: community/fd
       file_roller: extra/file-roller
@@ -63,7 +65,7 @@ config:
       gnome_sound_recorder: extra/gnome-sound-recorder
       gnu_free_fonts: extra/gnu-free-fonts
       gnu_netcat: extra/gnu-netcat
-      golang: community/go
+      golang: extra/go
       gpgme: core/gpgme
       gthumb: extra/gthumb
       gvfs: extra/gvfs
@@ -74,10 +76,10 @@ config:
       ipython: community/ipython
       jetbrains_mono_nerd: community/ttf-jetbrains-mono-nerd
       jq: community/jq
-      k9s: community/k9s
+      k9s: extra/k9s
       keepassxc: community/keepassxc
-      kubectl: community/kubectl
-      kubectx: community/kubectx
+      kubectl: extra/kubectl
+      kubectx: extra/kubectx
       lazygit: community/lazygit
       libreoffice_fresh: extra/libreoffice-fresh
       libssh2: core/libssh2
@@ -105,7 +107,7 @@ config:
       openscad: community/openscad
       opensnitch: community/opensnitch
       openssh: core/openssh
-      pacman_contrib: community/pacman-contrib
+      pacman_contrib: extra/pacman-contrib
       pass: community/pass
       peek: community/peek
       podman: extra/podman
@@ -125,6 +127,7 @@ config:
       sqlite: core/sqlite
       strace: extra/strace
       tcpdump: extra/tcpdump
+      telegram_desktop: extra/telegram-desktop
       terraform: community/terraform
       thunderbird: extra/thunderbird
       tmux: community/tmux
@@ -143,6 +146,7 @@ config:
       wget: extra/wget
       whois: extra/whois
       wireguard_tools: extra/wireguard-tools
+      wireless_tools: extra/wireless_tools
       wireshark_cli: extra/wireshark-cli
       wireshark_qt: extra/wireshark-qt
       xclip: extra/xclip

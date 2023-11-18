@@ -131,17 +131,17 @@ git archive --format=zip --output <filename>.zip master
 # change git ssh command
 GIT_SSH_COMMAND='ssh -vvv' git fetch
 
-$ name: git log --format='%an' | sort -u
-$ email: git log --format='%ae' | sort -u
+$ name: git -c log.showSignature=false log --format='%an' | sort -u
+$ email: git -c log.showSignature=false log --format='%ae' | sort -u
 $ uncheckout-branch: git branch --list | awk '{ if ($1 != "*") { print $1 } }'
 $ file-or-folder: find * -type f -o -type d
-$ commit_sha_current_branch: git log --format="%C(auto) %H %s" --no-merges master.. | fzf | awk '{ print $1 }'
+$ commit_sha_current_branch: git -c log.showSignature=false log --format="%C(auto) %H %s" --no-merges master.. | fzf | awk '{ print $1 }'
 
 ; ----------------------------------------------------------------------------
 % ssh [security]
 
 # authorise ssh pub key in a remote machine.
-ssh-copy-id -i <public-key> user@<hostname-or-ip>
+ssh-copy-id -i <public-key> user@host
 
 # jump through multiple hosts
 ssh -J user@host1,user@host2 user@host3
@@ -155,8 +155,12 @@ ssh-keygen -t ed25519 -C "<comment>"
 # add ssh key to agent
 ssh-add <private-key>
 
-# reverse port forwarding
-ssh -L 8001:127.0.0.1:8001 user@host
+# list keys in agent
+ssh-add -L
+
+; listen remote port on local
+# local port forwarding/tunnel
+ssh -N -L <remote-port>:localhost:<localport> user@host
 
 # keyscan by type of domain or IP
 ssh-keyscan -t ed25519 github.com
@@ -193,6 +197,9 @@ gpg --fingerprint <email>
 
 # get fingerprint of key file (without importing it into the keyring first)
 gpg --show-keys --with-fingerprint <filename>
+
+# get encrypted file details
+gpg --list-packets <file>
 
 # list signatures
 gpg --list-signatures <fingerprint>
@@ -250,11 +257,11 @@ openssl x509 -text -noout -in <crt-file>
 nmap 192.168.1.1
 
 ; -sP: uses ping
-# get all valid IP addresses in network (255 hosts)
+# get all addresses from a subnet (255 hosts)
 nmap -sP 192.168.1.0/24
 
 ; -Pn: skip ping
-# get all ports in an address (1 host)
+# get all ports from a host (1 host)
 nmap -Pn 192.168.1.0/32
 
 # find dhcp addresses
@@ -314,6 +321,9 @@ iwctl station wlan0 get-networks
 
 # connect to a network
 iwctl station wlan0 connect <ssid>
+
+# ieee 802.11 information e.g. frequency, ghz, mac address, of a device
+iwlist wlan0 scanning
 
 ; ----------------------------------------------------------------------------
 % tcpdump [network]
@@ -530,6 +540,12 @@ dig +short soa example.com
 # list all records
 dig +noall +answer +multiline example.com any
 
+# get public IP address
+dig +short myip.opendns.com @resolver1.opendns.com
+
+# get mDNS hostname
+dig -x <ip-address> -p 5353 @224.0.0.251
+
 ; ----------------------------------------------------------------------------
 % nslookup [network, dns]
 
@@ -578,11 +594,17 @@ scanimage -L
 ; ----------------------------------------------------------------------------
 % lpstat [printer, cups]
 
-# get printer info
-lpstat -a
+# get printer status
+lpstat -p -d
 
 # get jobs status
 lpstat -t
+
+# list queue
+lpq
+
+# clear queue
+lprm -
 
 ; ----------------------------------------------------------------------------
 % lp [printer, cups]
@@ -594,7 +616,7 @@ echo 'IPP everywhere' | lp
 % nc [network, netcat]
 
 # check if a port is open
-nc -z -v 127.0.0.1 <port>
+nc -zv 127.0.0.1 <port>
 
 ; -l: listen mode
 ; -vv: twice more verbose
@@ -656,6 +678,9 @@ $ service-file: systemctl list-unit-files | grep enabled | awk '{ print $1 }'
 # resolve domain names
 resolvectl --cache=false query strboul.com
 
+# flush dns cache
+resolvectl flush-caches
+
 ; ----------------------------------------------------------------------------
 % firewalld [systemd]
 
@@ -701,6 +726,9 @@ find * -type d -name '<name>'
 ; useful for logs.
 # find any file modified in the last 1 min
 find * -mmin 1
+
+# find files owned by the user
+find * -user <user>
 
 # find if all files in a dir can be read by the user
 find <dir> -print > /dev/null
@@ -937,8 +965,11 @@ groups
 # list all groups.
 getent group | cut -d: -f1
 
-# add a new user with home directory and password
-useradd --create-home --shell /usr/bin/zsh <username> && passwd <username>
+# add a new user with home directory and shell
+useradd --create-home --shell /usr/bin/bash <username>
+
+# set or change password of a user
+passwd <username>
 
 # delete user and its home directory
 userdel -rf <username>
@@ -1232,6 +1263,15 @@ iptables --list-rules
 iptables -S
 
 ; ----------------------------------------------------------------------------
+% networking [linux, network]
+
+# ping a port from a host
+timeout 5 bash -c ': < /dev/tcp/<host>/<port>'
+
+# dns without dig
+getent hosts archlinux.org
+
+; ----------------------------------------------------------------------------
 % xdg [linux]
 
 # copy file contents to the clipboard
@@ -1394,6 +1434,9 @@ restic diff <snapshot_id> <snapshot_id>
 
 # diff last two snapshots
 restic diff $(restic snapshots --json | jq -r '.[-2:][].id')
+
+# mount snapshots
+restic mount /tmp/restic-mount
 
 ; ----------------------------------------------------------------------------
 % pass [password]

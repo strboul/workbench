@@ -12,7 +12,7 @@
 # where every commit starts with a commit category (or type) followed by a
 # colon and a text message.
 #
-# you run `gitcommitcategorysummary`, then it gives you:
+# you run `git-commit-category-summary`, then it gives you:
 #
 # ```
 #  <branch_name>
@@ -32,7 +32,7 @@
 # ```
 #
 # Usage:
-#   gitcommitcategorysummary
+#   git-commit-category-summary
 #
 # Optional parameters:
 #   ref-main: main base ref to compare. Default value is 'master'.
@@ -41,8 +41,6 @@
 #  In the ref parameters, any git reference (e.g. branch name, commit SHA,
 #  etc.) can be passed.
 #
-
-# TODO: rename as gitcommitgroupbytype (in conventional commits, the first part is called as type).
 
 import subprocess
 import sys
@@ -54,9 +52,11 @@ import sys
 #   but indented
 # - item
 
+GIT_CMD = ["git", "-c", "log.showSignature=false"]
+
 
 def get_current_branch_name():
-    cmd = ["git", "symbolic-ref", "--short", "HEAD"]
+    cmd = GIT_CMD + ["symbolic-ref", "--short", "HEAD"]
     branch = subprocess.check_output(cmd).decode("utf-8").strip()
     return branch
 
@@ -77,7 +77,7 @@ def get_arguments(current_branch_name):
 
 def get_git_commit_logs(ref_main, ref_compare):
     cmd_fmt = f"{ref_main}..{ref_compare}"
-    cmd = ["git", "log", "--format='%s'", cmd_fmt]
+    cmd = GIT_CMD + ["log", "--format='%s'", cmd_fmt]
     logs = subprocess.check_output(cmd).decode("utf-8")
     logs = logs.split("\n")
     logs = list(filter(None, logs))

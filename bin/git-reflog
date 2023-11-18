@@ -3,7 +3,7 @@
 # Display git reflog. Show the last day entries.
 #
 # Usage:
-# gitreflog
+# git-reflog
 #
 
 import locale
@@ -15,6 +15,7 @@ from datetime import datetime, timezone
 locale.setlocale(locale.LC_TIME, "en_US.UTF-8")
 ISO_DATE_FORMAT = "%Y-%m-%d"
 HEADER_DASH_LENGTH = 32
+GIT_CMD = ["git", "-c", "log.showSignature=false"]
 
 
 def get_now_time_str():
@@ -24,7 +25,7 @@ def get_now_time_str():
 
 
 def get_git_reflog():
-    cmd = ["git", "reflog", "--date=iso", "--format='%h %gd %gs (%s)'"]
+    cmd = GIT_CMD + ["reflog", "--date=iso", "--format='%h %gd %gs (%s)'"]
     run = subprocess.run(
         cmd, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, check=True
     )

@@ -5,10 +5,10 @@
 # Examples:
 #
 #  # between a tag and HEAD:
-#  gitrefsummary 1.0.0 HEAD
+#  git-refsummary 1.0.0 HEAD
 #
 #  # between two commits and edit the output in vim:
-#  gitrefsummary 4e0962e 53fc196 | vim -
+#  git-refsummary 4e0962e 53fc196 | vim -
 #
 
 set -e
@@ -26,7 +26,7 @@ get_default_refs() {
 }
 
 get_git_log() {
-  git log "$FROM_REF..$TO_REF" --oneline --first-parent master --no-decorate --format="%h|%an|%s"
+  git -c log.showSignature=false log "$FROM_REF..$TO_REF" --oneline --first-parent master --no-decorate --format="%h|%an|%s"
 }
 
 pretty_print() {

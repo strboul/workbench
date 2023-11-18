@@ -24,7 +24,6 @@ vim.api.nvim_set_hl(0, "TrailingWhitespace", { bg = "red" })
 vim.api.nvim_set_hl(0, "CursorLineActive", hl.color_column)
 
 -- [[ User highlight overrides. ]]
-vim.api.nvim_set_hl(0, "IndentBlanklineIndent", { fg = "#3d3d3d", nocombine = true })
 vim.api.nvim_set_hl(0, "ColorColumn", hl.sign_column)
 vim.api.nvim_set_hl(0, "SignColumn", hl.sign_column)
 vim.api.nvim_set_hl(0, "Todo", { bg = "#800000", fg = "#d0d090", italic = true })

@@ -1,3 +1,17 @@
+# zsh profiling [start]
+#  - look for jumps in the timestamps.
+#
+# ===== zprof start =====
+# zmodload zsh/zprof
+# ===== zprof start =====
+# ===== zshstartlog start =====
+# zmodload zsh/datetime
+# setopt promptsubst
+# PS4='+$EPOCHREALTIME %N:%i> '
+# exec 3>&2 2> /tmp/zshstartlog.$$
+# setopt xtrace prompt_subst
+# ===== zshstartlog start =====
+
 # disable the update prompt from oh-my-zsh, just update when it comes.
 export DISABLE_UPDATE_PROMPT=true
 
@@ -52,17 +66,19 @@ plugins+=(
   git-auto-fetch
 )
 # plugins: others (autocomplete & tooling)
+# Caveat: Be mindful when you enable new plugins, add what you really need,
+# because they can be slow.
 plugins+=(
-  aws
+  # aws
   direnv
   docker
   docker-compose
-  helm
-  kubectl
-  npm
+  # helm
+  # kubectl
+  # npm
   pass
   terraform
-  yarn
+  # yarn
 )
 
 source "$ZSH"/oh-my-zsh.sh
@@ -181,3 +197,13 @@ fi
 # p10k (https://github.com/romkatv/powerlevel10k)
 # To customize prompt, run `p10k configure` or edit $WORKBENCH_PATH/files/p10k/p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+
+# zsh profiling [end]
+# ===== zshstartlog end =====
+# unsetopt xtrace
+# exec 2>&3 3>&-
+# ===== zshstartlog end =====
+# ===== zprof end =====
+# zprof > /tmp/zprof
+# ===== zprof end =====

@@ -18,6 +18,7 @@
       - "{{ config.packages.pacman.gdu }}"  # https://github.com/dundee/gdu
       - "{{ config.packages.pacman.neofetch }}"  # https://github.com/dylanaraps/neofetch
       - "{{ config.packages.pacman.onefetch }}"  # https://github.com/o2sh/onefetch
+      - "{{ config.packages.pacman.duf }}"  # https://github.com/muesli/duf
     state: present
   become: true
 

@@ -82,6 +82,11 @@
       become: true
       tags: gui.signal
 
+    - name: Install Telegram
+      community.general.pacman: name="{{ config.packages.pacman.telegram_desktop }}" state=present
+      become: true
+      tags: gui.telegram
+
     # https://www.wireshark.org/
     - name: Install Wireshark
       ansible.builtin.import_tasks: wireshark.yml

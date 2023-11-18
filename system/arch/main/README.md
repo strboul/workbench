@@ -48,28 +48,3 @@ TODO
 ansible-playbook main.yml --list-tasks
 ansible-playbook main.yml --list-tags
 ```
-
-## 3. Encrypted content
-
-Some content is encrypted with `ansible-vault` passphrase, which is encrypted
-with `gpg`.
-
-### Encrypted files
-
-```sh
-ansible-vault encrypt --vault-password-file="$(git rev-parse --show-toplevel)/vault_pass.sh" <file_vault>
-```
-
-View/decrypt the encrypted files with `view`, `decrypt` respectively.
-
-Edit the encrypted file with your favorite editor.
-
-```sh
-ansible-vault edit --vault-password-file="$(git rev-parse --show-toplevel)/vault_pass.sh" <file_vault>
-```
-
-#### Resources
-
-- [Encrypting content with Ansible Vault](https://docs.ansible.com/ansible/latest/user_guide/vault.html)
-
-- [Encrypting the Ansible Vault passphrase using GPG](https://disjoint.ca/til/2016/12/14/encrypting-the-ansible-vault-passphrase-using-gpg/)

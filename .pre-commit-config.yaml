@@ -15,7 +15,6 @@ repos:
     -   id: check-executables-have-shebangs
     -   id: check-shebang-scripts-are-executable
     -   id: check-yaml
-        exclude: ".*vault.*"
     -   id: check-json
         exclude: |
             (?x)(
@@ -104,7 +103,8 @@ repos:
         language: system
         exclude: |
             (?x)(
-                ^.git-crypt\/
+                ^.git-crypt\/|
+                ^files\/git\/allowed_signers
             )
         entry: |
             python -c '''

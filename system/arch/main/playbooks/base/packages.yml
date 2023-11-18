@@ -25,14 +25,15 @@
 - name: Install network tools/packages
   community.general.pacman:
     name:
-      - "{{ config.packages.pacman.traceroute }}"  # print the route packets trace to network host
-      - "{{ config.packages.pacman.iputils }}"  # network monitoring tools, incl. ping
-      - "{{ config.packages.pacman.inetutils }}"  # collection of common network programs, e.g. ping
-      - "{{ config.packages.pacman.bind }}"  # dns stuff
-      - "{{ config.packages.pacman.gnu_netcat }}"  # netcat, the network piping application
-      - "{{ config.packages.pacman.socat }}"  # multipurpose relay
-      - "{{ config.packages.pacman.nmap }}"  # utility for network discovery and security auditing
-      - "{{ config.packages.pacman.tcpdump }}"  # powerful command-line packet analyzer
-      - "{{ config.packages.pacman.whois }}"  # powerful command-line packet analyzer
+      - "{{ config.packages.pacman.traceroute }}"  # Tracks the route taken by packets over an IP network
+      - "{{ config.packages.pacman.iputils }}"  # Network monitoring tools, including ping
+      - "{{ config.packages.pacman.inetutils }}"  # A collection of common network programs
+      - "{{ config.packages.pacman.bind }}"  # A complete, highly portable implementation of the DNS protocol
+      - "{{ config.packages.pacman.gnu_netcat }}"  # GNU rewrite of netcat, the network piping application
+      - "{{ config.packages.pacman.socat }}"  # Multipurpose relay
+      - "{{ config.packages.pacman.nmap }}"  # Utility for network discovery and security auditing
+      - "{{ config.packages.pacman.tcpdump }}"  # Powerful command-line packet analyzer
+      - "{{ config.packages.pacman.whois }}"  # Intelligent WHOIS client
+      - "{{ config.packages.pacman.wireless_tools }}"  # Tools allowing to manipulate the Wireless Extensions
     state: present
   become: true
