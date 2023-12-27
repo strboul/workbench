@@ -23,3 +23,4 @@
   loop:
     - github.com/go-delve/delve/cmd/dlv@latest  # delve debugger
     - github.com/mvdan/sh/cmd/shfmt@latest  # shfmt
+    - github.com/strboul/routemonitor@latest # routemonitor

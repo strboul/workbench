@@ -59,40 +59,43 @@ git remote add <ssh_or_https>
 # list last n commits
 git log -n <n>
 
-# search in all of the commit messages of project
+# search in all of commit messages of project
 git log --grep "<query>"
 
 # history of file
 git log -p <filename>
 
-# search a query in the git logs
+# search query in git logs
 git log -p -G <query>
 
 # search in history
 git grep '<query>' $(git rev-list --all)
 
-# search a query in a file/folder with history
+# search query in file/folder with history
 git grep '<query>' "$(git rev-list --all -- <file-or-folder>)" -- <file-or-folder>
 
-# amend and don't edit the commit message
+# amend and don't edit commit message
 git commit --amend --no-edit
 
-# change the SHA of the last commit
+# change SHA of last commit
 git commit --allow-empty --amend --no-edit
 
-# create a fixup commit
+# create fixup commit
 git commit --fixup <commit_sha_current_branch>
 
 # by skipping commit hooks
 git commit --no-verify
 
-# commit with a date ISO 8601 format
+# commit with date ISO 8601 format
 git commit --date="YYYY-MM-DDTHH:MM:SS"
+
+# cherry pick commit
+git cherry-pick <commit_sha>
 
 # reset head commit
 git reset HEAD~
 
-# get a stash diff
+# get stash diff
 git stash show -p stash@{0}
 
 # list tags by creation date (descending)
@@ -104,7 +107,7 @@ git ls-files --ignored --exclude-standard --others
 # change remote url
 git remote set-url origin git@example.com:user/repo.git
 
-# create patch files from the last n commits
+# create patch files from last n commits
 git format-patch -<n> HEAD
 
 # apply multiple patches
@@ -140,7 +143,7 @@ $ commit_sha_current_branch: git -c log.showSignature=false log --format="%C(aut
 ; ----------------------------------------------------------------------------
 % ssh [security]
 
-# authorise ssh pub key in a remote machine.
+# authorise ssh pub key in remote machine
 ssh-copy-id -i <public-key> user@host
 
 # jump through multiple hosts
@@ -171,7 +174,7 @@ $ private-key: find ~/.ssh/keys -type f -not -name '*.pub'
 ; ----------------------------------------------------------------------------
 % scp [security]
 
-# secure copy a directory (-r: recursive)
+# secure copy directory (-r: recursive)
 scp -r <local_dir> user@host:<remote_dir>
 
 # copy with jump hosts
@@ -183,7 +186,7 @@ scp -J juser@jhost <file1> <file2> user@host:/
 # list public keys
 gpg --list-keys
 
-# create/generate key with the defaults
+# create/generate key with defaults
 gpg --full-generate-key
 
 # list public keys long format with fingerprints
@@ -195,7 +198,7 @@ gpg --search-keys <email>
 # get fingerprint of key by email
 gpg --fingerprint <email>
 
-# get fingerprint of key file (without importing it into the keyring first)
+# get fingerprint of key file (without importing it into keyring first)
 gpg --show-keys --with-fingerprint <filename>
 
 # get encrypted file details
@@ -207,7 +210,7 @@ gpg --list-signatures <fingerprint>
 # list private keys
 gpg --list-secret-keys --keyid-format=LONG
 
-# import a public/private key from file
+# import public/private key from file
 gpg --import <key-file>
 
 # export public key as clean text
@@ -232,7 +235,7 @@ gpg --decrypt --output <output_filename> <input_filename_gpg>
 # clearsign file
 gpg --clearsign <input_filename>
 
-# verify a sign
+# verify sign
 gpg --verify <filename>
 
 # get smartcard status
@@ -257,11 +260,11 @@ openssl x509 -text -noout -in <crt-file>
 nmap 192.168.1.1
 
 ; -sP: uses ping
-# get all addresses from a subnet (255 hosts)
+# get all addresses from subnet (255 hosts)
 nmap -sP 192.168.1.0/24
 
 ; -Pn: skip ping
-# get all ports from a host (1 host)
+# get all ports from hosts
 nmap -Pn 192.168.1.0/32
 
 # find dhcp addresses
@@ -296,16 +299,16 @@ nmcli connection show
 # list wifi devices
 nmcli dev wifi list
 
-# create a new connection
+# create new connection
 nmcli dev wifi con "<ssid>"
 
-# up a connection (ask password)
+# up connection (ask password)
 nmcli con up --ask "<ssid>"
 
-# print password of the current wifi device
+# print password of current wifi device
 nmcli dev wifi show-password
 
-# print password of a known network
+# print password of known network
 nmcli -show-secrets -get-values "802-11-wireless-security.psk" connection show "<known-ssid>"
 
 $ known-ssid: nmcli -g name connection
@@ -316,13 +319,13 @@ $ known-ssid: nmcli -g name connection
 # list devices
 iwctl station list
 
-# list available networks on a device
+# list available networks on device
 iwctl station wlan0 get-networks
 
-# connect to a network
+# connect to network
 iwctl station wlan0 connect <ssid>
 
-# ieee 802.11 information e.g. frequency, ghz, mac address, of a device
+# ieee 802.11 information e.g. frequency, ghz, mac address, of device
 iwlist wlan0 scanning
 
 ; ----------------------------------------------------------------------------
@@ -341,7 +344,10 @@ tcpdump -nn -i eth0
 tcpdump -nn -vvv -X -i eth0
 
 # write packagets to file
-tcpdump -i eth0 -w <file>.pcap
+tcpdump -w capture.pcap
+
+# write packages to file and also print stdout
+tcpdump --print -w capture.pcap
 
 # monitor outgoing connections except ssh
 tcpdump -i eth0 port not 22 and src <source-ip>
@@ -355,14 +361,17 @@ tcpdump -i any
 ; fork: handles connection in a child process, make the parent process attempt
 ; to handle more connections.
 ; reuseaddr: allows immediate restart of the server process.
-# listen at a port
+# listen at port
 socat - TCP4-LISTEN:<port>,fork,reuseaddr
 
-# send a message to a port
+# send message to port
 echo "hello" | socat TCP4:<address>:<port> -
 
 # send file contents as stream
 echo "$(<<file>)" | socat TCP4:<address>:<port> -
+
+# simple http server
+socat -v -d -d TCP-LISTEN:3333,crlf,reuseaddr,fork SYSTEM:"echo HTTP/1.1 200 OK;echo Content-Type\: text/plain;echo;echo \"Server: \$SOCAT_SOCKADDR:\$SOCAT_SOCKPORT\";echo \"Client: \$SOCAT_PEERADDR:\$SOCAT_PEERPORT\";"
 
 $ address: echo "192.168.1.1" --- --fzf-overrides '--no-select-1'
 $ port: echo "3333" --- --fzf-overrides '--no-select-1'
@@ -372,6 +381,28 @@ $ port: echo "3333" --- --fzf-overrides '--no-select-1'
 
 # list network interfaces
 netstat -ie
+
+; ----------------------------------------------------------------------------
+; tc (traffic control)
+;   qdisc: queuing disciplines
+;   netem: network emulation
+;
+% tc [network]
+
+# add delay to every packet on device
+tc qdisc add dev eth1 root netem delay 200ms
+
+# randomly drop approximately x percent of packets on device
+tc qdisc add dev eth1 root netem loss 1%
+
+# inspect filters on device
+tc qdisc show dev eth1
+
+# list rules
+tc qdisc ls
+
+# remove tc filters
+tc qdisc del dev eth1 root
 
 ; ----------------------------------------------------------------------------
 % qpdf [pdf]
@@ -400,10 +431,10 @@ $ image-files: find * -type f -regex '.*\.\(png\|jpg\|jpeg\)'
 # show open files (-w don't show warnings)
 lsof -w
 
-# list a specific port
+# list specific port
 lsof -i:<port>
 
-# determine which proceses modify a file or directory
+# determine which proceses modify file or directory
 lsof <file_or_dir>
 
 ; ----------------------------------------------------------------------------
@@ -445,7 +476,7 @@ kill -9 <pid>
 ; ----------------------------------------------------------------------------
 % auditctl [process]
 
-# list the rules
+# list rules
 auditctl -l
 
 # get key reports today
@@ -498,7 +529,7 @@ unlink <file>
 ; ----------------------------------------------------------------------------
 % free [linux]
 
-# display memory and swap info in the system
+# display memory and swap info in system
 free -m
 
 ; ----------------------------------------------------------------------------
@@ -570,10 +601,10 @@ ip link delete xennet0 type dummy
 ; ----------------------------------------------------------------------------
 % traceroute, tracepath [network]
 
-# traceroute to a host (uses icmp)
+# traceroute host (uses icmp)
 traceroute <domain_tld>
 
-# tracepath to a host (uses UDP and MTU)
+# tracepath host (uses UDP and MTU)
 tracepath <domain_tld>
 
 ; ----------------------------------------------------------------------------
@@ -609,20 +640,20 @@ lprm -
 ; ----------------------------------------------------------------------------
 % lp [printer, cups]
 
-# print the echoed string
+# print echoed string
 echo 'IPP everywhere' | lp
 
 ; ----------------------------------------------------------------------------
 % nc [network, netcat]
 
-# check if a port is open
+# check if port is open
 nc -zv 127.0.0.1 <port>
 
 ; -l: listen mode
 ; -vv: twice more verbose
 ; -n: numeric-only IP addresses, no DNS
 ; -p: local port number
-# listen on a port
+# listen on port
 nc -lvvnp <port>
 
 $ port: echo "3333" --- --fzf-overrides '--no-select-1'
@@ -631,7 +662,7 @@ $ port: echo "3333" --- --fzf-overrides '--no-select-1'
 % telnet [network]
 
 ; prefer netcat over telnet!
-# ping a port
+# ping port
 telnet 127.0.0.1 <port>
 
 ; ----------------------------------------------------------------------------
@@ -646,28 +677,28 @@ userdbctl
 # follow log messages.
 journalctl -f
 
-# listen logs of an executable.
+# listen logs of an executable
 journalctl -f /usr/bin/<program>
 
 # show log disk usage
 journalctl --disk-usage
 
-# get logs since the current boot.
+# get logs since current boot
 journalctl -b
 
-# get logs from the previous boot.
+# get logs from previous boot
 journalctl -b-1
 
-# list boots from the current year.
+# list boots from current year
 journalctl --list-boots
 
 # show messages since
 journalctl --since "1 day ago"
 
-# show only error, critical, alert priority messages.
+# show only error, critical, alert priority messages
 journalctl -p err..alert
 
-# get logs since the boot and of a unit.
+# get logs since boot and of unit
 journalctl -b -u <service-file>
 
 $ service-file: systemctl list-unit-files | grep enabled | awk '{ print $1 }'
@@ -711,7 +742,7 @@ firewall-cmd --reload
 ; ----------------------------------------------------------------------------
 % pwgen
 
-# create a random password with length of 16 (with capital letter and numerals)
+# create random password with length of 16 (with capital letter and numerals)
 pwgen -nc 16 -1
 
 ; ----------------------------------------------------------------------------
@@ -724,19 +755,19 @@ find * -type f -name '*.<extension>'
 find * -type d -name '<name>'
 
 ; useful for logs.
-# find any file modified in the last 1 min
+# find any file modified in last 1 min
 find * -mmin 1
 
-# find files owned by the user
+# find files owned by user
 find * -user <user>
 
-# find if all files in a dir can be read by the user
+# find if all files in dir can be read by user
 find <dir> -print > /dev/null
 
 ; ----------------------------------------------------------------------------
 % systemctl [systemd]
 
-# get status of a service
+# get status of service
 systemctl status <service>
 
 # list running user services
@@ -745,7 +776,7 @@ systemctl --user list-units --state=running
 # list user timers
 systemctl --user list-timers
 
-# stop a user timer
+# stop user timer
 systemctl --user <user-timer-unit>
 
 # show failed services
@@ -769,16 +800,16 @@ docker rmi <image_id>
 # clean none/dangling images
 docker rmi $(docker images --filter "dangling=true" -q --no-trunc)
 
-# list the networks
+# list networks
 docker network ls
 
-# list the running containers
+# list running containers
 docker ps
 
 # delete all running and stopped containers
 docker rm -f $(docker ps -aq)
 
-# inspect a container or image
+# inspect container or image
 docker inspect <container-or-image-sha>
 
 # inspect with format
@@ -835,13 +866,13 @@ fdisk -l
 ;   9   Kernel routines [Non standard]
 ;
 
-# get manual page of a command
+# get manual page of command
 man printf
 
-# get manual page of specific section of a command
+# get manual page of specific section of command
 man 3 printf
 
-# list sections of a command
+# list sections of command
 man -k '^printf'
 
 ; ----------------------------------------------------------------------------
@@ -874,7 +905,7 @@ pacman -U <cache-file>
 # clear all unused cache
 pacman -Sc
 
-# completely (with dependencies) remove a package
+# remove package with dependencies
 pacman -Rcns <installed-packages>
 
 # pacman package report
@@ -905,10 +936,10 @@ id -un
 # change file permissions with octal
 chmod 0600 <filename>
 
-# change user and group ownership of a file
+# change user and group ownership of file
 chown <new-user>:<new-group> <filename>
 
-# change group ownership of a file
+# change group ownership of file
 chgrp <new-group> <filename>
 
 ; ----------------------------------------------------------------------------
@@ -932,7 +963,7 @@ virsh destroy <vm_name>
 # remove vm
 virsh undefine <vm_name>
 
-# console access of a running VM
+# console access of running VM
 virsh console <vm_name>
 
 # list networks
@@ -947,13 +978,13 @@ virsh net-dhcp-leases <network_name>
 # clone VM and create storage image
 virt-clone -o <vm_name> -n <new_vm_name> -f /var/lib/libvirt/images/<new_vm>.qcow2
 
-# delete/remove the attached storage file
+# delete/remove attached storage file
 rm -f "$(virsh dumpxml --domain <vm_name> | grep -oP "source file='\K[^']*")"
 
 ; ----------------------------------------------------------------------------
 % shred [linux]
 
-# safe delete/remove a file by overwriting it multiple times
+# safe delete/remove file by overwriting it multiple times
 shred -u <file>
 
 ; ----------------------------------------------------------------------------
@@ -965,10 +996,10 @@ groups
 # list all groups.
 getent group | cut -d: -f1
 
-# add a new user with home directory and shell
+# add new user with home directory and shell
 useradd --create-home --shell /usr/bin/bash <username>
 
-# set or change password of a user
+# set or change password of user
 passwd <username>
 
 # delete user and its home directory
@@ -995,16 +1026,16 @@ $ group: getent group | cut -d: -f1
 ; ----------------------------------------------------------------------------
 % curl [network]
 
-# send a get http request
+# send get http request
 curl <url>
 
-# send a http request with a custom header and json body
+# send http request with custom header and json body
 curl -X <method> <url> -H '<headername>: <headervalue>' -d '<json>'
 
-# send a get http request and follow redirects
+# send get http request and follow redirects
 curl -L <url>
 
-# use a specific interface
+# use specific interface
 curl --interface eth0 <url>
 
 $ method: echo -e 'GET\nPOST\nPUT\nDELETE\nPATCH'
@@ -1012,13 +1043,13 @@ $ method: echo -e 'GET\nPOST\nPUT\nDELETE\nPATCH'
 ; ----------------------------------------------------------------------------
 % strace [linux]
 
-# trace a command
+# trace command
 strace ls
 
-# trace a command and any newly created child process
+# trace command and any newly created child processes
 strace -f ls
 
-# trace a process and write to a file.
+# trace process and write to file
 strace -f -p <pid> -e trace=write -o strace_pid_<pid>.capture
 
 $ pid: ps a | tail -n +2 | fzf | awk '{ print $1 }'
@@ -1026,19 +1057,19 @@ $ pid: ps a | tail -n +2 | fzf | awk '{ print $1 }'
 ; ----------------------------------------------------------------------------
 % bash [linux]
 
-# for loop over the files
+# for loop over files
 for filename in *; do echo "$filename"; done
 
 # ternary string comparison
 [[ "str1" == "str2" ]] && echo "equal" || echo "not equal"
 
-# check if a string contains a substring
+# check if string contains substring
 if [[ "Arch Linux" =~ .*Linux.* ]]; then; echo "it contains"; fi
 
-# check if a string is empty
+# check if string is empty
 if [[ -z '' ]]; then echo "it is empty"; fi
 
-# check if a string is not empty
+# check if string is not empty
 if [[ -n 'foo' ]]; then echo "it is not empty"; fi
 
 ; ----------------------------------------------------------------------------
@@ -1050,7 +1081,7 @@ uname -a
 ; ----------------------------------------------------------------------------
 % psql [database]
 
-# send queries from the command line
+# send queries from command line
 psql postgresql://postgres:secret@127.0.0.1:5432/db -c '''
 SELECT * FROM alias;
 '''
@@ -1058,7 +1089,7 @@ SELECT * FROM alias;
 ; ----------------------------------------------------------------------------
 % wget [linux]
 
-# download and save a file with output
+# download and save file with output
 wget <link> -O <output_file>
 
 ; ----------------------------------------------------------------------------
@@ -1067,7 +1098,7 @@ wget <link> -O <output_file>
 # download new metadata from remote server
 fwupdmgr refresh
 
-# update devices to the latest firmware version
+# update devices to latest firmware version
 fwupdmgr update
 
 ; ----------------------------------------------------------------------------
@@ -1127,7 +1158,7 @@ chattr -ia <file>
 # archive files
 zip archive.zip file1 file2
 
-# add file or folders to the zip archive
+# add file or folders to zip archive
 zip -r archive.zip file_or_folder
 
 # list files in archive
@@ -1166,7 +1197,7 @@ cat file.json | jq 'select(.key == "value")'
 ; ----------------------------------------------------------------------------
 % rg [ripgrep, grep]
 
-# search in a single file
+# search in single file
 rg <query> <file>
 
 # search in dir recursively
@@ -1175,7 +1206,7 @@ rg <query> <folder>/
 # search literally i.e. without regex
 rg -F '<query>'
 
-# search files not containing the query
+# search files not containing query
 rg --files-without-match <query>
 
 # search pattern but ignore files
@@ -1196,10 +1227,10 @@ python -m venv .venv
 # pip freeze requirements
 python -m pip freeze > requirements.txt
 
-# Create a single http server on directory
+# create single http server on directory
 python -m http.server <port> --bind <address>
 
-# Convert unix time to datetime
+# convert unix time to datetime
 python -c "import datetime; print(datetime.datetime.fromtimestamp(0))"
 
 # Pretty print json
@@ -1229,13 +1260,13 @@ pyenv shell <version>
 ; ----------------------------------------------------------------------------
 % xdg [linux]
 
-# find xdg-mime of a file.
+# find xdg-mime of file
 xdg-mime query filetype <file>
 
-# find default application of a xdg-mime.
+# find default application of xdg-mime
 xdg-mime query default <mime>
 
-# get list of xdg desktop files.
+# get list of xdg desktop files
 ls /usr/share/applications
 
 ; ----------------------------------------------------------------------------
@@ -1247,13 +1278,13 @@ iptables -t raw -A PREROUTING --destination 1.1.1.1 -j LOG --log-prefix='[iptabl
 # log outgoing packets
 iptables -t raw -A OUTPUT --destination 1.1.1.1 -j LOG --log-prefix='[iptables-raw-debug] '
 
-# list the raw table
+# list raw table
 iptables -t raw -L -v -n --line-numbers
 
 # flush (clean) raw table
 iptables -t raw -F
 
-# delete a specific rule from a table by line number
+# delete specific rule from table by line number
 sudo iptables -t raw -D INPUT 2
 
 # list rules
@@ -1265,19 +1296,17 @@ iptables -S
 ; ----------------------------------------------------------------------------
 % networking [linux, network]
 
-# ping a port from a host
+# ping port from host
 timeout 5 bash -c ': < /dev/tcp/<host>/<port>'
 
 # dns without dig
 getent hosts archlinux.org
 
 ; ----------------------------------------------------------------------------
-% xdg [linux]
+% xclip [unix]
 
-# copy file contents to the clipboard
-xclip -selection clipboard < <public-key>
-
-$ public-key: find ~/.ssh/keys -type f -name '*.pub'
+# copy file contents to clipboard
+xclip -selection clipboard < /path/to/file.txt
 
 ; ----------------------------------------------------------------------------
 % neomutt [mutt, email]
@@ -1306,7 +1335,7 @@ git-crypt status -e
 ; ----------------------------------------------------------------------------
 % grep [unix]
 
-# get count of the query in files
+# get count of query in files
 grep -c '<query>' *txt
 
 # get match with n lines around
@@ -1339,7 +1368,7 @@ apropos <query>
 # get snapshot date
 date +'%FT%T%z'
 
-# get date with a format
+# get date with format
 date +'%Y-%m-%dT%H:%M:%S'
 
 ; ----------------------------------------------------------------------------
@@ -1387,7 +1416,7 @@ cat /proc/<pid>/environ | tr "\0" "\n"
 # get process command line
 cat /proc/<pid>/cmdline | tr "\0" "\n"
 
-# get process link to the working directory
+# get process link to working directory
 file /proc/<pid>/cwd
 
 # get process file descriptors

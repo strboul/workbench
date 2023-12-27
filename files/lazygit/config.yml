@@ -5,6 +5,7 @@
 gui:
   showFileTree: false
   showRandomTip: false
+  mainPanelSplitMode: 'horizontal'
 
 update:
   method: never

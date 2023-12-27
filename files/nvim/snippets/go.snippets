@@ -8,6 +8,24 @@ func main() {
 }
 endsnippet
 
-snippet fprintdebug
-fmt.Printf("\n\n=*=*=*=*=*=*=*=*=*=\n%v\n=*=*=*=*=*=*=*=*=*=\n\n", ${1:obj})
+snippet fm
+fmt.Printf("Type: %T Value: %v\n", ${1}, ${1})
+endsnippet
+
+snippet st "struct type"
+	struct ${1:name} type {
+
+	}
+endsnippet
+
+snippet forr "for range loop"
+	for i, v := range vals {
+
+	}
+endsnippet
+
+snippet iferr "if error not nil, return err"
+	if err != nil {
+		return err
+	}
 endsnippet

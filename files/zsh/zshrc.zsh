@@ -46,25 +46,24 @@ fi
 # change the default term to TMUX that it can display 256 colors
 export TERM=xterm-256color
 
-# ===== oh-my-zsh =====
-
-export ZSH="$HOME/.oh-my-zsh"
-
-export ZSH_THEME="powerlevel10k/powerlevel10k"
-
+# ===== plugins =====
 # See all available plugins: https://github.com/ohmyzsh/ohmyzsh/wiki/Plugins
 #
+
 # plugins: zsh related
 plugins+=(
+  auto-notify
   history-substring-search
   z
   zsh-autosuggestions
   zsh-syntax-highlighting
 )
+
 # plugins: git related
 plugins+=(
   git-auto-fetch
 )
+
 # plugins: others (autocomplete & tooling)
 # Caveat: Be mindful when you enable new plugins, add what you really need,
 # because they can be slow.
@@ -81,7 +80,24 @@ plugins+=(
   # yarn
 )
 
-source "$ZSH"/oh-my-zsh.sh
+# ===== plugins config =====
+
+# auto-notify
+export AUTO_NOTIFY_IGNORE=(vim nvim less more man watch git top htop mynvim gg lg)
+# Set threshold to seconds
+export AUTO_NOTIFY_THRESHOLD=15
+# Set notification expiry miliseconds
+export AUTO_NOTIFY_EXPIRE_TIME=3000
+__computer_emoji="$(echo -e '\xf0\x9f\x92\xbb')"
+export AUTO_NOTIFY_TITLE="${__computer_emoji}  %command"
+export AUTO_NOTIFY_BODY="command finished took %elapsed seconds with exit code %exit_code"
+
+# ===== oh-my-zsh =====
+
+export ZSH="$HOME/.oh-my-zsh"
+export ZSH_THEME="powerlevel10k/powerlevel10k"
+
+source "$ZSH/oh-my-zsh.sh"
 
 # ===== paths =====
 

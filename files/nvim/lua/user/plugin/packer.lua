@@ -10,37 +10,44 @@ Notes:
 local user_utils = require("user.utils")
 local packer = require("packer")
 
--- Autoupdate packer.nvim if the last update was x time ago. Keep the last update
--- date in the disk.
---
-local function autoupdate()
-  local filepath = table.concat({
-    os.getenv("HOME"),
-    "/.config/nvim/.plugin_last_updated",
-  })
+local plugin_updates = {}
+
+function plugin_updates.last_updated_filepath()
+  return table.concat({ os.getenv("HOME"), "/.config/nvim/.plugin_last_updated" })
+end
+
+function plugin_updates.reminder()
+  local filepath = plugin_updates.last_updated_filepath()
+  -- initialize the file if not exists
   if not user_utils.file_exists(filepath) then
     user_utils.file_write(filepath, os.time())
     return
   end
+  -- if last updated is greater than the time specified, raise a
+  -- message
   local file_ts = user_utils.file_read(filepath)
-  local diff = os.date("%d", os.difftime(os.time(), tonumber(file_ts)))
+  local diff_days = os.date("%d", os.difftime(os.time(), tonumber(file_ts)))
   local diff_days_limit = 7
-  if tonumber(diff) > diff_days_limit then
-    -- those packer functions use a homegrown async library. wouldn't bother
-    -- here to do a async pcall to check whether it's done. low prio.
-    packer.compile()
-    packer.update()
-    user_utils.file_write(filepath, os.time())
+  if tonumber(diff_days) > diff_days_limit then
+    vim.api.nvim_echo({ { "[workbench] Time to update packer `:PackUpdate`", "WarningMsg" } }, true, {})
   end
 end
-local augroup_autoupdate = vim.api.nvim_create_augroup("PackerAutoUpdate", { clear = true })
+
+function plugin_updates.packer_update()
+  local filepath = plugin_updates.last_updated_filepath()
+  packer.compile()
+  packer.update()
+  user_utils.file_write(filepath, os.time())
+end
+
+local augroup_autoupdate = vim.api.nvim_create_augroup("PackerUpdateReminder", { clear = true })
 vim.api.nvim_create_autocmd({ "VimEnter" }, {
-  desc = [[
-    Automatically update the plugin packages if the date last passed x days.
-  ]],
+  desc = [[ Reminder to update plugins on start. ]],
   group = augroup_autoupdate,
-  callback = autoupdate,
+  callback = plugin_updates.reminder,
 })
+
+vim.api.nvim_create_user_command("PackUpdate", plugin_updates.packer_update, {})
 
 vim.cmd([[ packadd packer.nvim ]])
 
@@ -55,7 +62,7 @@ packer.startup(function(use)
   })
 
   -- file drawer.
-  use({ "https://github.com/nvim-tree/nvim-tree.lua", commit = "9ef6c3cd8805d868d20106be09ce07f004e8232f" })
+  use({ "https://github.com/nvim-tree/nvim-tree.lua", commit = "9ef6c3cd8805d868d20106be09ce07f004e8232f" }) -- XXX
 
   -- treesitter.
   use({

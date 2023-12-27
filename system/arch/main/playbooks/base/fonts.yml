@@ -4,7 +4,8 @@
 # List fonts
 #   fc-list
 #
-# Match a font from the list
+# Get the currently used font
+#   fc-match monospace
 #   fc-match emoji
 #
 
@@ -42,15 +43,15 @@
       ansible.builtin.copy:
         dest: "{{ ansible_env.HOME }}/.config/fontconfig/fonts.conf"
         content: |
-          <?xml version="1.0"?>
-          <!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd">
+          <?xml version='1.0'?>
+          <!DOCTYPE fontconfig SYSTEM 'urn:fontconfig:fonts.dtd'>
           <fontconfig>
-          <alias>
-             <family>monospace</family>
-             <prefer>
-               <family>JetBrainsMono Nerd Font Mono</family>
-               <family>Noto Color Emoji</family>
-             </prefer>
-           </alias>
+            <alias>
+              <family>monospace</family>
+              <prefer>
+                <family>JetBrainsMono NFP</family>
+                <family>Noto Color Emoji</family>
+              </prefer>
+            </alias>
           </fontconfig>
         mode: "0644"

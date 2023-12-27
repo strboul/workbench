@@ -3,12 +3,6 @@
 # Print the remote details before pushing
 #
 
-git_remote_details() {
-  git config --get remote.origin.url
-}
-
-main() {
-  printf '\e[33mpushing: %s\e[0m\n' "$(git_remote_details)"
-}
-
-main
+REMOTE_NAME="$1"
+URL="$2"
+printf '\e[33mpushing \"%s\": %s\e[0m\n' "$REMOTE_NAME" "$URL"

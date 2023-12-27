@@ -35,5 +35,6 @@
       - "{{ config.packages.pacman.tcpdump }}"  # Powerful command-line packet analyzer
       - "{{ config.packages.pacman.whois }}"  # Intelligent WHOIS client
       - "{{ config.packages.pacman.wireless_tools }}"  # Tools allowing to manipulate the Wireless Extensions
+      - "{{ config.packages.pacman.ipcalc }}"  # Calculates IP broadcast, network, host ranges
     state: present
   become: true

@@ -85,6 +85,7 @@ telescope.setup({
       find_command = { "fd", "--type", "f", "--hidden", "--exclude", ".git" },
     },
   },
+
   defaults = {
     -- All mappings.
     -- https://github.com/nvim-telescope/telescope.nvim/blob/master/lua/telescope/mappings.lua
@@ -106,6 +107,18 @@ telescope.setup({
         ["<cr>"] = custom_actions.my_smart_select,
         ["<C-a>"] = actions.select_all,
       },
+    },
+
+    -- `telescope.builtin.grep_string` uses this config.
+    vimgrep_arguments = {
+      "rg",
+      "--color=never",
+      "--no-heading",
+      "--with-filename",
+      "--line-number",
+      "--column",
+      "--smart-case",
+      "--hidden",
     },
   },
 })

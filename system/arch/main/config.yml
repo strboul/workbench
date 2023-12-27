@@ -21,6 +21,7 @@ config:
       alacritty: community/alacritty
       arc_gtk_theme: community/arc-gtk-theme
       archlinux_keyring: core/archlinux-keyring
+      ark: extra/ark
       bandwhich: community/bandwhich
       base_devel: base-devel
       bat: community/bat
@@ -39,8 +40,9 @@ config:
       direnv: community/direnv
       dmidecode: extra/dmidecode
       docker: community/docker
-      docker_compose: community/docker-compose
       docker_buildx: community/docker-buildx
+      docker_compose: community/docker-compose
+      dolphin: extra/dolphin
       duf: extra/duf
       etckeeper: community/etckeeper
       fd: community/fd
@@ -69,15 +71,19 @@ config:
       gpgme: core/gpgme
       gthumb: extra/gthumb
       gvfs: extra/gvfs
+      gwenview: extra/gwenview
       htop: extra/htop
       hyperfine: community/hyperfine
       inetutils: core/inetutils
+      ipcalc: extra/ipcalc
       iputils: core/iputils
       ipython: community/ipython
       jetbrains_mono_nerd: community/ttf-jetbrains-mono-nerd
       jq: community/jq
       k9s: extra/k9s
+      kde_plasma: plasma
       keepassxc: community/keepassxc
+      konsole: extra/konsole
       kubectl: extra/kubectl
       kubectx: extra/kubectx
       lazygit: community/lazygit
@@ -103,6 +109,7 @@ config:
       noto_fonts_extra: extra/noto-fonts-extra
       npm: community/npm
       ntp: extra/ntp
+      okular: extra/okular
       onefetch: community/onefetch
       openscad: community/openscad
       opensnitch: community/opensnitch

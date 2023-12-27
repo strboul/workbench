@@ -39,6 +39,7 @@ create_container() {
   podman run -it \
     --volume "$HOME/.gitconfig:/root/.gitconfig" \
     --volume "$HOME/.gitignore:/root/.gitignore" \
+    --volume "$HOME/.rgignore:/root/.rgignore" \
     --volume "$WORKBENCH_PATH/files/nvim/init.lua:/root/.config/nvim/init.lua" \
     --volume "$WORKBENCH_PATH/files/nvim/lua:/root/.config/nvim/lua" \
     --volume "$WORKBENCH_PATH/files/nvim/after:/root/.config/nvim/after" \

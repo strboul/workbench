@@ -10,6 +10,10 @@ M.copy_with_metadata = function()
   local end_row, end_col = unpack(vim.api.nvim_buf_get_mark(0, ">"))
   -- get buffer lines by range
   local buf_lines = vim.api.nvim_buf_get_lines(0, start_row - 1, end_row, false)
+  -- Replace tab chars with spaces (default is 4 spaces per tab)
+  for i, line in ipairs(buf_lines) do
+    buf_lines[i] = string.gsub(line, "\t", string.rep(" ", 4))
+  end
   local linestr = table.concat(buf_lines, "\n")
   local selected = table.concat({ "```", linestr, "```" }, "\n")
   -- get path

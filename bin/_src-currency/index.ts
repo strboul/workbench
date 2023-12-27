@@ -26,28 +26,36 @@ class Currency {
     await this.getConversionRate();
     this.calculateTotal();
     console.log(`conversion rate: ${this.rate}`);
-    console.log(`total: ${this.total} ${this.to}`);
+    const total = this.formatNumberWithUnderscores(this.total);
+    console.log(`total: ${total} ${this.to}`);
     this.saveToHistFile();
   }
 
   private async getConversionRate(): Promise<void> {
     const currStr: string = `${this.from}${this.to}`.toUpperCase();
-    const result = await fetch(
-      `https://query1.finance.yahoo.com/v8/finance/chart/${currStr}=X`,
-    );
+    const url = `https://query1.finance.yahoo.com/v8/finance/chart/${currStr}=X`;
+    const result = await fetch(url);
     const json = await result.json();
     const { regularMarketPrice } = json.chart.result[0].meta;
     this.rate = this.signDigits(regularMarketPrice, 4);
   }
 
   private calculateTotal(): void {
-    let total: number = Number(this.amount) * this.rate;
-    total = this.signDigits(total, 2);
-    this.total = total;
+    let result = this.parseNumberWithUnderscores(this.amount) * this.rate;
+    result = this.signDigits(result, 2);
+    this.total = result;
   }
 
   private signDigits(num: number, digits: number): number {
     return Number(num.toFixed(digits));
+  }
+
+  private parseNumberWithUnderscores(input: string): number {
+    return Number(input.replace(/_/g, ""));
+  }
+
+  private formatNumberWithUnderscores(number: number): string {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "_");
   }
 
   private get histFilePath(): string {

@@ -1,0 +1,17 @@
+---
+- name: Extra
+  tags: extra
+  hosts: all
+  tasks:
+    - name: Check routes with routemonitor periodically
+      strboul.notify.check:
+        id: routemonitor
+        condition: "! ~/go/bin/routemonitor -config=~/.config/routemonitor/config.yml"
+        message: |
+          $(~/go/bin/routemonitor -config=~/.config/routemonitor/config.yml 2>&1)
+        options:
+          urgency: critical
+        timer:
+          OnBootSec: 1m
+          OnUnitActiveSec: 5m
+          Persistent: true
