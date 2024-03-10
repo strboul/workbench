@@ -50,6 +50,7 @@ config:
       firefox: extra/firefox
       firewalld: community/firewalld
       flameshot: community/flameshot
+      foliate: extra/foliate
       fuse2: extra/fuse2
       fwupd: community/fwupd
       fzf: community/fzf
@@ -76,6 +77,7 @@ config:
       hyperfine: community/hyperfine
       inetutils: core/inetutils
       ipcalc: extra/ipcalc
+      iperf3: extra/iperf3
       iputils: core/iputils
       ipython: community/ipython
       jetbrains_mono_nerd: community/ttf-jetbrains-mono-nerd
@@ -84,6 +86,7 @@ config:
       kde_plasma: plasma
       keepassxc: community/keepassxc
       konsole: extra/konsole
+      krita: extra/krita
       kubectl: extra/kubectl
       kubectx: extra/kubectx
       lazygit: community/lazygit
@@ -150,6 +153,7 @@ config:
       virtualbox: community/virtualbox
       virtualbox_guest_utils: community/virtualbox-guest-utils
       vlc: extra/vlc
+      w3m: extra/w3m
       wget: extra/wget
       whois: extra/whois
       wireguard_tools: extra/wireguard-tools
@@ -163,6 +167,7 @@ config:
       xfwm4_themes: extra/xfwm4-themes
       xorg_xev: extra/xorg-xev
       yamllint: community/yamllint
+      yq_go: extra/go-yq
       yubikey_manager: community/yubikey-manager
       yubikey_manager_qt: community/yubikey-manager-qt
       yubikey_touch_detector: community/yubikey-touch-detector

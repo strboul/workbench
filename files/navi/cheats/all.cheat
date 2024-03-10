@@ -32,6 +32,9 @@ git config --local user.name "<name>"
 # set local email
 git config --local user.email "<email>"
 
+# list configs
+git config --list
+
 # remove remote-tracking branches
 git fetch --prune
 
@@ -43,6 +46,9 @@ git branch -m <newname>
 
 # rebase branch with master
 git rebase origin master
+
+# rebase commits without changing date
+git -c rebase.instructionFormat='%s%nexec GIT_COMMITTER_DATE="%cD" git commit --amend --no-edit' rebase -i <parent-of-commit-sha>
 
 # abort rebase
 git rebase --abort
@@ -68,11 +74,17 @@ git log -p <filename>
 # search query in git logs
 git log -p -G <query>
 
+# list commits reverse order
+git log --reverse
+
 # search in history
 git grep '<query>' $(git rev-list --all)
 
 # search query in file/folder with history
 git grep '<query>' "$(git rev-list --all -- <file-or-folder>)" -- <file-or-folder>
+
+# compare changes between branches
+git diff master..
 
 # amend and don't edit commit message
 git commit --amend --no-edit
@@ -133,6 +145,9 @@ git archive --format=zip --output <filename>.zip master
 
 # change git ssh command
 GIT_SSH_COMMAND='ssh -vvv' git fetch
+
+# git operate with a specific ssh key
+git -c "core.sshCommand=ssh -i /path/to/key" clone git@example.com:username/repo.git
 
 $ name: git -c log.showSignature=false log --format='%an' | sort -u
 $ email: git -c log.showSignature=false log --format='%ae' | sort -u
@@ -358,9 +373,12 @@ tcpdump -i any
 ; ----------------------------------------------------------------------------
 % socat [network]
 
-; fork: handles connection in a child process, make the parent process attempt
-; to handle more connections.
-; reuseaddr: allows immediate restart of the server process.
+; - fork: handles connection in a child process, make the parent process attempt
+; to handle more connections. You can change `fork` to `lf` which will close the
+; connection after the first message is received.
+;
+; - reuseaddr: allows immediate restart of the server process.
+;
 # listen at port
 socat - TCP4-LISTEN:<port>,fork,reuseaddr
 
@@ -451,6 +469,27 @@ du -sh *
 
 # display free disk space
 df -h
+
+; ----------------------------------------------------------------------------
+; Syntax is based on old IBM Job Control Language (JCL).
+; - if=<file> Input file
+; - of=<file> Output file
+; - bs=<size> Block size.
+; - count=<int> Total number of blocks to copy.
+;
+% dd [disk]
+
+# wipe disk
+dd if=/dev/zero of=/dev/sda bs=4M
+
+# make device bootable with iso
+dd if=file.iso of=/dev/sda bs=4M oflag=direct status=progress
+
+; ----------------------------------------------------------------------------
+% fallocate [disk]
+
+# allocate space to file
+fallocate -l 20G file.img
 
 ; ----------------------------------------------------------------------------
 % lsblk [disk]
@@ -571,7 +610,7 @@ dig +short soa example.com
 # list all records
 dig +noall +answer +multiline example.com any
 
-# get public IP address
+# get public IP address of machine
 dig +short myip.opendns.com @resolver1.opendns.com
 
 # get mDNS hostname
@@ -785,6 +824,9 @@ systemctl --failed
 # edit service file
 sudo EDITOR=vim systemctl edit <service>
 
+# reboot and get into bios
+systemctl reboot --firmware
+
 $ service: systemctl list-units --type=service --no-pager --quiet | awk '{ print $1 }'
 $ user-timer-unit: systemctl --user list-timers --no-pager --quiet | perl -pe 's/^.*(\s+)(.*)(?<=\.timer).*$/\2/g'
 
@@ -796,6 +838,9 @@ docker tag <image-id> <new-tag>
 
 # delete an image
 docker rmi <image_id>
+
+# delete all images
+docker rmi $(docker images -q)
 
 # clean none/dangling images
 docker rmi $(docker images --filter "dangling=true" -q --no-trunc)
@@ -1038,6 +1083,12 @@ curl -L <url>
 # use specific interface
 curl --interface eth0 <url>
 
+# expand shortened urls
+curl -sIL https://goo.gl/l6MS | sed -n 's/Location: *//p'
+
+# send cookies
+curl --cookie "token=12345" http://localhost
+
 $ method: echo -e 'GET\nPOST\nPUT\nDELETE\nPATCH'
 
 ; ----------------------------------------------------------------------------
@@ -1173,7 +1224,7 @@ unzip archive.zip -d destination_folder
 # create tar archive
 tar -czvf filename.tar.gz /path/to/dir1
 
-# extract tar archive
+# extract tar archive, untar
 tar -xzvf filename.tar.gz
 
 ; ----------------------------------------------------------------------------
@@ -1470,8 +1521,29 @@ restic mount /tmp/restic-mount
 ; ----------------------------------------------------------------------------
 % pass [password]
 
+# insert new password
+pass insert archlinux.org/wiki/username
+
+# copy password to clipboard
+pass -c archlinux.org/wiki/username
+
 # multi line insert
 pass insert -m <name>
+
+# edit password
+pass edit archlinux.org/wiki/username
+
+# delete password
+pass rm archlinux.org/wiki/username
+
+; ----------------------------------------------------------------------------
+% etckeeper
+
+# get etc's working tree status
+sudo etckeeper vcs status
+
+# get etc's commit logs
+sudo etckeeper vcs log
 
 ; ----------------------------------------------------------------------------
 % misc

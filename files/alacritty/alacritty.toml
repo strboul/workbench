@@ -1,0 +1,64 @@
+[env]
+# this variable is used to check whether the "terminal emulator" is alacritty
+TERM_PROGRAM = "alacritty"
+
+[window]
+decorations = "none"
+opacity = 1.0
+
+[window.dimensions]
+columns = 70
+lines = 25
+
+[window.padding]
+x = 5
+y = 5
+
+[font]
+size = 9.0
+
+[font.bold]
+family = "monospace"
+style = "Bold"
+
+[font.bold_italic]
+family = "monospace"
+style = "Bold Italic"
+
+[font.italic]
+family = "monospace"
+style = "Italic"
+
+[font.normal]
+family = "monospace"
+style = "Regular"
+
+[colors]
+draw_bold_text_with_bright_colors = true
+
+# Colors (Ubuntu)
+# https://github.com/alacritty/alacritty/wiki/Color-schemes#ubuntu
+
+[colors.bright]
+black = "#555753"
+blue = "#729fcf"
+cyan = "#34e2e2"
+green = "#8ae234"
+magenta = "#ad7fa8"
+red = "#ef2929"
+white = "#eeeeec"
+yellow = "#fce94f"
+
+[colors.normal]
+black = "#2e3436"
+blue = "#3465a4"
+cyan = "#06989a"
+green = "#4e9a06"
+magenta = "#75507b"
+red = "#cc0000"
+white = "#d3d7cf"
+yellow = "#c4a000"
+
+[colors.primary]
+background = "#000000"
+foreground = "#eeeeec"

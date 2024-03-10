@@ -11,6 +11,7 @@
       - "{{ config.packages.pacman.fd }}"  # https://github.com/sharkdp/fd
       - "{{ config.packages.pacman.bat }}"  # https://github.com/sharkdp/bat
       - "{{ config.packages.pacman.jq }}"  # https://github.com/stedolan/jq
+      - "{{ config.packages.pacman.yq_go }}"  # https://github.com/mikefarah/yq
       - "{{ config.packages.pacman.ipython }}"  # https://github.com/ipython/ipython
       - "{{ config.packages.pacman.direnv }}"  # https://github.com/direnv/direnv
       - "{{ config.packages.pacman.hyperfine }}"  # https://github.com/sharkdp/hyperfine

@@ -61,7 +61,6 @@
           - virtualenv
           - pylint  # https://github.com/PyCQA/pylint
           - black  # https://github.com/psf/black
-          - bpython  # https://github.com/bpython/bpython
           - requests  # https://github.com/psf/requests
         state: present
       environment:

@@ -30,33 +30,14 @@
     mode: "0600"
   notify: sshd restart
 
-# Use `ssh-keyscan -t ed25519 github.com` to gather the public keys.
+# Account Manipulation: SSH Authorized Keys
+# <https://attack.mitre.org/techniques/T1098/004/>
+# Change the file owner to root and make it owner writable, but group readable.
 #
-# !! Don't forget to validate the keys from another secure channel that are
-# correct. !!
-#
-- name: Update known hosts
-  block:
-    - name: Get ssh host pubkey
-      ansible.posix.authorized_key:
-        key: "{{ lookup('file', '/etc/ssh/ssh_host_ed25519_key.pub') }}"
-        user: "{{ ansible_user_id }}"
-        state: present
-      register: ssh_host_ed25519_key
-
-    - name: Update known_hosts
-      # I could use `ansible.builtin.known_hosts` but I want block markers.
-      ansible.builtin.blockinfile:
-        path: "{{ vars_ssh.client_path }}/known_hosts"
-        block: |
-          # current host
-          {{ ansible_hostname }} ssh-ed25519 {{ ssh_host_ed25519_key.key.split()[1] }}
-
-          # https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/githubs-ssh-key-fingerprints
-          github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl
-
-          # gitlab doesn't have a website :(
-          gitlab.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAfuCHKVTjquxvt6CM6tdG4SLp1Btn/nOeHHE5UOzRdf
-        mode: "0644"
-        create: true
-        state: present
+- name: Restrict authorized_keys permissions
+  ansible.builtin.file:
+    path: "{{ vars_ssh.client_path }}/authorized_keys"
+    owner: root
+    group: root
+    mode: "0644"
+  become: true

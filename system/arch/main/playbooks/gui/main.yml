@@ -109,6 +109,12 @@
       become: true
       tags: gui.gimp
 
+    # https://krita.org/en/
+    - name: Install krita
+      community.general.pacman: name="{{ config.packages.pacman.krita }}" state=present
+      become: true
+      tags: gui.krita
+
     # https://wiki.gnome.org/Apps/Gthumb
     - name: Install gThumb
       community.general.pacman: name="{{ config.packages.pacman.gthumb }}" state=present
@@ -149,3 +155,9 @@
       community.general.pacman: name="{{ config.packages.pacman.openscad }}" state=present
       become: true
       tags: gui.openscad
+
+    # https://github.com/johnfactotum/foliate
+    - name: Install foliate
+      community.general.pacman: name="{{ config.packages.pacman.foliate }}" state=present
+      become: true
+      tags: gui.foliate

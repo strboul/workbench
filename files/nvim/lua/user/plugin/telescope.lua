@@ -12,40 +12,19 @@ local custom_commands = {}
 
 -- My smart select on Telescope
 --
--- With file finder:
---   if the number of file selections are more than one, open all of them with
---   vsplit in the same window; else, just open the file in the same buffer.
---
--- With find word:
---   if the number of file selections are more than one, put them into the
---   quickfix window; else, just open the file in the same buffer.
+-- If there is a multi selection, put the selected ones into the quickfix
+-- window; else, open the file in the current buffer.
 --
 function custom_actions.my_smart_select(prompt_bufnr)
   local picker = action_state.get_current_picker(prompt_bufnr)
-  -- There's no picker type or something, so I had to choose the prompt title
-  -- (which is bad because it's configurable).
-  local title = picker.prompt_title
-  local multi_selection = picker:get_multi_selection()
-  local num_selections = table.getn(multi_selection)
-  if title == "Find Files" then
-    if num_selections > 1 then
-      for _, entry in ipairs(multi_selection) do
-        vim.cmd(string.format("%s %s", ":vsplit!", entry.value))
-      end
-    else
-      actions.file_edit(prompt_bufnr)
-    end
-  elseif title:match("^Find Word") then
-    if num_selections > 1 then
-      actions.send_selected_to_qflist(prompt_bufnr)
-      actions.open_qflist()
-      -- jump to the first qf match.
-      vim.cmd.cc()
-    else
-      actions.file_edit(prompt_bufnr)
-    end
+  local num_selections = table.getn(picker:get_multi_selection())
+  if num_selections > 1 then
+    actions.send_selected_to_qflist(prompt_bufnr)
+    actions.open_qflist()
+    -- jump to the first qf match.
+    vim.cmd.cc()
   else
-    actions.select_default(prompt_bufnr)
+    actions.file_edit(prompt_bufnr)
   end
 end
 

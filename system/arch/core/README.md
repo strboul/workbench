@@ -2,23 +2,23 @@
 
 My notes of Arch Linux installation.
 
-- Boot with `systemd-boot` to UEFI.
+- Boot with `systemd-boot` via UEFI.
 
-- Newer GPT partition table with two partitions: boot and LUKS encrypted
+- GPT partition table with two partitions: boot and LUKS encrypted
   system.
 
-- BTRFS as the root filesystem with multiple subvolumes.
+- btrfs as root filesystem with multiple subvolumes.
 
 This document should be followed on top of the official
 [Installation Guide](https://wiki.archlinux.org/title/installation_guide).
 
 ## Setup
 
-### Prerequisite
+### Prerequisites
 
 - Prepare an installation medium and boot it with that environment.
 
-On UEFI:
+- On UEFI:
 
   - Disable secure boot.
 
@@ -27,14 +27,14 @@ On UEFI:
     [this step](https://support.thinkcritical.com/kb/articles/switch-windows-10-from-raid-ide-to-ahci)
     to continue using Win 10/11.
 
-  - On Dell, change `Fastboot` from `Minimal` to `Thorough` to perform complete
-    hardware and configuration testing.
+  - (For Dell only) Change `Fastboot` from `Minimal` to `Thorough` to perform
+    complete hardware and configuration testing.
 
 ### Verify boot mode
 
 Verify system is booted via UEFI by listing contents of efivars. If the
-directory does not exist, the system is booted in BIOS mode. This document
-requires the UEFI boot with GPT disk partition.
+directory does not exist, the system is booted to BIOS. This document
+requires the UEFI boot with the newer GPT (not MBR) disk partition.
 
 ```sh
 ls /sys/firmware/efi/efivars || { echo 'boot not uefi!'; exit 1; }
@@ -58,7 +58,7 @@ ping archlinux.org -c 1
 
 ### SSH access
 
-Also possible to access the machine over `ssh` (if you are in the same network):
+Optionally, access the machine over `ssh` from the same network:
 
 1. Check if the ssh service is active: `systemctl status sshd`
 
@@ -410,12 +410,6 @@ date
 
 Install desktop environment, window and display manager, etc.
 
-Install xfce.
-
-```sh
-sudo pacman -S xorg-server xorg-xinit xfce4
-```
-
 Install and setup lightdm.
 
 ```sh
@@ -435,6 +429,12 @@ Enable the lightdm service.
 
 ```sh
 sudo systemctl enable lightdm
+```
+
+Install KDE.
+
+```sh
+sudo pacman -S xorg-server xorg-xinit xfce4
 ```
 
 Network.

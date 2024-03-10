@@ -4,7 +4,7 @@ fail_fast: true
 repos:
 # base hooks
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v4.5.0
     hooks:
     -   id: trailing-whitespace
     -   id: end-of-file-fixer
@@ -23,7 +23,7 @@ repos:
 
 # nvim: lua
 -   repo: https://github.com/JohnnyMorganz/StyLua
-    rev: v0.17.1
+    rev: v0.20.0
     hooks:
       - id: stylua-github
         name: "[lua] stylua"
@@ -31,14 +31,14 @@ repos:
 
 # python: black
 -   repo: https://github.com/psf/black
-    rev: 23.3.0
+    rev: 24.1.1
     hooks:
     -   id: black
         name: "[py] black"
 
 # python: flake8
 -   repo: https://github.com/PyCQA/flake8
-    rev: 4.0.1
+    rev: 7.0.0
     hooks:
     -   id: flake8
         name: "[py] flake8"
@@ -46,7 +46,7 @@ repos:
 
 # python: isort
 -   repo: https://github.com/pycqa/isort
-    rev: 5.12.0
+    rev: 5.13.2
     hooks:
       - id: isort
         name: "[py] isort"
@@ -54,7 +54,7 @@ repos:
 
 # shell: shellcheck
 -   repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: v0.9.0.5
+    rev: v0.9.0.6
     hooks:
     -   id: shellcheck
         name: "[sh] shellcheck"
@@ -67,7 +67,7 @@ repos:
 
 # shell: shfmt - requires golang to build
 -   repo: https://github.com/scop/pre-commit-shfmt
-    rev: v3.6.0-2
+    rev: v3.7.0-4
     hooks:
     -   id: shfmt
         name: "[sh] shfmt"
@@ -85,7 +85,7 @@ repos:
 
 # ansible: ansible-lint
 -   repo: https://github.com/ansible-community/ansible-lint
-    rev: v6.17.0
+    rev: v24.2.0
     hooks:
     -   id: ansible-lint
         name: "[ansible] ansible-lint"

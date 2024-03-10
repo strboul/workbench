@@ -12,6 +12,7 @@
 - name: Install cli utils via pacman
   community.general.pacman:
     name:
+      - "{{ config.packages.pacman.w3m }}"  # https://w3m.sourceforge.net/
       - "{{ config.packages.pacman.navi }}"  # https://github.com/denisidoro/navi
       - "{{ config.packages.pacman.neomutt }}"  # https://neomutt.org/
       - "{{ config.packages.pacman.yamllint }}"  # https://github.com/adrienverge/yamllint

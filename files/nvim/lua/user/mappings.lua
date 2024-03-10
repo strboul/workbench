@@ -38,3 +38,6 @@ vim.keymap.set("n", "<Del>", "<nop>")
 
 -- don't select newline character when doing $.
 vim.keymap.set("x", "$", "g_")
+
+-- duplicate current tab into new tab, avoid "Already only one window" echo.
+vim.keymap.set("n", "<C-w>T", ":tab split<CR>", { noremap = true, silent = true })

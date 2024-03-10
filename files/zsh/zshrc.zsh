@@ -166,16 +166,6 @@ alias la='ll -a'
 # Neovim.
 alias v='mynvim'
 
-# python and bpython using different PYTHONPATH (https://stackoverflow.com/a/22182421)
-bpython() {
-  if test -n "$VIRTUAL_ENV"; then
-    PYTHONPATH="$(python -c 'import sys; print(":".join(sys.path))')" \
-      command bpython "$@"
-  else
-    command bpython "$@"
-  fi
-}
-alias py='command -v bpython &> /dev/null && eval $(command -v bpython) || python'
 # it's annoying to have __pycache__ files laying around.
 export PYTHONDONTWRITEBYTECODE=1
 

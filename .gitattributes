@@ -1,3 +1,8 @@
+# linguist
+*.yml linguist-detectable=true
+*.yaml linguist-detectable=true
+
+# git-crypt
 files/ssh/** filter=git-crypt diff=git-crypt
 files/git/allowed_signers filter=git-crypt diff=git-crypt
 bin/my-restic filter=git-crypt diff=git-crypt
