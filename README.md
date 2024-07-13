@@ -36,6 +36,8 @@ Recommended steps to install the parts in the following order.
 
 ## Development
 
-- Copy current git hooks to the cloned repository: `cp -R files/git/git_templates/hooks/* .git/hooks`
+<details>
 
-- Run `pre-commit install` that installs the hook scripts at `.git/hooks`
+Check `setup.md` for more information.
+
+</details>

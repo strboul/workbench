@@ -24,6 +24,13 @@
         state: present
       become: true
 
+    - name: Install Wayland specific applications
+      community.general.pacman:
+        name:
+          - "{{ config.packages.pacman.wl_clipboard }}"  # xclip replacement
+        state: present
+      become: true
+
     - name: Disable baloo file indexer
       become: true
       block:

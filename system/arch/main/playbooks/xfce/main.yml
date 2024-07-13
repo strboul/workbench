@@ -42,7 +42,7 @@
           - "{{ config.packages.pacman.viewnior }}"
           - "{{ config.packages.pacman.file_roller }}"  # Archive manager | https://fileroller.sourceforge.net/
           - "{{ config.packages.pacman.flameshot }}"  # Screenshot | https://github.com/flameshot-org/flameshot
-          - "{{ config.packages.pacman.peek }}"  # GIF recorder | https://github.com/phw/peek
+          - "{{ config.packages.pacman.kooha }}"  # GIF recorder | https://github.com/SeaDve/Kooha
         state: present
       become: true
 

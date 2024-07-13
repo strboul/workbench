@@ -1,0 +1,78 @@
+#!/usr/bin/env python
+
+# TODO: make it work.
+
+import argparse
+import hashlib
+import pathlib
+
+# List duplicated files
+#
+# Usage:
+#   list-duplicated-files <path>
+#
+# Example:
+#   For instance, you have the following files.
+#       .
+#   ├── 1
+#   ├── 2
+#   ├── 3
+#   ├── bar
+#   │   ├── 2
+#   │   └── 3
+#   └── foo
+#       ├── 1
+#       └── 2
+#
+#   The sha256sum values of e.g. 1 and foo/1 are the same.
+#
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(allow_abbrev=False)
+    parser.add_argument("path", type=str, help="Path to folder")
+    args = parser.parse_args()
+    return args
+
+
+def get_file_hash(file_path):
+    sha256_hash = hashlib.sha256()
+    with open(file_path, "rb") as file:
+        for byte_block in iter(lambda: file.read(4096), b""):
+            sha256_hash.update(byte_block)
+    return sha256_hash.hexdigest()
+
+
+def find_duplicate_files(root_path):
+    duplicate_files = {}
+
+    for file_path in root_path.rglob("*.*"):
+        sha256_value = ""
+        if file_path.is_file():
+            sha256_value = get_file_hash(file_path)
+        if sha256_value:
+            if not duplicate_files.get(sha256_value):
+                duplicate_files[sha256_value] = []
+            duplicate_files[sha256_value].append(file_path)
+
+    return duplicate_files
+
+
+def main():
+    args = parse_args()
+    path = pathlib.Path(args.path)
+    duplicate_files = find_duplicate_files(path)
+
+    stats = {"files": 0, "groups": 0}
+    for files in duplicate_files.values():
+        if len(files) > 1:
+            stats["groups"] += 1
+            for file in files:
+                print(file)
+                stats["files"] += 1
+            print(" ")
+    print(f"Found {stats['files']} duplicated files in {stats['groups']} groups")
+
+
+if __name__ == "__main__":
+    main()

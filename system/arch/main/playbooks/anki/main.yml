@@ -1,0 +1,35 @@
+# Anki
+# https://apps.ankiweb.net/
+#
+---
+- name: Anki
+  tags: anki
+  hosts: all
+  vars:
+    anki_version: "24.06.3"
+  tasks:
+    - name: Install dependencies
+      community.general.pacman:
+        name:
+          - "{{ config.packages.pacman.mpv }}"
+        state: present
+      become: true
+
+    - name: Download Anki with QT6 version
+      ansible.builtin.get_url:
+        url: "https://github.com/ankitects/anki/releases/download/{{ anki_version }}/anki-{{ anki_version }}-linux-qt6.tar.zst"
+        dest: "/tmp/anki.tar.zst"
+        mode: "0644"
+
+    - name: Extract Anki tarball
+      ansible.builtin.unarchive:
+        src: "/tmp/anki.tar.zst"
+        dest: "/tmp"
+        remote_src: true
+
+    - name: Install Anki
+      ansible.builtin.command: "./install.sh"
+      args:
+        chdir: "/tmp/anki"
+      become: true
+      changed_when: false

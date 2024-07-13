@@ -1,0 +1,14 @@
+---
+# Wacom
+# https://wiki.archlinux.org/title/Graphics_tablet
+#
+- name: wacom
+  tags: wacom
+  hosts: all
+  tasks:
+    - name: Install utilities
+      community.general.pacman:
+        name:
+          - "{{ config.packages.pacman.wacomtablet }}"
+        state: present
+      become: true

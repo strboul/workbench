@@ -17,7 +17,7 @@
       - "{{ config.packages.pacman.hyperfine }}"  # https://github.com/sharkdp/hyperfine
       - "{{ config.packages.pacman.ranger }}"  # https://github.com/ranger/ranger
       - "{{ config.packages.pacman.gdu }}"  # https://github.com/dundee/gdu
-      - "{{ config.packages.pacman.neofetch }}"  # https://github.com/dylanaraps/neofetch
+      - "{{ config.packages.pacman.fastfetch }}"  # https://github.com/fastfetch-cli/fastfetch
       - "{{ config.packages.pacman.onefetch }}"  # https://github.com/o2sh/onefetch
       - "{{ config.packages.pacman.duf }}"  # https://github.com/muesli/duf
     state: present

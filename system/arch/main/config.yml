@@ -45,6 +45,7 @@ config:
       dolphin: extra/dolphin
       duf: extra/duf
       etckeeper: community/etckeeper
+      fastfetch: extra/fastfetch
       fd: community/fd
       file_roller: extra/file-roller
       firefox: extra/firefox
@@ -86,10 +87,12 @@ config:
       kde_plasma: plasma
       keepassxc: community/keepassxc
       konsole: extra/konsole
+      kooha: extra/kooha
       krita: extra/krita
       kubectl: extra/kubectl
       kubectx: extra/kubectx
       lazygit: community/lazygit
+      leafpad: extra/leafpad
       libreoffice_fresh: extra/libreoffice-fresh
       libssh2: core/libssh2
       libssh: extra/libssh
@@ -100,8 +103,8 @@ config:
       man_pages: core/man-pages
       meld: extra/meld
       minikube: community/minikube
+      mpv: extra/mpv
       navi: community/navi
-      neofetch: community/neofetch
       neomutt: community/neomutt
       neovim: community/neovim
       nmap: extra/nmap
@@ -112,6 +115,7 @@ config:
       noto_fonts_extra: extra/noto-fonts-extra
       npm: community/npm
       ntp: extra/ntp
+      obs_studio: extra/obs-studio
       okular: extra/okular
       onefetch: community/onefetch
       openscad: community/openscad
@@ -119,7 +123,6 @@ config:
       openssh: core/openssh
       pacman_contrib: extra/pacman-contrib
       pass: community/pass
-      peek: community/peek
       podman: extra/podman
       postgresql: extra/postgresql
       pwgen: community/pwgen
@@ -154,12 +157,14 @@ config:
       virtualbox_guest_utils: community/virtualbox-guest-utils
       vlc: extra/vlc
       w3m: extra/w3m
+      wacomtablet: extra/wacomtablet
       wget: extra/wget
       whois: extra/whois
       wireguard_tools: extra/wireguard-tools
       wireless_tools: extra/wireless_tools
       wireshark_cli: extra/wireshark-cli
       wireshark_qt: extra/wireshark-qt
+      wl_clipboard: extra/wl-clipboard
       xclip: extra/xclip
       xcolor: community/xcolor
       xdg_utils: extra/xdg-utils
@@ -186,7 +191,6 @@ config:
       clang_format_static_bin: clang-format-static-bin
       docker_credential_secretservice: docker-credential-secretservice
       google_chrome: google-chrome
-      lazydocker: lazydocker
       mullvad_vpn_bin: mullvad-vpn-bin
       opensnitch_ebpf_module: opensnitch-ebpf-module
       shellcheck: shellcheck-bin

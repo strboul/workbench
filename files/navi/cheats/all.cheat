@@ -39,7 +39,7 @@ git config --list
 git fetch --prune
 
 # squash merge branch
-git merge --squash <uncheckout-branch>
+git merge --squash <uncheckout-branch-no-master>
 
 # rename current branch
 git branch -m <newname>
@@ -55,6 +55,9 @@ git rebase --abort
 
 # rename branch
 git branch -m <oldname> <newname>
+
+# delete branch
+git branch -d <uncheckout-branch-no-master>
 
 # list remote origins
 git remote -v
@@ -93,7 +96,7 @@ git commit --amend --no-edit
 git commit --allow-empty --amend --no-edit
 
 # create fixup commit
-git commit --fixup <commit_sha_current_branch>
+git commit --fixup <branch-commit-sha>
 
 # by skipping commit hooks
 git commit --no-verify
@@ -151,9 +154,9 @@ git -c "core.sshCommand=ssh -i /path/to/key" clone git@example.com:username/repo
 
 $ name: git -c log.showSignature=false log --format='%an' | sort -u
 $ email: git -c log.showSignature=false log --format='%ae' | sort -u
-$ uncheckout-branch: git branch --list | awk '{ if ($1 != "*") { print $1 } }'
+$ uncheckout-branch-no-master: git branch --list | awk '{ if ($1 != "*" && $1 != "master" && $1 != "main") { print $1 } }'
 $ file-or-folder: find * -type f -o -type d
-$ commit_sha_current_branch: git -c log.showSignature=false log --format="%C(auto) %H %s" --no-merges master.. | fzf | awk '{ print $1 }'
+$ branch-commit-sha: git -c log.showSignature=false log --format="%C(auto) %H %s" --no-merges master.. | fzf | awk '{ print $1 }'
 
 ; ----------------------------------------------------------------------------
 % ssh [security]
@@ -366,6 +369,9 @@ tcpdump --print -w capture.pcap
 
 # monitor outgoing connections except ssh
 tcpdump -i eth0 port not 22 and src <source-ip>
+
+# monitor interface except destination cidr
+tcpdump -n -i eth0 not dst net 10.10.10.0/24
 
 # listen all interfaces
 tcpdump -i any
@@ -836,6 +842,9 @@ $ user-timer-unit: systemctl --user list-timers --no-pager --quiet | perl -pe 's
 # tag an image
 docker tag <image-id> <new-tag>
 
+# build image without cache
+docker build --no-cache -t <name> .
+
 # delete an image
 docker rmi <image_id>
 
@@ -879,13 +888,16 @@ docker system prune
 docker stats
 
 ; ----------------------------------------------------------------------------
-% docker-compose [docker]
+% docker compose [docker]
 
 # start containers detached, force recreated
 docker compose up --detach --force-recreate
 
 # stop and remove containers, networks
 docker compose down
+
+# exec into container
+docker compose exec -it <container> bash
 
 ; ----------------------------------------------------------------------------
 % fdisk [disk]
@@ -1284,8 +1296,11 @@ python -m http.server <port> --bind <address>
 # convert unix time to datetime
 python -c "import datetime; print(datetime.datetime.fromtimestamp(0))"
 
-# Pretty print json
+# pretty print json
 <json> | python -m json.tool
+
+# list python paths
+python -c "import sys;print(sys.path)"
 
 $ port: echo "3333" --- --fzf-overrides '--no-select-1'
 $ address: echo "127.0.0.1" --- --fzf-overrides '--no-select-1'
@@ -1307,6 +1322,9 @@ pyenv local <version>
 
 # temporarily set version
 pyenv shell <version>
+
+# rehash pyenv shims if executable isn't in ~/.pyenv/shims
+pyenv rehash
 
 ; ----------------------------------------------------------------------------
 % xdg [linux]
@@ -1354,10 +1372,16 @@ timeout 5 bash -c ': < /dev/tcp/<host>/<port>'
 getent hosts archlinux.org
 
 ; ----------------------------------------------------------------------------
-% xclip [unix]
+% xclip [xorg]
 
-# copy file contents to clipboard
+# copy file to clipboard
 xclip -selection clipboard < /path/to/file.txt
+
+; ----------------------------------------------------------------------------
+% wl-clipboard [wayland]
+
+# copy file to clipboard
+wl-copy < /path/to/file.txt
 
 ; ----------------------------------------------------------------------------
 % neomutt [mutt, email]
@@ -1503,6 +1527,12 @@ kubectl delete pod -n <namespace> <pod_name>
 # get cluster information
 kubectl config get-contexts
 
+# remove deployment pods
+kubectl scale deployment/hello-node --replicas=0
+
+# create and run pod on the fly
+kubectl run tmp-python-312 --image='python:3.12-bullseye'
+
 ; ----------------------------------------------------------------------------
 % restic [backup]
 
@@ -1535,6 +1565,12 @@ pass edit archlinux.org/wiki/username
 
 # delete password
 pass rm archlinux.org/wiki/username
+
+; ----------------------------------------------------------------------------
+% ansible
+
+# run ad-hoc commands
+ansible -v <inventory_group> -m ansible.builtin.shell -a 'ls /'
 
 ; ----------------------------------------------------------------------------
 % etckeeper

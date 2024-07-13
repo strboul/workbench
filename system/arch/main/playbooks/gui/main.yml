@@ -161,3 +161,15 @@
       community.general.pacman: name="{{ config.packages.pacman.foliate }}" state=present
       become: true
       tags: gui.foliate
+
+    # http://tarot.freeshell.org/leafpad/
+    - name: Install leafpad
+      community.general.pacman: name="{{ config.packages.pacman.leafpad }}" state=present
+      become: true
+      tags: gui.leafpad
+
+    # https://github.com/obsproject/obs-studio
+    - name: Install Open Broadcaster Software
+      community.general.pacman: name="{{ config.packages.pacman.obs_studio }}" state=present
+      become: true
+      tags: gui.obs_studio

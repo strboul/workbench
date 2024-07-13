@@ -34,13 +34,18 @@ export XDG_STATE_HOME="$HOME/.local/state"
 # Initialize tmux on zsh start-up if
 # (1) tmux exists,
 # (2) terminal emulator is alacritty.
-if command -v tmux > /dev/null; then
-  [ -z "$TMUX" ] \
-    && [ "$TERM_PROGRAM" = "alacritty" ] \
-    &&
-    # -u   is for UTF-8
-    # -2   force tmux to assume the terminal supports 256 colours.
-    exec tmux -2 -u
+#
+# (if true is easy switch on/off for testing purposes).
+#
+if true; then
+  if command -v tmux > /dev/null; then
+    [ -z "$TMUX" ] \
+      && [ "$TERM_PROGRAM" = "alacritty" ] \
+      &&
+      # -u   is for UTF-8
+      # -2   force tmux to assume the terminal supports 256 colours.
+      exec tmux -2 -u
+  fi
 fi
 
 # change the default term to TMUX that it can display 256 colors
@@ -57,6 +62,7 @@ plugins+=(
   z
   zsh-autosuggestions
   zsh-syntax-highlighting
+  you-should-use
 )
 
 # plugins: git related
@@ -68,16 +74,8 @@ plugins+=(
 # Caveat: Be mindful when you enable new plugins, add what you really need,
 # because they can be slow.
 plugins+=(
-  # aws
   direnv
-  docker
-  docker-compose
-  # helm
-  # kubectl
-  # npm
   pass
-  terraform
-  # yarn
 )
 
 # ===== plugins config =====
@@ -93,6 +91,10 @@ export AUTO_NOTIFY_TITLE="${__computer_emoji}  %command"
 export AUTO_NOTIFY_BODY="command finished took %elapsed seconds with exit code %exit_code"
 
 # ===== oh-my-zsh =====
+
+# https://github.com/ohmyzsh/ohmyzsh#skip-aliases
+# Skip all aliases in lib files
+zstyle ':omz:lib:*' aliases no
 
 export ZSH="$HOME/.oh-my-zsh"
 export ZSH_THEME="powerlevel10k/powerlevel10k"
@@ -148,6 +150,9 @@ setopt EXTENDED_HISTORY
 export HISTORY_IGNORE="(ls|cd|cd ..|pwd|exit)"
 
 # ===== aliases =====
+#
+# - Run `zsh -i -x -c '' |& grep <alias>` to find where an alias is defined.
+#
 
 __cdr() {
   # jump to the root path of a git repository
@@ -158,13 +163,19 @@ alias cdr="__cdr"
 alias cp='cp -iv' # 'cp' prompt and verbose
 alias mv='mv -iv' # 'mv' prompt and verbose
 
-# list.
+# list
 alias ls='myls'
 alias ll='ls -lh'
 alias la='ll -a'
 
-# Neovim.
+# Neovim
 alias v='mynvim'
+
+# misc
+alias history=omz_history
+alias grep='grep --color=auto --exclude-dir={.bzr,CVS,.git,.hg,.svn,.idea,.tox}'
+alias fgrep='grep -F --color=auto --exclude-dir={.bzr,CVS,.git,.hg,.svn,.idea,.tox}'
+alias egrep='grep -E --color=auto --exclude-dir={.bzr,CVS,.git,.hg,.svn,.idea,.tox}'
 
 # it's annoying to have __pycache__ files laying around.
 export PYTHONDONTWRITEBYTECODE=1

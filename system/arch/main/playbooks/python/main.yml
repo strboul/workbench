@@ -51,7 +51,7 @@
       loop:
         - "2.7.18"  # last release of Python 2
         - "3.8-dev"
-        - "3.11-dev"
+        - "3.12-dev"
       register: pyenv_install
       notify: Set default pyenv version
 

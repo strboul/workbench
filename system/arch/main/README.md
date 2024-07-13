@@ -14,7 +14,7 @@ Install Ansible and Ansible Galaxy requirements.
 
 ```sh
 sudo pacman -S ansible
-ansible-galaxy collection install -r ansible-galaxy.yml
+ansible-galaxy collection install -r requirements.yml
 ```
 
 ## 2. Run

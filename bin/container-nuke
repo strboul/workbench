@@ -34,7 +34,7 @@ remove_images() {
 
 remove_volumes() {
   utils__log__info "force removing volumes"
-  "$COMMAND" volume prune -f || true
+  "$COMMAND" volume prune --all -f || true
 }
 
 remove_build_cache() {

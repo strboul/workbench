@@ -1,0 +1,37 @@
+name: pre-commit
+
+on:
+  push:
+
+env:
+  # pre-commit action doesn't get installed otherwise
+  PIP_REQUIRE_VIRTUALENV: false
+
+jobs:
+  pre-commit:
+    if: false # FIXME: disable it for now.
+    runs-on: ubuntu-22.04
+    timeout-minutes: 3
+    # XXX because of gitea. this is ever resolved, remove the line below.
+    container: catthehacker/ubuntu:act-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12.4"
+
+      - name: Run symlinks
+        run: |
+          export WORKBENCH_PATH="$(pwd)"
+          ./files/symlink
+
+      - name: Install Ansible requirements
+        run: |
+          python -m pip install ansible
+          ansible-galaxy collection install -r system/arch/main/requirements.yml
+
+      - name: Run pre-commit
+        uses: pre-commit/action@v3.0.1

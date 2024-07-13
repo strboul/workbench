@@ -57,6 +57,7 @@
     - { repo: "https://github.com/zsh-users/zsh-syntax-highlighting.git", dest: "zsh-syntax-highlighting" }
     - { repo: "https://github.com/zsh-users/zsh-history-substring-search.git", dest: "zsh-history-substring-search" }
     - { repo: "https://github.com/MichaelAquilina/zsh-auto-notify.git", dest: "auto-notify" }
+    - { repo: "https://github.com/MichaelAquilina/zsh-you-should-use", dest: "you-should-use" }
 
 - name: Install powerlevel10k prompt
   block:

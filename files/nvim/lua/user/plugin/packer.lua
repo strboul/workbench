@@ -97,4 +97,8 @@ packer.startup(function(use)
 
   -- ansible.
   use({ "https://github.com/pearofducks/ansible-vim" })
+
+  -- multiple search. TODO:
+  -- I need highlight under the cursor, visual selection.
+  use({ "https://github.com/vim-scripts/MultipleSearch" })
 end)

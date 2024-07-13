@@ -3,7 +3,7 @@
   ansible.builtin.pip:
     name:
       - tmuxp  # https://github.com/tmux-python/tmuxp
-      - youtube-dl  # https://github.com/ytdl-org/youtube-dl
+      - yt-dlp[default]  # https://github.com/yt-dlp/yt-dlp
       - visidata  # https://www.visidata.org/
     state: present
   environment:
@@ -27,4 +27,3 @@
     state: present
   loop:
     - "{{ config.packages.aur.shellcheck }}"  # AUR gives binary, dep free version https://github.com/koalaman/shellcheck
-    - "{{ config.packages.aur.lazydocker }}"  # https://github.com/jesseduffield/lazydocker
