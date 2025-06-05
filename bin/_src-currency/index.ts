@@ -16,6 +16,9 @@ class Currency {
   private total!: number;
 
   constructor(args: ICurrency) {
+    if (!args || !args.amount || !args.from || !args.to) {
+      Log.error("Missing required arguments: amount, from, to");
+    }
     this.amount = args.amount;
     this.from = args.from;
     this.to = args.to;
@@ -35,6 +38,9 @@ class Currency {
     const currStr: string = `${this.from}${this.to}`.toUpperCase();
     const url = `https://query1.finance.yahoo.com/v8/finance/chart/${currStr}=X`;
     const result = await fetch(url);
+    if (!result.ok) {
+      Log.error(`${result.statusText} - HTTP status: ${result.status}`);
+    }
     const json = await result.json();
     const { regularMarketPrice } = json.chart.result[0].meta;
     this.rate = this.signDigits(regularMarketPrice, 4);

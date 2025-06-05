@@ -38,11 +38,13 @@
         state: present
       tags: gui.brave
 
-    # https://wiki.archlinux.org/title/Visual_Studio_Code (open source version)
-    - name: Install code
-      community.general.pacman: name="{{ config.packages.pacman.code }}" state=present
-      become: true
-      tags: gui.code
+    # https://code.visualstudio.com/
+    - name: Visual Studio Code (official binary)
+      kewlfft.aur.aur:
+        use: yay
+        name: "{{ config.packages.aur.visual_studio_code_bin }}"
+        state: present
+      tags: gui.vscode
 
     # https://wiki.archlinux.org/title/Zathura
     - name: Install Zathura
@@ -69,23 +71,6 @@
     - name: Setup Thunderbird
       ansible.builtin.import_tasks: thunderbird.yml
       tags: gui.thunderbird
-
-    - name: Install Slack desktop
-      kewlfft.aur.aur:
-        use: yay
-        name: "{{ config.packages.aur.slack_desktop }}"
-        state: present
-      tags: gui.slack
-
-    - name: Install Signal
-      community.general.pacman: name="{{ config.packages.pacman.signal_desktop }}" state=present
-      become: true
-      tags: gui.signal
-
-    - name: Install Telegram
-      community.general.pacman: name="{{ config.packages.pacman.telegram_desktop }}" state=present
-      become: true
-      tags: gui.telegram
 
     # https://www.wireshark.org/
     - name: Install Wireshark
@@ -114,18 +99,6 @@
       community.general.pacman: name="{{ config.packages.pacman.krita }}" state=present
       become: true
       tags: gui.krita
-
-    # https://wiki.gnome.org/Apps/Gthumb
-    - name: Install gThumb
-      community.general.pacman: name="{{ config.packages.pacman.gthumb }}" state=present
-      become: true
-      tags: gui.gthumb
-
-    # https://github.com/Soft/xcolor
-    - name: Install xcolor
-      community.general.pacman: name="{{ config.packages.pacman.xcolor }}" state=present
-      become: true
-      tags: gui.xcolor
 
     - name: Install gnome-disk-utility
       community.general.pacman: name="{{ config.packages.pacman.gnome_disk_utility }}" state=present
@@ -173,3 +146,16 @@
       community.general.pacman: name="{{ config.packages.pacman.obs_studio }}" state=present
       become: true
       tags: gui.obs_studio
+
+    # https://github.com/flameshot-org/flameshot
+    - name: Install Flameshot
+      community.general.pacman: name="{{ config.packages.pacman.flameshot }}" state=present
+      become: true
+      tags: gui.flameshot
+
+    # https://github.com/SeaDve/Kooha
+    - name: Install Kooha
+      community.general.pacman: name="{{ config.packages.pacman.kooha }}" state=present
+      become: true
+      tags: gui.kooha
+

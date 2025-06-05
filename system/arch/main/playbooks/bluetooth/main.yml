@@ -13,13 +13,12 @@
         state: present
       become: true
 
-    - name: Be sure bluetooth is always running
-      ansible.builtin.command: /bin/true
-      changed_when: false
-      notify: Bluetooth running
-
-    - name: Run notified handlers
-      ansible.builtin.meta: flush_handlers
+    - name: Bluetooth running
+      ansible.builtin.systemd:
+        name: bluetooth
+        state: started
+        enabled: true
+      become: true
 
     - name: Check if bluetooth conf file exists
       ansible.builtin.stat:
@@ -42,11 +41,3 @@
         - { regexp: "^#AutoEnable=", line: "AutoEnable=true" }
       become: true
       when: bluetooth_conf_file.stat.exists
-
-  handlers:
-    - name: Bluetooth running
-      ansible.builtin.systemd:
-        name: bluetooth
-        state: started
-        enabled: true
-      become: true

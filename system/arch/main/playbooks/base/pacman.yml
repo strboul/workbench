@@ -52,64 +52,49 @@
     mode: "0644"
   become: true
 
-- name: Create unneeded packages hook
+- name: Create hook to list orphan packages
   ansible.builtin.blockinfile:
-    path: /etc/pacman.d/hooks/unneeded-packages.hook
+    path: /etc/pacman.d/hooks/orphan-packages.hook
     block: |
       [Trigger]
-      Operation = Install
       Operation = Upgrade
-      Operation = Remove
       Type = Package
       Target = *
 
       [Action]
-      Description = Checking for unneeded packages
+      Description = Listing orphan packages...
       When = PostTransaction
       Exec = /bin/bash -c '/usr/bin/pacman -Qtdq || true'
     mode: "0644"
     create: true
   become: true
 
-# TODO: remove this block of update. Add `pacman -Syu` as a prerequisite to the
-# README of system/arch/main.
+- name: Create hook to keep last versions of all packages
+  ansible.builtin.blockinfile:
+    path: /etc/pacman.d/hooks/keep-last-packages.hook
+    block: |
+      [Trigger]
+      Operation = Upgrade
+      Type = Package
+      Target = *
 
-# Create a dummy file to check if system is updated via Ansible in the
-# beginning. Because I only want to update the system via Ansible once in the
-# beginning, and for the subsequent runs, I want to control this process
-# myself.
-- name: Check file for pacman updated
-  ansible.builtin.stat:
-    path: "{{ pacman_updated_file }}"
-  register: pacman_system_updated_status
-
-- name: Update archlinux-keyring
-  community.general.pacman: name="{{ config.packages.pacman.archlinux_keyring }}" state=present
-  become: true
-
-- name: pacman -Syu to update the system
-  community.general.pacman:
-    update_cache: true
-    upgrade: true
-  become: true
-  throttle: 1  # don't hammer arch servers
-  when: not pacman_system_updated_status.stat.exists
-  register: pacman_system_updated
-
-- name: Create file for pacman updated
-  ansible.builtin.copy:
-    dest: "{{ pacman_updated_file }}"
-    content: "{{ lookup('pipe', 'date') }}\n"  # add timestamp info inside
+      [Action]
+      Description = Removing old packages from cache...
+      When = PostTransaction
+      Exec = /usr/bin/paccache --remove --keep 3
+      Depends = pacman-contrib
     mode: "0644"
-  when: pacman_system_updated.changed
+    create: true
+  become: true
 
 - name: Set notification service to check package updates
   strboul.notify.check:
     id: pacman-updates
     condition: checkupdates
     message: |
-      There are pending updates in the system.
-
+      There are pending upgrades in the system.
+      *** Don't forget to take a backup before upgrade. ***
+      ---
       $(checkupdates)
     options:
       urgency: critical

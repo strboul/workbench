@@ -76,7 +76,7 @@ packer.startup(function(use)
   use({ "https://github.com/neoclide/coc.nvim", branch = "release" })
 
   -- which key.
-  use({ "https://github.com/folke/which-key.nvim" })
+  use({ "https://github.com/folke/which-key.nvim", commit = "0539da005b98b02cf730c1d9da82b8e8edb1c2d2" }) -- XXX
 
   -- indentation bars.
   use("https://github.com/lukas-reineke/indent-blankline.nvim")

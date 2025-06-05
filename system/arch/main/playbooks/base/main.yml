@@ -39,6 +39,10 @@
       ansible.builtin.import_tasks: yay.yml
       tags: base.yay
 
+    - name: Setup locale
+      ansible.builtin.import_tasks: locale.yml
+      tags: base.locale
+
     - name: Base packages
       ansible.builtin.import_tasks: packages.yml
       tags: base.packages

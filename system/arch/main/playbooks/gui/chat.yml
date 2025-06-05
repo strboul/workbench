@@ -1,0 +1,29 @@
+---
+- name: Install Signal
+  community.general.pacman: name="{{ config.packages.pacman.signal_desktop }}" state=present
+  become: true
+  tags: gui.signal
+
+- name: Install Telegram
+  community.general.pacman: name="{{ config.packages.pacman.telegram_desktop }}" state=present
+  become: true
+  tags: gui.telegram
+
+- name: Install Slack desktop
+  kewlfft.aur.aur:
+    use: yay
+    name: "{{ config.packages.aur.slack_desktop }}"
+    state: present
+  tags: gui.slack
+
+- name: Install Discord
+  community.general.pacman: name="{{ config.packages.pacman.discord }}" state=present
+  become: true
+  tags: gui.discord
+
+# Matrix collaboration client
+# https://element.io
+- name: Install Element
+  community.general.pacman: name="{{ config.packages.pacman.element_desktop }}" state=present
+  become: true
+  tags: gui.element_desktop

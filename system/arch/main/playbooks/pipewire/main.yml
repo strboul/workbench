@@ -1,15 +1,31 @@
 ---
-# Pulseaudio control - details
-#   pactl info
+# Pipewire
 #
-# Pipewire control - details
-#   wpctl status
+# Useful commands:
+#   Pulseaudio control status
+#     pactl info
+#
+#   Wireplumber control status
+#     wpctl status
+#
+#   Test speakers
+#     speaker-test -c 2 -t wav -l 1
 #
 - name: Pipewire
   tags: pipewire
   hosts: all
   tasks:
-    # - name: Install pipewire
+    - name: Install pipewire
+      community.general.pacman:
+        name:
+          - "{{ config.packages.pacman.pipewire }}"
+          - "{{ config.packages.pacman.pipewire_alsa }}"
+          - "{{ config.packages.pacman.pipewire_pulse }}"
+          - "{{ config.packages.pacman.pipewire_jack }}"
+          - "{{ config.packages.pacman.wireplumber }}"
+          - "{{ config.packages.pacman.alsa_utils }}"
+        state: present
+      become: true
 
     - name: Create pipewire user config dir
       ansible.builtin.file:

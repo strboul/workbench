@@ -3,10 +3,7 @@
 # lazygit wrapper (alias)
 #
 
-source "$WORKBENCH_PATH/bin/_utils/utils.sh"
-
 main() {
-  utils__git__check_repository "$(pwd)"
   tmux-zoom lazygit
 }
 

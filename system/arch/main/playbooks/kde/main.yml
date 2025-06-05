@@ -6,13 +6,6 @@
   tags: kde
   hosts: all
   tasks:
-    - name: Install KDE Plasma
-      community.general.pacman:
-        name:
-          - "{{ config.packages.pacman.kde_plasma }}"
-        state: present
-      become: true
-
     - name: Install KDE applications
       community.general.pacman:
         name:
@@ -21,6 +14,7 @@
           - "{{ config.packages.pacman.gwenview }}"  # image viewer
           - "{{ config.packages.pacman.okular }}"  # pdf viewer
           - "{{ config.packages.pacman.ark }}"  # compression utility
+          - "{{ config.packages.pacman.partitionmanager }}"  # manage disks
         state: present
       become: true
 
@@ -47,9 +41,3 @@
             - balooctl disable
             - balooctl purge
           changed_when: kde_balooctl_status.rc not in [0, 1]
-
-    # - name: Configure KDE
-      # TODO
-      # https://github.com/shalva97/kde-configuration-files
-      # https://github.com/shalva97/kde-configuration-files/blob/b011186249deb8b3c268d5dab9cb0f84739127b8/setupKDE.fish#L4
-      # https://github.com/gjpin/arch-linux/blob/d4f111b944b17f4de51c2969f8e7ad1a62e036b9/plasma.sh

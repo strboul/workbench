@@ -12,7 +12,6 @@ nvim_version() { nvim --version | head -n 1; }
 fzf_version() { printf "fzf %s" "$(fzf --version)"; }
 alacritty_version() { alacritty --version; }
 ripgrep_version() { rg --version | awk 'ORS=" "'; }
-bat_version() { bat --version; }
 fd_version() { fd --version; }
 git_version() { git --version; }
 lazygit_version() {
@@ -42,7 +41,6 @@ main() {
   new_row "$(lazygit_version)"
   new_row "$(alacritty_version)"
   new_row "$(ripgrep_version)"
-  new_row "$(bat_version)"
   new_row "$(fd_version)"
   new_row "$(gitsubstatus_version)"
 }

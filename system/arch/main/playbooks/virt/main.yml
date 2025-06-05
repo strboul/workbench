@@ -9,6 +9,7 @@
       tags: virt.libvirt
       notify: libvirtd running
 
+    # https://virt-manager.org/
     - name: Install virt-manager
       community.general.pacman: name="{{ config.packages.pacman.virt_manager }}" state=present
       become: true
@@ -31,6 +32,7 @@
       become: true
       tags: virt.virtualbox
 
+    # https://apps.gnome.org/Boxes/
     - name: Install gnome-boxes
       community.general.pacman: name="{{ config.packages.pacman.gnome_boxes }}" state=present
       become: true

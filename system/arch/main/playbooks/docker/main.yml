@@ -18,20 +18,19 @@
         state: present
       become: true
 
-    - name: Be sure Docker is always running
-      ansible.builtin.command: /bin/true
-      changed_when: false
-      notify: Docker service running
-
-    - name: Run notified handlers
-      ansible.builtin.meta: flush_handlers
-
     # https://github.com/docker/docker-credential-helpers/tree/master/secretservice
     - name: Install docker-credential-secretservice
       kewlfft.aur.aur:
         use: yay
         name: "{{ config.packages.aur.docker_credential_secretservice }}"
         state: present
+
+    - name: Docker service running
+      ansible.builtin.systemd:
+        name: docker.service
+        state: started
+        enabled: true
+      become: true
 
     - name: Create the docker group
       ansible.builtin.group:
@@ -89,11 +88,3 @@
           ansible.builtin.fail:
             msg: Docker test run failed.
           when: docker_test_run_cmd.rc != 0
-
-  handlers:
-    - name: Docker service running
-      ansible.builtin.systemd:
-        name: docker.service
-        state: started
-        enabled: true
-      become: true

@@ -8,7 +8,7 @@ config:
   gpg:
     pubfile:
       url: https://strboul.com/keys/pgp/4C884872307BB096C0EB226D9DFB9FAB33E2BB02.asc
-      checksum: sha256:9662e4a52f78888755bf0661ff886da50645a0ed07445fdf0d29354cb28c725d
+      checksum: sha256:df082d766f79f754e41bd2c553e6d9b77282ce15cad58bff60ef8e1e5174b286
     pubkey:
       master: 4C884872307BB096C0EB226D9DFB9FAB33E2BB02
       subkey_sign: 2AA9C7006171519C
@@ -18,143 +18,143 @@ config:
   # alphabetically sorted with vim's `:sort` within their groups
   packages:
     pacman:
-      alacritty: community/alacritty
-      arc_gtk_theme: community/arc-gtk-theme
+      alacritty: extra/alacritty
+      alsa_utils: extra/alsa-utils
       archlinux_keyring: core/archlinux-keyring
       ark: extra/ark
-      bandwhich: community/bandwhich
+      bandwhich: extra/bandwhich
       base_devel: base-devel
-      bat: community/bat
       bind: extra/bind
-      blueman: community/blueman
       bluez: extra/bluez
       bluez_utils: extra/bluez-utils
       chromium: extra/chromium
       clang: extra/clang
-      code: community/code
       coreutils: core/coreutils
       cups: extra/cups
       curl: core/curl
-      dbeaver: community/dbeaver
-      deno: community/deno
-      direnv: community/direnv
+      dbeaver: extra/dbeaver
+      deno: extra/deno
+      direnv: extra/direnv
+      discord: extra/discord
       dmidecode: extra/dmidecode
-      docker: community/docker
-      docker_buildx: community/docker-buildx
-      docker_compose: community/docker-compose
+      docker: extra/docker
+      docker_buildx: extra/docker-buildx
+      docker_compose: extra/docker-compose
       dolphin: extra/dolphin
       duf: extra/duf
-      etckeeper: community/etckeeper
+      element_desktop: extra/element-desktop
+      etckeeper: extra/etckeeper
       fastfetch: extra/fastfetch
-      fd: community/fd
-      file_roller: extra/file-roller
+      fd: extra/fd
       firefox: extra/firefox
-      firewalld: community/firewalld
-      flameshot: community/flameshot
+      firewalld: extra/firewalld
+      flameshot: extra/flameshot
       foliate: extra/foliate
       fuse2: extra/fuse2
-      fwupd: community/fwupd
-      fzf: community/fzf
-      galculator: community/galculator
-      gcr: extra/gcr
+      fwupd: extra/fwupd
+      fzf: extra/fzf
       gdb: extra/gdb
-      gdu: community/gdu
-      gedit: community/gedit
+      gdu: extra/gdu
+      gedit: extra/gedit
       ghostscript: extra/ghostscript
       gimp: extra/gimp
       git: extra/git
-      gnome_boxes: community/gnome-boxes
+      git_absorb: extra/git-absorb
+      gnome_boxes: extra/gnome-boxes
       gnome_disk_utility: extra/gnome-disk-utility
-      gnome_keyring: extra/gnome-keyring
       gnome_sound_recorder: extra/gnome-sound-recorder
       gnu_free_fonts: extra/gnu-free-fonts
       gnu_netcat: extra/gnu-netcat
       golang: extra/go
       gpgme: core/gpgme
-      gthumb: extra/gthumb
-      gvfs: extra/gvfs
       gwenview: extra/gwenview
       htop: extra/htop
-      hyperfine: community/hyperfine
+      hyperfine: extra/hyperfine
       inetutils: core/inetutils
+      iotop: extra/iotop
       ipcalc: extra/ipcalc
       iperf3: extra/iperf3
       iputils: core/iputils
-      ipython: community/ipython
-      jetbrains_mono_nerd: community/ttf-jetbrains-mono-nerd
-      jq: community/jq
+      ipython: extra/ipython
+      jetbrains_mono_nerd: extra/ttf-jetbrains-mono-nerd
+      jq: extra/jq
       k9s: extra/k9s
-      kde_plasma: plasma
-      keepassxc: community/keepassxc
+      keepassxc: extra/keepassxc
       konsole: extra/konsole
       kooha: extra/kooha
       krita: extra/krita
       kubectl: extra/kubectl
       kubectx: extra/kubectx
-      lazygit: community/lazygit
+      lazygit: extra/lazygit
       leafpad: extra/leafpad
       libreoffice_fresh: extra/libreoffice-fresh
       libssh2: core/libssh2
       libssh: extra/libssh
-      libvirt: community/libvirt
+      libvirt: extra/libvirt
       lsof: extra/lsof
       lua: extra/lua
       man_db: core/man-db
       man_pages: core/man-pages
       meld: extra/meld
-      minikube: community/minikube
+      minikube: extra/minikube
       mpv: extra/mpv
-      navi: community/navi
-      neomutt: community/neomutt
-      neovim: community/neovim
+      navi: extra/navi
+      neomutt: extra/neomutt
       nmap: extra/nmap
-      nodejs: community/nodejs
+      nodejs: extra/nodejs
       noto_fonts: extra/noto-fonts
       noto_fonts_cjk: extra/noto-fonts-cjk
       noto_fonts_emoji: extra/noto-fonts-emoji
       noto_fonts_extra: extra/noto-fonts-extra
-      npm: community/npm
+      npm: extra/npm
       ntp: extra/ntp
       obs_studio: extra/obs-studio
       okular: extra/okular
-      onefetch: community/onefetch
-      openscad: community/openscad
-      opensnitch: community/opensnitch
+      onefetch: extra/onefetch
+      openscad: extra/openscad
+      opensnitch: extra/opensnitch
       openssh: core/openssh
       pacman_contrib: extra/pacman-contrib
-      pass: community/pass
+      partitionmanager: extra/partitionmanager
+      pass: extra/pass
+      pciutils: core/pciutils
+      pipewire: extra/pipewire
+      pipewire_alsa: extra/pipewire-alsa
+      pipewire_jack: extra/pipewire-jack
+      pipewire_pulse: extra/pipewire-pulse
       podman: extra/podman
       postgresql: extra/postgresql
-      pwgen: community/pwgen
-      pyenv: community/pyenv
+      pwgen: extra/pwgen
+      pyenv: extra/pyenv
+      python_pipx: extra/python-pipx
       qrencode: extra/qrencode
-      r: community/r
-      ranger: community/ranger
+      r: extra/r
+      ranger: extra/ranger
       restic: extra/restic
-      ripgrep: community/ripgrep
+      ripgrep: extra/ripgrep
       rust: extra/rust
       sane: extra/sane
-      signal_desktop: community/signal-desktop
+      signal_desktop: extra/signal-desktop
       socat: extra/socat
-      solaar: community/solaar
+      solaar: extra/solaar
       sqlite: core/sqlite
       strace: extra/strace
+      sysstat: extra/sysstat
       tcpdump: extra/tcpdump
       telegram_desktop: extra/telegram-desktop
-      terraform: community/terraform
+      terraform: extra/terraform
       thunderbird: extra/thunderbird
-      tmux: community/tmux
+      tmux: extra/tmux
       traceroute: core/traceroute
       tree: extra/tree
       usbutils: core/usbutils
       vagrant: extra/vagrant
       valgrind: extra/valgrind
       vi: core/vi
-      viewnior: community/viewnior
       vim: extra/vim
-      virt_manager: community/virt-manager
-      virtualbox: community/virtualbox
-      virtualbox_guest_utils: community/virtualbox-guest-utils
+      virt_manager: extra/virt-manager
+      virtualbox: extra/virtualbox
+      virtualbox_guest_utils: extra/virtualbox-guest-utils
       vlc: extra/vlc
       w3m: extra/w3m
       wacomtablet: extra/wacomtablet
@@ -162,24 +162,20 @@ config:
       whois: extra/whois
       wireguard_tools: extra/wireguard-tools
       wireless_tools: extra/wireless_tools
+      wireplumber: extra/wireplumber
       wireshark_cli: extra/wireshark-cli
       wireshark_qt: extra/wireshark-qt
       wl_clipboard: extra/wl-clipboard
-      xclip: extra/xclip
-      xcolor: community/xcolor
       xdg_utils: extra/xdg-utils
-      xfce4_goodies: xfce4-goodies
-      xfwm4_themes: extra/xfwm4-themes
-      xorg_xev: extra/xorg-xev
-      yamllint: community/yamllint
-      yq_go: extra/go-yq
-      yubikey_manager: community/yubikey-manager
-      yubikey_manager_qt: community/yubikey-manager-qt
-      yubikey_touch_detector: community/yubikey-touch-detector
-      zathura: community/zathura
-      zathura_pdf_poppler: community/zathura-pdf-poppler
+      yamllint: extra/yamllint
+      yubikey_manager: extra/yubikey-manager
+      yubikey_manager_qt: extra/yubikey-manager-qt
+      yubikey_touch_detector: extra/yubikey-touch-detector
+      zathura: extra/zathura
+      zathura_pdf_poppler: extra/zathura-pdf-poppler
       zbar: extra/zbar
       zsh: extra/zsh
+
     # beware aur packages - audit them before you add here
     #
     # list all aur packages with `pacman -Qm`

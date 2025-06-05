@@ -3,19 +3,18 @@
 TERM_PROGRAM = "alacritty"
 
 [window]
-decorations = "none"
 opacity = 1.0
 
 [window.dimensions]
-columns = 70
-lines = 25
+columns = 100
+lines = 40
 
 [window.padding]
 x = 5
 y = 5
 
 [font]
-size = 9.0
+size = 10.0
 
 [font.bold]
 family = "monospace"

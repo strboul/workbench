@@ -16,11 +16,12 @@
 export DISABLE_UPDATE_PROMPT=true
 
 # main locale is US.
-export LANG="en_US.UTF-8"
+export LANG='en_US.UTF-8'
+export LC_ALL='en_US.UTF-8'
 # time locale is British (start week from Monday).
-export LC_TIME="en_GB.UTF-8"
+export LC_TIME='en_GB.UTF-8'
 # paper locale is British (A4, etc.).
-export LC_PAPER="en_GB.UTF-8"
+export LC_PAPER='en_GB.UTF-8'
 
 # XDG base
 # (https://wiki.archlinux.org/title/XDG_Base_Directory)
@@ -192,8 +193,6 @@ zstyle ":completion:*:*:make:*" tag-order "targets"
 
 # https://github.com/BurntSushi/ripgrep/blob/0.8.0/GUIDE.md#configuration-file
 export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
-# https://github.com/sharkdp/bat#configuration-file
-export BAT_CONFIG_PATH="$HOME/.batconf"
 export PYTHONSTARTUP="$HOME/.pythonstartup"
 
 # fd (https://github.com/sharkdp/fd)

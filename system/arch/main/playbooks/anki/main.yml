@@ -30,6 +30,6 @@
     - name: Install Anki
       ansible.builtin.command: "./install.sh"
       args:
-        chdir: "/tmp/anki"
+        chdir: "/tmp/anki-{{ anki_version }}-linux-qt6"
       become: true
       changed_when: false

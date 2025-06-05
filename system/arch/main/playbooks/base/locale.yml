@@ -15,11 +15,13 @@
     name: "{{ item }}"
     state: present
   loop:
-    - "en_GB.UTF-8"
     - "en_US.UTF-8"
+    - "en_GB.UTF-8"
   become: true
   when: locale_gen_file.changed
 
+# LC_ALL cannot be set here.
+# https://wiki.archlinux.org/title/Locale#LC_ALL:_troubleshooting
 - name: Set system default locales
   ansible.builtin.command: "localectl set-locale {{ item }}"
   loop:

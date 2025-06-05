@@ -1,5 +1,4 @@
-# 'edge' is the dev branch, rolling release
-FROM docker.io/library/alpine:edge
+FROM docker.io/library/alpine:3.20
 # install neovim
 RUN apk --no-cache add neovim neovim-doc
 # install base libraries/packages.

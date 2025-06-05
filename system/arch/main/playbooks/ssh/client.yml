@@ -5,11 +5,14 @@
       client_path: "{{ ansible_env.HOME }}/.ssh"
       client_keys_path: "{{ ansible_env.HOME }}/.ssh/keys"
 
-- name: Create ssh user directory
+- name: Create directories
   ansible.builtin.file:
-    path: "{{ vars_ssh.client_path }}"
+    path: "{{ item }}"
     mode: "0700"
     state: directory
+  loop:
+    - "{{ vars_ssh.client_path }}"
+    - "{{ vars_ssh.client_keys_path }}"
 
 - name: Get keys
   ansible.builtin.include_vars:
@@ -40,4 +43,5 @@
     owner: root
     group: root
     mode: "0644"
+    state: touch
   become: true

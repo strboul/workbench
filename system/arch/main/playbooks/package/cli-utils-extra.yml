@@ -1,14 +1,4 @@
 ---
-- name: Extra cli utils via pip
-  ansible.builtin.pip:
-    name:
-      - tmuxp  # https://github.com/tmux-python/tmuxp
-      - yt-dlp[default]  # https://github.com/yt-dlp/yt-dlp
-      - visidata  # https://www.visidata.org/
-    state: present
-  environment:
-    PIP_REQUIRE_VIRTUALENV: "false"
-
 - name: Install cli utils via pacman
   community.general.pacman:
     name:

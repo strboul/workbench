@@ -9,9 +9,9 @@
 #   gbrowse --open=chrome # opens with chrome
 #
 # Details:
-#   The following protocols are covered:
-#   - "git@github.com:org/repo.git"
-#   - "ssh://git@gitlab.dev.internal.org:30022/org/repo.git"
+#   The following formats are supported:
+#     - "git@github.com:org/repo.git"
+#     - "ssh://git@gitlab.dev.internal.org:30022/org/repo.git"
 #
 
 import argparse
@@ -19,19 +19,21 @@ import subprocess
 import sys
 import urllib.parse
 
-BROWSERS = {
+_BROWSERS = {
     "chrome": "google-chrome-stable",
     "chromium": "chromium",
     "firefox": "firefox",
 }
 
-_DEFAULT_BROWSER = BROWSERS["firefox"]
+_DEFAULT_BROWSER = _BROWSERS["firefox"]
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(allow_abbrev=False)
+    parser = argparse.ArgumentParser(
+        allow_abbrev=False, description="Browse git remote repository on a browser"
+    )
     parser.add_argument("path", nargs="?")
-    parser.add_argument("--open", nargs="?", const=_DEFAULT_BROWSER)
+    parser.add_argument("--open", nargs="?", const=_DEFAULT_BROWSER, choices=_BROWSERS)
     args = parser.parse_args()
     return args
 
@@ -59,7 +61,7 @@ def get_git_origin_url(path):
 
 
 def get_browser_name(name):
-    browser = BROWSERS.get(name)
+    browser = _BROWSERS.get(name)
     if browser is None:
         raise ValueError("unknown browser")
     return browser

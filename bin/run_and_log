@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+# Run and log input and output
+#
+# Handy tool to reproduce some stuff and send to some bug report, etc.
+#
+# Usage:
+#   run_and_log  # starts an interactive shell
+#
+#   run_and_log ls -l  # non-interactive
+#
+
+source "$WORKBENCH_PATH/bin/_utils/utils.sh"
+
+LOGFILE="$HOME/run_and_log.log"
+PROMPT="run_and_log> "
+
+run_and_log() {
+  if [ ! -f "$LOGFILE" ]; then
+    utils__log__success "created logfile:" "$LOGFILE"
+    touch "$LOGFILE"
+  fi
+
+  _run() {
+    echo "\$ $*" >> "$LOGFILE"
+    eval "$*" 2>&1 | tee -a "$LOGFILE"
+  }
+
+  # Non-interactive: log and run passed command
+  if [ $# -gt 0 ]; then
+    _run "$*"
+  else
+    # Interactive mode
+    echo "Entering interactive run_and_log shell. Press 'ctrl-D' to quit."
+    while true; do
+      read -e -p "$PROMPT" cmd || break
+      [ -z "$cmd" ] && continue
+      _run "$cmd"
+    done
+  fi
+  utils__log__success "logfile \"${LOGFILE}\" has number of lines:" "$(wc -l < $LOGFILE)"
+  utils__log__info "don't forget to remove the logfile afterwards"
+}
+
+run_and_log "$@"

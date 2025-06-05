@@ -7,7 +7,7 @@
   ansible.builtin.stat:
     path: /etc/.git/config
   register: etckeeper_git
-  changed_when: etckeeper_git.rc != 0
+  changed_when: not etckeeper_git.stat.exists
   become: true
 
 - name: Initialize etckeeper

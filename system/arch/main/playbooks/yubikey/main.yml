@@ -13,13 +13,12 @@
   tags: yubikey
   hosts: all
   tasks:
-    - name: Start PC/SC Smart Card Daemon service
-      ansible.builtin.command: /bin/true
-      changed_when: false
-      notify: pcsd.service running
-
-    - name: Run notified handlers
-      ansible.builtin.meta: flush_handlers
+    - name: PC/SC Smart Card Daemon service running
+      ansible.builtin.systemd:
+        name: pcscd.service
+        state: started
+        enabled: true
+      become: true
 
     # ykman: YubiKey Manager CLI
     # https://github.com/Yubico/yubikey-manager
@@ -40,10 +39,11 @@
       tags: yubikey.client
       block:
         # https://github.com/maximbaz/yubikey-touch-detector
+        # TODO: this doesn't work bcs of https://github.com/maximbaz/yubikey-touch-detector/issues/54
+        # see if it's gonna be resolved or perish it.
         - name: Install yubikey-touch-detector
           community.general.pacman: name="{{ config.packages.pacman.yubikey_touch_detector }}" state=present
           become: true
-          notify: yubikey-touch-detector.service running
 
         - name: Set yubikey-touch-detector config file
           ansible.builtin.blockinfile:
@@ -55,17 +55,9 @@
             create: true
             state: present
 
-  handlers:
-    - name: pcsd.service running
-      ansible.builtin.systemd:
-        name: pcsd.service
-        state: started
-        enabled: true
-      become: true
-
-    - name: yubikey-touch-detector.service running
-      ansible.builtin.systemd:
-        name: yubikey-touch-detector
-        state: started
-        scope: user
-        enabled: true
+        - name: yubikey-touch-detector.service running
+          ansible.builtin.systemd:
+            name: yubikey-touch-detector
+            state: started
+            scope: user
+            enabled: true

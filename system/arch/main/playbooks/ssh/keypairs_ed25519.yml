@@ -14,6 +14,7 @@
     path: "{{ vars_generate_keypairs.key_path }}"
     type: ed25519
     comment: "{{ item }}_{{ ansible_date_time.date }}"
+    state: present
   when: not ssh_key_file.stat.exists
 
 - name: "Make key file permission restrictive {{ item }}"
@@ -22,9 +23,10 @@
     mode: "0400"
     state: file
 
-- name: "Check if key has a passphrase: {{ item }}"
-  ansible.builtin.command:
-    check-ssh-key-passphrase {{ vars_generate_keypairs.key_path }}
-  register: ssh_check_passphrase
-  changed_when: ssh_check_passphrase.rc != 0
-  ignore_errors: true
+# TODO: make it a systemd-timer check
+# - name: "Check if key has a passphrase: {{ item }}"
+#   ansible.builtin.command:
+#     check-ssh-key-passphrase {{ vars_generate_keypairs.key_path }}
+#   register: ssh_check_passphrase
+#   changed_when: ssh_check_passphrase.rc != 0
+#   ignore_errors: true

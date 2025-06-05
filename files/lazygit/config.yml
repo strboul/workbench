@@ -3,9 +3,8 @@
 #
 ---
 gui:
-  showFileTree: false
   showRandomTip: false
-  mainPanelSplitMode: 'horizontal'
+  mainPanelSplitMode: horizontal
 
 update:
   method: never
@@ -15,6 +14,9 @@ update:
 quitOnTopLevelReturn: true
 
 disableStartupPopups: true
+
+# quit lazygit if it's opened from a non-git location
+notARepository: quit
 
 keybinding:
   files:

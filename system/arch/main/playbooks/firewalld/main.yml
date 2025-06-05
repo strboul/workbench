@@ -9,28 +9,40 @@
       community.general.pacman: name="{{ config.packages.pacman.firewalld }}" state=present
       become: true
 
-    - name: Be sure firewalld is always running
-      ansible.builtin.command: /bin/true
-      changed_when: false
-      notify: firewalld running
-
-    - name: Run notified handlers
-      ansible.builtin.meta: flush_handlers
+    - name: firewalld running
+      ansible.builtin.systemd:
+        name: firewalld
+        state: started
+        enabled: true
+      become: true
 
     - name: Set default zone to public
       ansible.builtin.shell: |
-        sudo firewall-cmd --set-default-zone=public
+        firewall-cmd --set-default-zone=public
       register: firewalld_set_default_zone
       changed_when: firewalld_set_default_zone.rc != 0
       become: true
 
-    - name: Allow port range (my socat)
-      ansible.builtin.shell: |
-        firewall-cmd --zone=public --add-port=3333/tcp --permanent
-        firewall-cmd --reload
-      register: firewalld_set_port
-      changed_when: firewalld_set_port.rc != 0
+    - name: Allow ports
       become: true
+      ansible.builtin.shell: |
+        firewall-cmd --permanent --zone=public --add-port={{ item.port }}/tcp
+        firewall-cmd --reload
+      register: firewalld_allow_ports
+      changed_when: firewalld_allow_ports.rc != 0
+      loop:
+        - { port: 3333 }  # my socat port
+
+    - name: Firewalld applet settings
+      ansible.builtin.blockinfile:
+        path: "{{ ansible_env.HOME }}/.config/firewall/applet.conf"
+        block: |
+          [General]
+          notifications=false
+          show-inactive=true
+        mode: "0644"
+        create: true
+        state: present
 
     - name: Set notification service to check if firewalld is running
       strboul.notify.check:
@@ -46,11 +58,3 @@
           OnBootSec: 1h
           OnUnitActiveSec: 1h
           Persistent: true
-
-  handlers:
-    - name: firewalld running
-      ansible.builtin.systemd:
-        name: firewalld
-        state: started
-        enabled: true
-      become: true

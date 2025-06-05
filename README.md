@@ -17,11 +17,14 @@
 
 ## Setup
 
+(Prerequisites: ssh, git, git-crypt, ansible)
+
 Set a directory to clone this repository, and then change directory into the
 `workbench` folder.
 
 ```sh
-echo 'export WORKBENCH_PATH="$HOME/.../workbench"' | tee -a "$HOME/.zshenv" "$HOME/.bash_profile"
+WORKBENCH_PATH="$(pwd)"
+echo "export WORKBENCH_PATH='${WORKBENCH_PATH}'" | tee -a "$HOME/.zshenv" "$HOME/.bash_profile"
 git clone https://github.com/strboul/workbench.git "$WORKBENCH_PATH"
 cd "$WORKBENCH_PATH"
 ```

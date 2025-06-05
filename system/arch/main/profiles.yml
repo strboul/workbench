@@ -6,6 +6,7 @@
 # Most likely to be used in a headless environment.
 minimal: &minimal
   - base
+  - gpg
   - bluetooth
   - ssh
   - firewalld
@@ -39,11 +40,10 @@ common: &common
   - gui.gedit
   - gui.gnome_disk_utility
   - gui.libreoffice
-  - gui.code
+  - gui.vscode
 
 personal:
   - *common
-  - gpg
   - language.rust
   - package.clang
   - package.terraform
@@ -55,8 +55,6 @@ personal:
   - gui.signal
   - gui.solaar
   - gui.vlc
-  - gui.xcolor
-  - gui.gthumb
 
 work:
   - *common

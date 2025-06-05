@@ -1,11 +1,16 @@
+# XDG: Cross Desktop Group
+#
+# Remarks
+# - `xdg-mime` associations written to `~/.config/mimeapps.list`.
+#
 ---
 - name: Set variables
   ansible.builtin.set_fact:
     vars_base_xdg:
       text_editor: gnome.gedit.desktop
-      image_viewer: viewnior.desktop
+      image_viewer: org.kde.gwenview.desktop
       media_player: vlc.desktop
-      pdf_viewer: org.pwmt.zathura.desktop
+      pdf_viewer: okularApplication_pdf.desktop
 
 - name: Install xdg utils
   community.general.pacman: name="{{ config.packages.pacman.xdg_utils }}" state=present
@@ -20,6 +25,7 @@
       - "{{ item.mimetype }}"
   loop:
     - { application: "{{ vars_base_xdg.text_editor }}", mimetype: "text/plain" }
+    - { application: "{{ vars_base_xdg.text_editor }}", mimetype: "text/markdown" }
     - { application: "{{ vars_base_xdg.text_editor }}", mimetype: "text/html" }
     - { application: "{{ vars_base_xdg.text_editor }}", mimetype: "application/json" }
     - { application: "{{ vars_base_xdg.image_viewer }}", mimetype: "image/jpeg" }

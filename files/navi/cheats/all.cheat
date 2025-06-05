@@ -11,11 +11,10 @@
 ;   separate the variables, e.g. `my-var`.
 ;
 ; - Try to use synonymous words from commands on the description, e.g. if a
-;   command has the word 'delete', use 'remove' in the description. If neither
-;   exists, but the command removes something, use both in the description.
+;   command has the word 'delete', try to use 'remove' in the description. If
+;   neither exists, but the command removes something, try to use the both in
+;   the description.
 ;
-; - Don't add comma (,) or hyphen (-) to the names because the fuzzy finder
-;   doesn't work.
 
 ; ----------------------------------------------------------------------------
 % git [git]
@@ -119,6 +118,9 @@ git tag --sort=-creatordate
 # list ignored files
 git ls-files --ignored --exclude-standard --others
 
+# list all remote branches
+git branch -r
+
 # change remote url
 git remote set-url origin git@example.com:user/repo.git
 
@@ -180,8 +182,9 @@ ssh-add <private-key>
 ssh-add -L
 
 ; listen remote port on local
-# local port forwarding/tunnel
-ssh -N -L <remote-port>:localhost:<localport> user@host
+; jump is optional
+# port forwarding
+ssh -N -L 127.0.0.1:3001:0.0.0.0:<remote-port> user@host
 
 # keyscan by type of domain or IP
 ssh-keyscan -t ed25519 github.com
@@ -262,6 +265,9 @@ gpg --card-status
 # list with expired subkeys
 gpg --list-options show-unusable-subkeys --list-keys
 
+# restart gpg agent
+gpgconf --kill gpg-agent
+
 $ fingerprint: gpg-list-public-keys | fzf | awk '{ print $1 }'
 $ email: gpg-list-public-keys | fzf | perl -pe 's/^.*\<(.*)\>$/\1/g'
 
@@ -270,6 +276,9 @@ $ email: gpg-list-public-keys | fzf | perl -pe 's/^.*\<(.*)\>$/\1/g'
 
 # get certificate details
 openssl x509 -text -noout -in <crt-file>
+
+# generate pseudo-random bytes
+openssl rand -hex 16
 
 ; ----------------------------------------------------------------------------
 % nmap [network]
@@ -395,7 +404,7 @@ echo "hello" | socat TCP4:<address>:<port> -
 echo "$(<<file>)" | socat TCP4:<address>:<port> -
 
 # simple http server
-socat -v -d -d TCP-LISTEN:3333,crlf,reuseaddr,fork SYSTEM:"echo HTTP/1.1 200 OK;echo Content-Type\: text/plain;echo;echo \"Server: \$SOCAT_SOCKADDR:\$SOCAT_SOCKPORT\";echo \"Client: \$SOCAT_PEERADDR:\$SOCAT_PEERPORT\";"
+socat -v -d -d TCP-LISTEN:<port>,crlf,reuseaddr,fork SYSTEM:"echo HTTP/1.1 200 OK;echo Content-Type\: text/plain;echo;echo \"Server: \$SOCAT_SOCKADDR:\$SOCAT_SOCKPORT\";echo \"Client: \$SOCAT_PEERADDR:\$SOCAT_PEERPORT\";"
 
 $ address: echo "192.168.1.1" --- --fzf-overrides '--no-select-1'
 $ port: echo "3333" --- --fzf-overrides '--no-select-1'
@@ -576,6 +585,9 @@ unlink <file>
 
 # display memory and swap info in system
 free -m
+
+# fill memory temporarily
+head -c 500m /dev/zero | tail | sleep 100
 
 ; ----------------------------------------------------------------------------
 % ss [network, socket, process]
@@ -1152,8 +1164,8 @@ SELECT * FROM alias;
 ; ----------------------------------------------------------------------------
 % wget [linux]
 
-# download and save file with output
-wget <link> -O <output_file>
+# print output to stdout
+wget -q -S -O - archlinux.org 2>&1
 
 ; ----------------------------------------------------------------------------
 % fwupdmgr [linux]
@@ -1179,8 +1191,17 @@ btrfs subvol delete @snapshots/<snapshot>
 # show subvol details of snapshot
 btrfs subvol show /.snapshots/<folder_name>
 
-; # Restore snapshot
-; TODO
+# start scrub on mounted filesystem
+btrfs scrub start /
+
+# get scrub progress
+btrfs scrub status /
+
+# cancel scrub
+btrfs scrub cancel /
+
+# list errors on mount
+btrfs device stats /
 
 ; ----------------------------------------------------------------------------
 % zfs, zpool [linux]
@@ -1354,7 +1375,7 @@ iptables -t raw -L -v -n --line-numbers
 iptables -t raw -F
 
 # delete specific rule from table by line number
-sudo iptables -t raw -D INPUT 2
+iptables -t raw -D INPUT 2
 
 # list rules
 iptables --list-rules
@@ -1561,10 +1582,13 @@ pass -c archlinux.org/wiki/username
 pass insert -m <name>
 
 # edit password
-pass edit archlinux.org/wiki/username
+pass edit <password>
 
 # delete password
-pass rm archlinux.org/wiki/username
+pass rm <password>
+
+# with custom password store path
+PASSWORD_STORE_DIR="$(pwd)" pass <password>
 
 ; ----------------------------------------------------------------------------
 % ansible
@@ -1576,10 +1600,10 @@ ansible -v <inventory_group> -m ansible.builtin.shell -a 'ls /'
 % etckeeper
 
 # get etc's working tree status
-sudo etckeeper vcs status
+etckeeper vcs status
 
 # get etc's commit logs
-sudo etckeeper vcs log
+etckeeper vcs log
 
 ; ----------------------------------------------------------------------------
 % misc

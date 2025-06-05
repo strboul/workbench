@@ -10,7 +10,6 @@
       community.general.pacman:
         name:
           - "{{ config.packages.pacman.gpgme }}"
-          - "{{ config.packages.pacman.gcr }}"  # pinentry-gnome3 requires this package
         state: present
       become: true
 
@@ -29,7 +28,6 @@
       register: gpg_pubkey_download
 
     - name: Verify fingerprint and import key
-      when: gpg_pubkey_download.changed
       block:
         - name: Get fingerprint of file
           ansible.builtin.shell: |
@@ -50,11 +48,12 @@
             gpg --list-keys "{{ config.gpg.pubkey.master }}"
           register: gpg_list_keys
           changed_when: gpg_list_keys.rc != 0
+          failed_when: false
 
         - name: Import key
           ansible.builtin.command: |
             gpg --import "{{ gpg_pubkey_path }}"
-          when: list_keys.rc != 0
+          when: gpg_list_keys.rc != 0
           register: gpg_import
           changed_when: gpg_import.rc != 0
 

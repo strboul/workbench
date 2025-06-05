@@ -1,7 +1,4 @@
 ---
-# Manage Python with pyenv
-# https://github.com/pyenv/pyenv/
-#
 - name: Setup Python
   tags: python
   hosts: all
@@ -16,16 +13,22 @@
         msg: "System Python not found!"
       when: not system_python.stat.exists
 
-    - name: Ensure pip is ready
-      ansible.builtin.command: /usr/bin/python -m ensurepip --upgrade
-      register: system_python_pip_ensure
-      changed_when: system_python_pip_ensure.rc != 0
-
+    # https://github.com/pyenv/pyenv/
     - name: Install pyenv
       community.general.pacman: name="{{ config.packages.pacman.pyenv }}" state=present
       become: true
 
-    - name: Add pyenv to zsh profile
+    # https://github.com/pypa/pipx
+    - name: Install pipx
+      community.general.pacman: name="{{ config.packages.pacman.python_pipx }}" state=present
+      become: true
+
+    # https://github.com/ipython/ipython
+    - name: Install ipython
+      community.general.pacman: name="{{ config.packages.pacman.ipython }}"
+      become: true
+
+    - name: Add pyenv to zshenv
       ansible.builtin.blockinfile:
         path: "{{ ansible_env.HOME }}/.zshenv"
         marker: "# {mark} ANSIBLE MANAGED BLOCK: pyenv"
@@ -55,16 +58,17 @@
       register: pyenv_install
       notify: Set default pyenv version
 
-    - name: Install some Python packages
-      ansible.builtin.pip:
-        name:
-          - virtualenv
-          - pylint  # https://github.com/PyCQA/pylint
-          - black  # https://github.com/psf/black
-          - requests  # https://github.com/psf/requests
+    - name: Install Python packages
+      community.general.pipx:
+        name: "{{ item }}"
         state: present
-      environment:
-        PIP_REQUIRE_VIRTUALENV: "false"
+      loop:
+        - pylint  # https://github.com/PyCQA/pylint
+        - black  # https://github.com/psf/black
+        - requests  # https://github.com/psf/requests
+        - git-substatus  # https://github.com/strboul/git-substatus
+        - pre-commit  # https://pre-commit.com/#installation
+        - yt-dlp[default]  # https://github.com/yt-dlp/yt-dlp
 
   handlers:
     # Set the highest Python version as global initially.
